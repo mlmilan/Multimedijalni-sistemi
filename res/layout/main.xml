@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+	<ImageView
+	    android:id="@+id/imgView"
+	    android:layout_width="fill_parent"
+	    android:layout_height="400dp"
+	    android:contentDescription="vmfkvmf" >
+
+	</ImageView>
+
+	<Button
+	    android:id="@+id/buttonFilter"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Filter" 
+	    android:layout_toRightOf="@+id/buttonLoadPicture"
+	    android:layout_below="@+id/imgView"/>
+
+	<Button
+	    android:id="@+id/buttonLoadPicture"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Load Picture"
+	    android:layout_gravity="left"
+	    android:layout_below="@+id/imgView" />
+
+
+</RelativeLayout>
