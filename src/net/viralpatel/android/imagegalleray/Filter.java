@@ -2,7 +2,7 @@ package net.viralpatel.android.imagegalleray;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-
+ 
 public class Filter {
 	
 	public static Bitmap invert(Bitmap bitmap) {
