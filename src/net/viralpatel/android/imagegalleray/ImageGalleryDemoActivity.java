@@ -7,14 +7,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
-import android.hardware.Camera;
-import android.hardware.Camera.PreviewCallback;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -54,7 +50,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				// TODO Auto-generated method stub
 				//new Jpeg(picturePath);
 				//File outFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg");
-				changeBitmap = Filter.gausianBlur(originalBitmap, 10, 5);
+				changeBitmap = Filter.emboss(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
 				imageView.setImageBitmap(changeBitmap);
