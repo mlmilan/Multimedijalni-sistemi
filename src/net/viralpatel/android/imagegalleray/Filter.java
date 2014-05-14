@@ -593,7 +593,169 @@ public class Filter {
 	}
 	
 	
+	public static Bitmap gammaCorection(Bitmap src, double red, double green, double blue) {
+	    // create output image
+	    Bitmap bmOut = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+	    // get image size
+	    int width = src.getWidth();
+	    int height = src.getHeight();
+	    // color information
+	    int A, R, G, B;
+	    int pixel;
+	    // constant value curve
+	    final int    MAX_SIZE = 256;
+	    final double MAX_VALUE_DBL = 255.0;
+	    final int    MAX_VALUE_INT = 255;
+	    final double REVERSE = 1.0;
+	 
+	    // gamma arrays
+	    int[] gammaR = new int[MAX_SIZE];
+	    int[] gammaG = new int[MAX_SIZE];
+	    int[] gammaB = new int[MAX_SIZE];
+	 
+	    // setting values for every gamma channels
+	    for(int i = 0; i < MAX_SIZE; ++i) {
+	        gammaR[i] = (int)Math.min(MAX_VALUE_INT,
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL, REVERSE / red)) + 0.5));
+	        gammaG[i] = (int)Math.min(MAX_VALUE_INT,
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL, REVERSE / green)) + 0.5));
+	        gammaB[i] = (int)Math.min(MAX_VALUE_INT,
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL, REVERSE / blue)) + 0.5));
+	    }
+	 
+	    // apply gamma table
+	    for(int x = 0; x < width; ++x) {
+	        for(int y = 0; y < height; ++y) {
+	            // get pixel color
+	            pixel = src.getPixel(x, y);
+	            A = Color.alpha(pixel);
+	            // look up gamma
+	            R = gammaR[Color.red(pixel)];
+	            G = gammaG[Color.green(pixel)];
+	            B = gammaB[Color.blue(pixel)];
+	            // set new color to output bitmap
+	            bmOut.setPixel(x, y, Color.argb(A, R, G, B));
+	        }
+	    }
+	 
+	    // return final image
+	    return bmOut;
+	}
 	
+	public static Bitmap colorFilter(Bitmap src, double red, double green, double blue) {
+        // image size
+        int width = src.getWidth();
+        int height = src.getHeight();
+        // create output bitmap
+        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
+        // color information
+        int A, R, G, B;
+        int pixel;
+ 
+        // scan through all pixels
+        for(int x = 0; x < width; ++x) {
+            for(int y = 0; y < height; ++y) {
+                // get pixel color
+                pixel = src.getPixel(x, y);
+                // apply filtering on each channel R, G, B
+                A = Color.alpha(pixel);
+                R = (int)(Color.red(pixel) * red);
+                G = (int)(Color.green(pixel) * green);
+                B = (int)(Color.blue(pixel) * blue);
+                // set new color pixel to output bitmap
+                bmOut.setPixel(x, y, Color.argb(A, R, G, B));
+            }
+        }
+ 
+        // return final image
+        return bmOut;
+    }
+	
+	public static Bitmap saturationFilter(Bitmap source, int level) {
+	    // get image size
+	    int width = source.getWidth();
+	    int height = source.getHeight();
+	    int[] pixels = new int[width * height];
+	    float[] HSV = new float[3];
+	    // get pixel array from source
+	    source.getPixels(pixels, 0, width, 0, 0, width, height);
+	 
+	    int index = 0;
+	    // iteration through pixels
+	    for(int y = 0; y < height; ++y) {
+	        for(int x = 0; x < width; ++x) {
+	            // get current index in 2D-matrix
+	            index = y * width + x;
+	            // convert to HSV
+	            Color.colorToHSV(pixels[index], HSV);
+	            // increase Saturation level
+	            HSV[1] *= level;
+	            HSV[1] = (float) Math.max(0.0, Math.min(HSV[1], 1.0));
+	            // take color back
+	            pixels[index] |= Color.HSVToColor(HSV);
+	        }
+	    }
+	    // output bitmap
+	    Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+	    bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+	    return bmOut;
+	}
+	
+	public static Bitmap hueFilter(Bitmap source, int level) {
+	    // get image size
+	    int width = source.getWidth();
+	    int height = source.getHeight();
+	    int[] pixels = new int[width * height];
+	    float[] HSV = new float[3];
+	    // get pixel array from source
+	    source.getPixels(pixels, 0, width, 0, 0, width, height);
+	     
+	    int index = 0;
+	    // iteration through pixels
+	    for(int y = 0; y < height; ++y) {
+	        for(int x = 0; x < width; ++x) {
+	            // get current index in 2D-matrix
+	            index = y * width + x;              
+	            // convert to HSV
+	            Color.colorToHSV(pixels[index], HSV);
+	            // increase Saturation level
+	            HSV[0] *= level;
+	            HSV[0] = (float) Math.max(0.0, Math.min(HSV[0], 360.0));
+	            // take color back
+	            pixels[index] |= Color.HSVToColor(HSV);
+	        }
+	    }
+	    // output bitmap                
+	    Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+	    bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+	    return bmOut;       
+	}
+
+	public static Bitmap shadingFilter(Bitmap source, int shadingColor) {
+	    // get image size
+	    int width = source.getWidth();
+	    int height = source.getHeight();
+	    int[] pixels = new int[width * height];
+	    // get pixel array from source
+	    source.getPixels(pixels, 0, width, 0, 0, width, height);
+	 
+	    int index = 0;
+	    // iteration through pixels
+	    for(int y = 0; y < height; ++y) {
+	        for(int x = 0; x < width; ++x) {
+	            // get current index in 2D-matrix
+	            index = y * width + x;
+	            // AND
+	            pixels[index] &= shadingColor;
+	        }
+	    }
+	    // output bitmap
+	    Bitmap bmOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+	    bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+	    return bmOut;
+	}
+}
+
 	
 
 }
