@@ -24,7 +24,7 @@ public class Filter {
 	private static int engravingRange = 1;         // PROVERITI DA LI TREBA DA SE DODAJE NEKE FIKSNA VREDNOST (OFFSET) !!!
 	
 	private static int[][] smooth;
-	private static int smoothRange = 5/2;
+	private static int smoothRange = 1;
 	
 	static {
 		sharpen = new int[3][3];
@@ -701,12 +701,12 @@ public class Filter {
 						bitmapY = y + deltaY;
 						bitmapY = bitmapY<0 ? 0 : bitmapY>=height?height-1:bitmapY;
 
-						red   += /*smooth[filtY][filtX] * */Color.red(bitmap.getPixel(bitmapX, bitmapY));
-						green += /*smooth[filtY][filtX] * */Color.green(bitmap.getPixel(bitmapX, bitmapY));
-						blue  += /*smooth[filtY][filtX] * */Color.blue(bitmap.getPixel(bitmapX, bitmapY));
+						red   += smooth[filtY][filtX] * Color.red(bitmap.getPixel(bitmapX, bitmapY));
+						green += smooth[filtY][filtX] * Color.green(bitmap.getPixel(bitmapX, bitmapY));
+						blue  += smooth[filtY][filtX] * Color.blue(bitmap.getPixel(bitmapX, bitmapY));
 					}
 
-				colorArray[y * width + x] = Color.rgb(((red/25)>255 ? 255 : (red/25)<0?0:(red/25)), ((green/25)>255 ? 255 : (green/25)<0?0:(green/25)), ((blue/25)>255 ? 255 : (blue/25)<0?0:(blue/25)));
+				colorArray[y * width + x] = Color.rgb(((red/13)>255 ? 255 : (red/13)<0?0:(red/13)), ((green/13)>255 ? 255 : (green/13)<0?0:(green/13)), ((blue/13)>255 ? 255 : (blue/13)<0?0:(blue/13)));
 				returnBitmap.setPixel(x, y, colorArray[y * width + x]);
 			}
 		return returnBitmap;

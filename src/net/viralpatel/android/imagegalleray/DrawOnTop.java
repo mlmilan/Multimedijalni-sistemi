@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -29,7 +30,6 @@ public class DrawOnTop extends View {
     public DrawOnTop(Context context, Bitmap b) {
         super(context);
         mBitmap = b;
-        
         mImageWidth = mBitmap.getWidth();
         mImageHeight = mBitmap.getHeight();
         
@@ -88,7 +88,9 @@ public class DrawOnTop extends View {
         	int marginWidth = (canvasWidth - newImageWidth)/2;
         	        	
         	// Convert from YUV to RGB
-        	decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
+        //	decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
+        	
+        	mBitmap.getPixels(mRGBData, 0, mBitmap.getWidth(), 0, 0, mBitmap.getWidth(), mBitmap.getHeight());
         	
         	// Draw bitmap
         	//mBitmap.setPixels(mRGBData, 0, mImageWidth, 0, 0, 
@@ -163,14 +165,14 @@ public class DrawOnTop extends View {
         	float barWidth = ((float)newImageWidth) / 256;
         	float barMarginHeight = 2;
         	RectF barRect = new RectF();
-        	barRect.bottom = canvasHeight - 200;
+        	barRect.bottom = canvasHeight - 600;  // bilo 200
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
         		float prob = (float)mRedHistogram[bin] / (float)redHistogramSum;
         		barRect.top = barRect.bottom - 
-        			Math.min(80,prob*barMaxHeight) - barMarginHeight;
+        			Math.min(200,prob*barMaxHeight) - barMarginHeight;  // bilo 80
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintRed);
@@ -179,12 +181,12 @@ public class DrawOnTop extends View {
         	} // bin
         	
         	// Draw green intensity histogram
-        	barRect.bottom = canvasHeight - 100;
+        	barRect.bottom = canvasHeight - 300; // bilo 100
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
-        		barRect.top = barRect.bottom - Math.min(80, ((float)mGreenHistogram[bin])/((float)greenHistogramSum) * barMaxHeight) - barMarginHeight;
+        		barRect.top = barRect.bottom - Math.min(200, ((float)mGreenHistogram[bin])/((float)greenHistogramSum) * barMaxHeight) - barMarginHeight;
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintGreen);
@@ -198,7 +200,7 @@ public class DrawOnTop extends View {
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
-        		barRect.top = barRect.bottom - Math.min(80, ((float)mBlueHistogram[bin])/((float)blueHistogramSum) * barMaxHeight) - barMarginHeight;
+        		barRect.top = barRect.bottom - Math.min(200, ((float)mBlueHistogram[bin])/((float)blueHistogramSum) * barMaxHeight) - barMarginHeight;
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintBlue);
