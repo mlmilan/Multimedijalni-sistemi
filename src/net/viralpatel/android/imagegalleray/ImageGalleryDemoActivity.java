@@ -119,7 +119,13 @@ public class ImageGalleryDemoActivity extends Activity {
 				//changeBitmap = Filter.colorFilter(originalBitmap, 1, 0, 0);
 				//changeBitmap = Filter.saturationFilter(originalBitmap, 2);
 				//changeBitmap = Filter.hueFilter(originalBitmap, 10);
-				changeBitmap = Filter.shadingFilter(originalBitmap, color);
+				//changeBitmap = Filter.shadingFilter(originalBitmap, color);
+				//changeBitmap = Filter.sharpen(originalBitmap);
+				//changeBitmap = Filter.blur(originalBitmap);
+				//changeBitmap = Filter.edge(originalBitmap);
+				//changeBitmap = Filter.emboss(originalBitmap);
+				//changeBitmap = Filter.engraving(originalBitmap);
+				changeBitmap = Filter.smooth(originalBitmap);
 				tEnd = System.currentTimeMillis();
 				if (first) {
 					tElapsed1 = (tEnd - tStart);

@@ -2,7 +2,7 @@ package net.viralpatel.android.imagegalleray;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
- 
+
 public class Filter {
 	
 	private static double[][] gaussianBlur;
@@ -19,6 +19,12 @@ public class Filter {
 	
 	private static int[][] emboss;
 	private static int embossRange = 1;
+	
+	private static int[][] engraving;
+	private static int engravingRange = 1;         // PROVERITI DA LI TREBA DA SE DODAJE NEKE FIKSNA VREDNOST (OFFSET) !!!
+	
+	private static int[][] smooth;
+	private static int smoothRange = 5/2;
 	
 	static {
 		sharpen = new int[3][3];
@@ -64,6 +70,28 @@ public class Filter {
 		emboss[2][0] = 0;
 		emboss[2][1] = 1;
 		emboss[2][2] = 2;
+		
+		engraving = new int[3][3];
+		engraving[0][0] = -2;
+		engraving[0][1] = 0;
+		engraving[0][2] = 0;
+		engraving[1][0] = 0;
+		engraving[1][1] = 2;
+		engraving[1][2] = 0;
+		engraving[2][0] = 0;
+		engraving[2][1] = 0;
+		engraving[2][2] = 0;
+		
+		smooth = new int[3][3];
+		smooth[0][0] = 1;
+		smooth[0][1] = 1;
+		smooth[0][2] = 1;
+		smooth[1][0] = 1;
+		smooth[1][1] = 5;
+		smooth[1][2] = 1;
+		smooth[2][0] = 1;
+		smooth[2][1] = 1;
+		smooth[2][2] = 1;
 	}
 	
 	public static Bitmap invert(Bitmap bitmap) {
@@ -325,8 +353,6 @@ public class Filter {
 		return returnBitmap;
 	}
 	
-
-
 	
 	private static void initBlur(double sigma, int ksize) {
 		if (ksize == 1 || ksize % 2 == 0) {
@@ -592,6 +618,101 @@ public class Filter {
 		return returnBitmap;
 	}
 	
+	public static Bitmap engraving(Bitmap bitmap) {
+		if (bitmap == null) {
+			return null;
+		}
+
+		int width = bitmap.getWidth();
+		int height = bitmap.getHeight();
+
+		int[] pixels = new int[width * height];
+		bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+		
+		
+		Bitmap returnBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+		int colorArray[] = new int[width * height];
+		bitmap.getPixels(colorArray, 0, width, 0, 0, width, height);
+
+		int bitmapX;
+		int bitmapY;
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++) {
+				//Èuvaju podatke o trenutnom rezultujuæem pixel-u
+				int red = 0;
+				int green = 0;
+				int blue = 0;
+				
+				//Iteracija kroz matricu filtera i taèke u slici koje odgovaraju njenim poljima
+				for (int deltaX=-engravingRange; deltaX <= engravingRange; deltaX++)
+					for (int deltaY=-engravingRange; deltaY <= engravingRange; deltaY++) {
+						int filtX = deltaX + engravingRange;
+						int filtY = deltaY + engravingRange;
+
+						bitmapX = x + deltaX;
+						bitmapX = bitmapX < 0 ? 0 : bitmapX >= width? width-1 : bitmapX;
+						bitmapY = y + deltaY;
+						bitmapY = bitmapY<0 ? 0 : bitmapY>=height?height-1:bitmapY;
+
+						red   += engraving[filtY][filtX] * Color.red(bitmap.getPixel(bitmapX, bitmapY));
+						green += engraving[filtY][filtX] * Color.green(bitmap.getPixel(bitmapX, bitmapY));
+						blue  += engraving[filtY][filtX] * Color.blue(bitmap.getPixel(bitmapX, bitmapY));
+					}
+
+				colorArray[y * width + x] = Color.rgb(((red+95)>255 ? 255 : (red+95)<0?0:(red+95)) + 1, ((green+95)>255 ? 255 : (green+95)<0?0:(green+95)) + 1, ((blue+95)>255 ? 255 : (blue+95)<0?0:(blue+95)) + 1);
+				returnBitmap.setPixel(x, y, colorArray[y * width + x]);
+			}
+		return returnBitmap;
+	}
+	
+	public static Bitmap smooth(Bitmap bitmap) {
+		if (bitmap == null) {
+			return null;
+		}
+
+		int width = bitmap.getWidth();
+		int height = bitmap.getHeight();
+
+		int[] pixels = new int[width * height];
+		bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+		
+		
+		Bitmap returnBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+		int colorArray[] = new int[width * height];
+		bitmap.getPixels(colorArray, 0, width, 0, 0, width, height);
+
+		int bitmapX;
+		int bitmapY;
+		for (int x = smoothRange; x < width - smoothRange; x++)
+			for (int y = smoothRange; y < height - smoothRange; y++) {
+				//Èuvaju podatke o trenutnom rezultujuæem pixel-u
+				int red = 0;
+				int green = 0;
+				int blue = 0;
+				
+				//Iteracija kroz matricu filtera i taèke u slici koje odgovaraju njenim poljima
+				for (int deltaX=-smoothRange; deltaX <= smoothRange; deltaX++)
+					for (int deltaY=-smoothRange; deltaY <= smoothRange; deltaY++) {
+						int filtX = deltaX + smoothRange;
+						int filtY = deltaY + smoothRange;
+
+						bitmapX = x + deltaX;
+						bitmapX = bitmapX < 0 ? 0 : bitmapX >= width? width-1 : bitmapX;
+						bitmapY = y + deltaY;
+						bitmapY = bitmapY<0 ? 0 : bitmapY>=height?height-1:bitmapY;
+
+						red   += /*smooth[filtY][filtX] * */Color.red(bitmap.getPixel(bitmapX, bitmapY));
+						green += /*smooth[filtY][filtX] * */Color.green(bitmap.getPixel(bitmapX, bitmapY));
+						blue  += /*smooth[filtY][filtX] * */Color.blue(bitmap.getPixel(bitmapX, bitmapY));
+					}
+
+				colorArray[y * width + x] = Color.rgb(((red/25)>255 ? 255 : (red/25)<0?0:(red/25)), ((green/25)>255 ? 255 : (green/25)<0?0:(green/25)), ((blue/25)>255 ? 255 : (blue/25)<0?0:(blue/25)));
+				returnBitmap.setPixel(x, y, colorArray[y * width + x]);
+			}
+		return returnBitmap;
+	}
+	
+
 	
 	public static Bitmap gammaCorection(Bitmap src, double red, double green, double blue) {
 	    // create output image
@@ -756,6 +877,3 @@ public class Filter {
 	}
 }
 
-	
-
-}
