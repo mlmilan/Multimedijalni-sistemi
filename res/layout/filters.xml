@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/frame">
+
+	<ImageView
+	    android:id="@+id/imgView"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:contentDescription="@string/img">
+
+	</ImageView>
+	
+	<HorizontalScrollView
+        android:id="@+id/horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_gravity="bottom">
+
+	<RelativeLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="5dip"
+	    android:layout_gravity="bottom" >
+
+	    <!-- 
+	    <Button
+	        android:id="@+id/buttonFilter"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="left|bottom"
+	        android:layout_marginBottom="10dip"
+	        android:layout_weight="1"
+	        android:padding="12dip"
+	        android:text="Filter" />
+
+	    <Button
+	        android:id="@+id/buttonHistogram"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center|bottom"
+	        android:layout_marginBottom="10dip"
+	        android:layout_weight="1"
+	        android:padding="12dip"
+	        android:text="Hist" />
+
+	    <Button
+	        android:id="@+id/buttonGrafik"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center|bottom"
+	        android:layout_marginBottom="10dip"
+	        android:layout_weight="1"
+	        android:padding="12dip"
+	        android:text="Grafik" />
+
+	    <Button
+	        android:id="@+id/buttonColorPicker"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right|bottom"
+	        android:layout_marginBottom="10dip"
+	        android:layout_weight="1"
+	        android:padding="12dip"
+	        android:text="Color" />
+	     -->
+	     
+	   
+	    
+	   
+	    <TextView
+            android:id="@+id/invert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold" />
+	    
+	    <ImageView
+	    android:id="@+id/imgViewProba"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_below="@+id/invert" >
+	         
+	     </ImageView>
+	    
+	         
+	    <TextView
+            android:id="@+id/invert1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold" 
+            android:layout_alignLeft="@+id/imgViewProba1"/>
+	    <ImageView
+	    android:id="@+id/imgViewProba1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imgViewProba"
+	    android:layout_below="@+id/invert1">
+	        </ImageView>
+	        
+	    <TextView
+            android:id="@+id/invert2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold" 
+            android:layout_alignLeft="@+id/imgViewProba2"/>
+	    <ImageView
+	    android:id="@+id/imgViewProba2"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imgViewProba1"
+	    android:layout_below="@+id/invert2">
+	        </ImageView>
+	        
+	    <TextView
+            android:id="@+id/invert3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold" 
+            android:layout_alignLeft="@+id/imgViewProba3"/>
+	    <ImageView
+	    android:id="@+id/imgViewProba3"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imgViewProba2"
+	    android:layout_below="@+id/invert3">
+	        </ImageView>
+	        
+	    <TextView
+            android:id="@+id/invert4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold"
+            android:layout_alignLeft="@+id/imgViewProba4" />
+	    <ImageView
+	    android:id="@+id/imgViewProba4"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imgViewProba3"
+	    android:layout_below="@+id/invert4">
+	        </ImageView>
+	        
+	    <TextView
+            android:id="@+id/invert5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold" 
+            android:layout_alignLeft="@+id/imgViewProba5"/>
+	    <ImageView
+	    android:id="@+id/imgViewProba5"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imgViewProba4"
+	    android:layout_below="@+id/invert5">
+	        </ImageView>
+	        
+	    <TextView
+            android:id="@+id/invert6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dip"
+            android:text="@string/text_invert"
+            android:textSize="14sp"
+            android:layout_marginLeft="5dip"
+            android:textStyle="bold"
+            android:layout_alignLeft="@+id/imgViewProba6" />
+	    <ImageView
+	    android:id="@+id/imgViewProba6"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/img_invert"
+	    android:layout_marginBottom="5dip"
+	    android:padding="5dip"
+	    android:layout_toRightOf="@+id/imgViewProba5"
+	    android:layout_below="@+id/invert6">
+	        </ImageView>
+	</RelativeLayout>
+	</HorizontalScrollView>
+
+
+</FrameLayout>
