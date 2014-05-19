@@ -2,7 +2,7 @@
 <resources>
 	<!-- App -->
     <string name="hello">Hello World, Main!</string>
-    <string name="app_name">ColorPickerPreference</string>
+    <string name="app_name">Android photoshop</string>
     
     <!-- Color Picker -->
     <string name="dialog_color_picker">Color Picker</string>
@@ -18,4 +18,11 @@
     <string name="color3_summary">picker with alpha slider</string>
     <string name="color4_title">Color 4</string>
     <string name="color4_summary">color set with HEX code in xml</string>
+    
+    <!--  Elements -->
+    <string name="button_load">Ucitaj sliku</string>
+    <string name="message">Ovo je android aplikacija za obradu slika. Kliknite na dugme ispod da biste ucitali sliku.</string>
+    <string name="img">Glavna slika</string>
+    <string name="img_invert">Invert</string>
+    <string name="text_invert">Invert</string>
 </resources>
