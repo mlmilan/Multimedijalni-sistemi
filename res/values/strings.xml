@@ -44,4 +44,6 @@
     <string name="text_engraving">Engraving</string>
     <string name="text_smooth">Smooth</string>
     <string name="text_original">Original</string>
+    <string name="text_color_picker">ColorPicker</string>
+    <string name="text_bw">Odaberite skalu za primenu crno-belog filtera:</string>
 </resources>

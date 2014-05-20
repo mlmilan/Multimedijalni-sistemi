@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.Test;
+import net.viralpatel.android.imagegalleray.colorpicker.*;
+import net.viralpatel.android.imagegalleray.colorpicker.AmbilWarnaDialog.OnAmbilWarnaListener;
+import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog.OnBlackWhiteListener;
 
 import com.jjoe64.graphview.BarGraphView;
 import com.jjoe64.graphview.GraphView;
@@ -53,8 +56,10 @@ public class ImageGalleryDemoActivity extends Activity {
     private DrawOnTop mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
-	private int color = 0;
+	private int ccolor, sscale;
 	public static final String PREFS_NAME = "picturePath";
+	private OnAmbilWarnaListener listenerColor;
+	private OnBlackWhiteListener listenerBlackWhite;
     
 	/** Called when the activity is first created. */
     @Override
@@ -88,6 +93,50 @@ public class ImageGalleryDemoActivity extends Activity {
         imageViewResizedEngraving = (ImageView) findViewById(R.id.imgViewEngraving);
         imageViewResizedSmooth = (ImageView) findViewById(R.id.imgViewSmooth);
         
+        listenerColor = new OnAmbilWarnaListener() {
+				
+				@Override
+				public void onOk(AmbilWarnaDialog dialog, int color) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					ccolor = color;
+					changeBitmap = Filter.shadingFilter(originalBitmap, ccolor);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(AmbilWarnaDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerBlackWhite = new OnBlackWhiteListener() {
+				
+				@Override
+				public void onOk(BlackWhiteDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					sscale = scale;
+					changeBitmap = Filter.blackWhite(originalBitmap, sscale);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(BlackWhiteDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         picturePath = settings.getString("putanja", "");
@@ -124,7 +173,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		}
 		
 		createSmallerImage();
-		
+		/*
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             color = extras.getInt("color");
@@ -146,7 +195,7 @@ public class ImageGalleryDemoActivity extends Activity {
 			imageView.setImageBitmap(changeBitmap);
 			originalBitmap = changeBitmap;
         }
-        
+        */
         imageViewResizedOriginal.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -179,12 +228,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				changeBitmap = Filter.blackWhite(originalBitmap, 10);
-				originalBitmap.recycle();
-				originalBitmap = null;
-				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				BlackWhiteDialog dialog = new BlackWhiteDialog(ImageGalleryDemoActivity.this,  listenerBlackWhite);
+ 				dialog.show();
 			}
 		});
         imageViewResizedBrightness.setOnClickListener(new View.OnClickListener() {
@@ -309,12 +354,12 @@ public class ImageGalleryDemoActivity extends Activity {
  			@Override
  			public void onClick(View arg0) {
  				// TODO Auto-generated method stub
- 				changeBitmap = Filter.shadingFilter(originalBitmap, Color.parseColor("magenta"));
- 				originalBitmap.recycle();
- 				originalBitmap = null;
- 				imageView.setImageBitmap(changeBitmap);
- 				originalBitmap = Bitmap.createBitmap(changeBitmap);
- 				createSmallerImage();
+ 				
+ 				
+ 				AmbilWarnaDialog dialog = new AmbilWarnaDialog(ImageGalleryDemoActivity.this, Color.parseColor("magenta"), listenerColor);
+ 				
+ 				dialog.show();
+ 				
  			}
  		});
         imageViewResizedBlur.setOnClickListener(new View.OnClickListener() {
