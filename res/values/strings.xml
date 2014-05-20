@@ -23,6 +23,25 @@
     <string name="button_load">Ucitaj sliku</string>
     <string name="message">Ovo je android aplikacija za obradu slika. Kliknite na dugme ispod da biste ucitali sliku.</string>
     <string name="img">Glavna slika</string>
-    <string name="img_invert">Invert</string>
+    <string name="img_invert">Filter</string>
     <string name="text_invert">Invert</string>
+    <string name="text_black_white">BlackWhite</string>
+    <string name="text_brightness">Brightness</string>
+    <string name="text_contrast">Contrast</string>
+    <string name="text_flip_vertical">FlipVert.</string>
+    <string name="text_flip_horizontal">FlipHorizon.</string>
+    <string name="text_grayscale">Grayscale</string>
+    <string name="text_gamma">Gamma</string>
+    <string name="text_colorRGB">ColorRGB</string>
+    <string name="text_saturation">Saturation</string>
+    <string name="text_hue">Hue</string>
+    <string name="text_shading">Shading</string>
+    <string name="text_blur">Blur</string>
+    <string name="text_gausian_blur">GausianBlur</string>
+    <string name="text_sharpen">Sharpen</string>
+    <string name="text_edge">Edge</string>
+    <string name="text_emboss">Emboss</string>
+    <string name="text_engraving">Engraving</string>
+    <string name="text_smooth">Smooth</string>
+    <string name="text_original">Original</string>
 </resources>
