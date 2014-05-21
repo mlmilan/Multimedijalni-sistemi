@@ -1,48 +1,31 @@
 package net.viralpatel.android.imagegalleray;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import net.viralpatel.android.imagegalleray.colorpicker.*;
+import net.viralpatel.android.imagegalleray.colorpicker.AmbilWarnaDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.AmbilWarnaDialog.OnAmbilWarnaListener;
+import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog.OnBlackWhiteListener;
+import net.viralpatel.android.imagegalleray.colorpicker.BrightnessDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.BrightnessDialog.OnBrightnessListener;
+import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog.OnContrastListener;
+import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog.OnGammaListener;
-
-import com.jjoe64.graphview.BarGraphView;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.hardware.Camera;
-import android.hardware.Camera.PreviewCallback;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 
 public class ImageGalleryDemoActivity extends Activity {
     
@@ -72,6 +55,18 @@ public class ImageGalleryDemoActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filters);
+        TabHost th = (TabHost) findViewById(R.id.tabhost);
+        th.setup();
+        
+        TabSpec spec = th.newTabSpec("tag1");
+        spec.setContent(R.id.tab1);
+        spec.setIndicator("Filters");
+        th.addTab(spec);
+        
+        spec = th.newTabSpec("tag2");
+        spec.setContent(R.id.tab2);
+        spec.setIndicator("Operations");
+        th.addTab(spec);
         
        // Button filter = (Button) findViewById(R.id.buttonFilter);
        // Button histogram = (Button) findViewById(R.id.buttonHistogram);
