@@ -4,10 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Test;
 import net.viralpatel.android.imagegalleray.colorpicker.*;
 import net.viralpatel.android.imagegalleray.colorpicker.AmbilWarnaDialog.OnAmbilWarnaListener;
 import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog.OnBlackWhiteListener;
+import net.viralpatel.android.imagegalleray.colorpicker.BrightnessDialog.OnBrightnessListener;
+import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog.OnContrastListener;
+import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog.OnGammaListener;
 
 import com.jjoe64.graphview.BarGraphView;
 import com.jjoe64.graphview.GraphView;
@@ -56,10 +58,14 @@ public class ImageGalleryDemoActivity extends Activity {
     private DrawOnTop mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
-	private int ccolor, sscale;
+	private int ccolor, sscale, bright, contrast;
+	private double gamma;
 	public static final String PREFS_NAME = "picturePath";
 	private OnAmbilWarnaListener listenerColor;
 	private OnBlackWhiteListener listenerBlackWhite;
+	private OnBrightnessListener listenerBrightness;
+	private OnContrastListener listenerContrast;
+	private OnGammaListener listenerGamma;
     
 	/** Called when the activity is first created. */
     @Override
@@ -137,6 +143,72 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 			};
 			
+			listenerBrightness = new OnBrightnessListener() {
+				
+				@Override
+				public void onOk(BrightnessDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					bright = scale;
+					changeBitmap = Filter.brightness(originalBitmap, bright);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(BrightnessDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerContrast = new OnContrastListener() {
+				
+				@Override
+				public void onOk(ContrastDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					contrast = scale;
+					changeBitmap = Filter.contrast(originalBitmap, contrast);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(ContrastDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerGamma = new OnGammaListener() {
+				
+				@Override
+				public void onOk(GammaDialog dialog, double scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					gamma = scale;
+					changeBitmap = Filter.gammaCorection(originalBitmap, gamma, gamma, gamma);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(GammaDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         picturePath = settings.getString("putanja", "");
@@ -173,29 +245,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		}
 		
 		createSmallerImage();
-		/*
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            color = extras.getInt("color");
-            //Toast.makeText(getBaseContext(), "Boja: " + color, Toast.LENGTH_LONG).show();
-            
-            imageView = (ImageView) findViewById(R.id.imgView);
-			File imageFile = new File(picturePath);
-			try {
-				BitmapScaler scaler = new BitmapScaler(imageFile, 512);
-				originalBitmap = scaler.getScaled();
-				imageView.setImageBitmap(scaler.getScaled());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			changeBitmap = Filter.shadingFilter(originalBitmap, color);
-			originalBitmap.recycle();
-			originalBitmap = null;
-			imageView.setImageBitmap(changeBitmap);
-			originalBitmap = changeBitmap;
-        }
-        */
+		
         imageViewResizedOriginal.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -237,12 +287,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				changeBitmap = Filter.brightness(originalBitmap, -100);
-				originalBitmap.recycle();
-				originalBitmap = null;
-				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				BrightnessDialog dialog = new BrightnessDialog(ImageGalleryDemoActivity.this,  listenerBrightness);
+ 				dialog.show();
 			}
 		});
         imageViewResizedContrast.setOnClickListener(new View.OnClickListener() {
@@ -250,12 +296,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				changeBitmap = Filter.contrast(originalBitmap, 100);
-				originalBitmap.recycle();
-				originalBitmap = null;
-				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				ContrastDialog dialog = new ContrastDialog(ImageGalleryDemoActivity.this,  listenerContrast);
+ 				dialog.show();
 			}
 		});
         imageViewResizedFlipVertical.setOnClickListener(new View.OnClickListener() {
@@ -302,12 +344,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				changeBitmap = Filter.gammaCorection(originalBitmap, 1.8, 1.8, 1.8);
-				originalBitmap.recycle();
-				originalBitmap = null;
-				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				GammaDialog dialog = new GammaDialog(ImageGalleryDemoActivity.this,  listenerGamma);
+ 				dialog.show();
 			}
 		});
         imageViewResizedColorRGB.setOnClickListener(new View.OnClickListener() {
@@ -544,17 +582,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				layout.addView(graphView);
 			}
 		});
-        
-        colorPicker.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent i = new Intent(ImageGalleryDemoActivity.this, net.viralpatel.android.imagegalleray.colorpicker.Test.class);
-				startActivity(i);
-				
-			}
-		});
+
 		*/
     }
 

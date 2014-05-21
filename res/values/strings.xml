@@ -46,4 +46,7 @@
     <string name="text_original">Original</string>
     <string name="text_color_picker">ColorPicker</string>
     <string name="text_bw">Odaberite skalu za primenu crno-belog filtera:</string>
+    <string name="text_brightness_text">Odaberite vrednost osvetljaja koji ce biti primenjen na slici:</string>
+    <string name="text_contrast_text">Odaberite vrednost kontrasta koji ce biti primenjen na slici:</string>
+    <string name="text_gamma_text">Odaberite vrednost gama parametra koji ce biti primenjen na slici:</string>
 </resources>
