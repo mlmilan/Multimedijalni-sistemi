@@ -2,6 +2,8 @@ package net.viralpatel.android.imagegalleray;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -26,10 +28,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         
         Button buttonLoadImage = (Button) findViewById(R.id.buttonLoadPicture);
-        
-        // Restore preferences
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        String putanja = settings.getString("putanja", "");
+
         
         /*
         Bundle extras = getIntent().getExtras();
@@ -109,5 +108,41 @@ public class MainActivity extends Activity {
 		
 		}
     }
+    
+    @Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+					MainActivity.this);
+
+			// set title
+			alertDialogBuilder.setTitle("Zelite da napustite aplikaciju?");
+
+			// set dialog message
+			alertDialogBuilder
+					.setMessage(
+							"Da li zelite da zavrsite rad sa aplikacijom?")
+					.setCancelable(false)
+					.setPositiveButton("DA",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									finish();
+								}
+							}).setNegativeButton("NE",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.dismiss();
+								}
+							});
+
+			// create alert dialog
+			AlertDialog alertDialog = alertDialogBuilder.create();
+
+			// show it
+			alertDialog.show();
+		}
 	    
 }

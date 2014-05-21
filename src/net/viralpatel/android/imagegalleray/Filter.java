@@ -213,10 +213,10 @@ public class Filter {
 
 		Bitmap returnBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		int colorArray[] = new int[width * height];
-		int r, g, b;
+		int r, g, b, a;
 		bitmap.getPixels(colorArray, 0, width, 0, 0, width, height);
 		
-		if (scale >- 100 && scale <= 100) {
+		if (scale >=- 100 && scale <= 100) {
 			scale = (scale+100)/100;
 			scale = scale*scale;
 			for(int i = 0; i < width; i++){
@@ -224,7 +224,7 @@ public class Filter {
 					r = Color.red(colorArray[j * width + i]);
 					g = Color.green(colorArray[j * width + i]);
 					b = Color.blue(colorArray[j * width + i]);
-		
+					a = Color.alpha(colorArray[j * width + i]);
 					newValue = r;
 					newValue -= 126;
 					newValue *= scale;
@@ -249,7 +249,7 @@ public class Filter {
 					else if (newValue >= 255) b = 254;
 					else b = newValue;
 					
-					colorArray[j * width + i] = Color.rgb(r, g, b);
+					colorArray[j * width + i] = Color.argb(a, r, g, b);
 					returnBitmap.setPixel(i, j, colorArray[j * width + i]);
 				}
 			}
@@ -734,6 +734,7 @@ public class Filter {
 	    int[] gammaG = new int[MAX_SIZE];
 	    int[] gammaB = new int[MAX_SIZE];
 	 
+	    if (red > 0 && green > 0 && blue > 0) {
 	    // setting values for every gamma channels
 	    for(int i = 0; i < MAX_SIZE; ++i) {
 	        gammaR[i] = (int)Math.min(MAX_VALUE_INT,
@@ -759,6 +760,7 @@ public class Filter {
 	        }
 	    }
 	 
+	    }
 	    // return final image
 	    return bmOut;
 	}

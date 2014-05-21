@@ -4,7 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Test;
+import net.viralpatel.android.imagegalleray.colorpicker.*;
+import net.viralpatel.android.imagegalleray.colorpicker.AmbilWarnaDialog.OnAmbilWarnaListener;
+import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog.OnBlackWhiteListener;
+import net.viralpatel.android.imagegalleray.colorpicker.BrightnessDialog.OnBrightnessListener;
+import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog.OnContrastListener;
+import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog.OnGammaListener;
 
 import com.jjoe64.graphview.BarGraphView;
 import com.jjoe64.graphview.GraphView;
@@ -19,6 +24,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -42,14 +48,24 @@ public class ImageGalleryDemoActivity extends Activity {
     
 	private String picturePath;
     private Bitmap changeBitmap = null;
-    private Bitmap originalBitmap = null;
-    private ImageView imageView, imageViewResized, imageViewResized1, imageViewResized2, imageViewResized3,
-    imageViewResized4, imageViewResized5, imageViewResized6;
+    private Bitmap originalBitmap = null, first_original = null;
+    private ImageView imageView, imageViewResizedInvert, imageViewResizedBlackWhite, imageViewResizedBrightness, 
+    imageViewResizedContrast,imageViewResizedFlipVertical, imageViewResizedFlipHorizontal, 
+    imageViewResizedGrayscale, imageViewResizedGamma, imageViewResizedColorRGB, imageViewResizedSaturation, 
+    imageViewResizedHue, imageViewResizedShading, imageViewResizedBlur, imageViewResizedGausianBlur, 
+    imageViewResizedSharpen, imageViewResizedEdge, imageViewResizedEmboss, imageViewResizedEngraving, 
+    imageViewResizedSmooth, imageViewResizedOriginal;
     private DrawOnTop mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
-	private int color = 0;
+	private int ccolor, sscale, bright, contrast;
+	private double gamma;
 	public static final String PREFS_NAME = "picturePath";
+	private OnAmbilWarnaListener listenerColor;
+	private OnBlackWhiteListener listenerBlackWhite;
+	private OnBrightnessListener listenerBrightness;
+	private OnContrastListener listenerContrast;
+	private OnGammaListener listenerGamma;
     
 	/** Called when the activity is first created. */
     @Override
@@ -62,13 +78,137 @@ public class ImageGalleryDemoActivity extends Activity {
        // Button grafik = (Button) findViewById(R.id.buttonGrafik);
        // Button colorPicker = (Button) findViewById(R.id.buttonColorPicker);
         imageView = (ImageView) findViewById(R.id.imgView);
-        imageViewResized = (ImageView) findViewById(R.id.imgViewProba);
-        imageViewResized1 = (ImageView) findViewById(R.id.imgViewProba1);
-        imageViewResized2 = (ImageView) findViewById(R.id.imgViewProba2);
-        imageViewResized3 = (ImageView) findViewById(R.id.imgViewProba3);
-        imageViewResized4 = (ImageView) findViewById(R.id.imgViewProba4);
-        imageViewResized5 = (ImageView) findViewById(R.id.imgViewProba5);
-        imageViewResized6 = (ImageView) findViewById(R.id.imgViewProba6);
+        imageViewResizedOriginal = (ImageView) findViewById(R.id.imgViewOriginal);
+        imageViewResizedInvert = (ImageView) findViewById(R.id.imgViewInvert);
+        imageViewResizedBlackWhite = (ImageView) findViewById(R.id.imgViewBlackWhite);
+        imageViewResizedBrightness = (ImageView) findViewById(R.id.imgViewBrightness);
+        imageViewResizedContrast = (ImageView) findViewById(R.id.imgViewContrast);
+        imageViewResizedFlipVertical = (ImageView) findViewById(R.id.imgViewFlipVertical);
+        imageViewResizedFlipHorizontal = (ImageView) findViewById(R.id.imgViewFlipHorizontal);
+        imageViewResizedGrayscale = (ImageView) findViewById(R.id.imgViewGrayscale);
+        imageViewResizedGamma = (ImageView) findViewById(R.id.imgViewGammaCorection);
+        imageViewResizedColorRGB = (ImageView) findViewById(R.id.imgViewColorRGB);
+        imageViewResizedSaturation = (ImageView) findViewById(R.id.imgViewSaturation);
+        imageViewResizedHue = (ImageView) findViewById(R.id.imgViewHue);
+        imageViewResizedShading = (ImageView) findViewById(R.id.imgViewShading);
+        imageViewResizedBlur = (ImageView) findViewById(R.id.imgViewBlur);
+        imageViewResizedGausianBlur = (ImageView) findViewById(R.id.imgViewGausianBlur);
+        imageViewResizedSharpen = (ImageView) findViewById(R.id.imgViewSharpen);
+        imageViewResizedEdge = (ImageView) findViewById(R.id.imgViewEdge);
+        imageViewResizedEmboss = (ImageView) findViewById(R.id.imgViewEmboss);
+        imageViewResizedEngraving = (ImageView) findViewById(R.id.imgViewEngraving);
+        imageViewResizedSmooth = (ImageView) findViewById(R.id.imgViewSmooth);
+        
+        listenerColor = new OnAmbilWarnaListener() {
+				
+				@Override
+				public void onOk(AmbilWarnaDialog dialog, int color) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					ccolor = color;
+					changeBitmap = Filter.shadingFilter(originalBitmap, ccolor);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(AmbilWarnaDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerBlackWhite = new OnBlackWhiteListener() {
+				
+				@Override
+				public void onOk(BlackWhiteDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					sscale = scale;
+					changeBitmap = Filter.blackWhite(originalBitmap, sscale);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(BlackWhiteDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerBrightness = new OnBrightnessListener() {
+				
+				@Override
+				public void onOk(BrightnessDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					bright = scale;
+					changeBitmap = Filter.brightness(originalBitmap, bright);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(BrightnessDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerContrast = new OnContrastListener() {
+				
+				@Override
+				public void onOk(ContrastDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					contrast = scale;
+					changeBitmap = Filter.contrast(originalBitmap, contrast);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(ContrastDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerGamma = new OnGammaListener() {
+				
+				@Override
+				public void onOk(GammaDialog dialog, double scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					gamma = scale;
+					changeBitmap = Filter.gammaCorection(originalBitmap, gamma, gamma, gamma);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(GammaDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         picturePath = settings.getString("putanja", "");
@@ -93,7 +233,7 @@ public class ImageGalleryDemoActivity extends Activity {
                     matrix.postRotate(270);
                 }
                 originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true); // rotating bitmap
-           
+                first_original = Bitmap.createBitmap(originalBitmap);
             if (originalBitmap.getWidth() <= originalBitmap.getHeight())
             	imageView.setScaleType(ScaleType.CENTER_CROP);
             else 
@@ -106,29 +246,21 @@ public class ImageGalleryDemoActivity extends Activity {
 		
 		createSmallerImage();
 		
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            color = extras.getInt("color");
-            //Toast.makeText(getBaseContext(), "Boja: " + color, Toast.LENGTH_LONG).show();
-            
-            imageView = (ImageView) findViewById(R.id.imgView);
-			File imageFile = new File(picturePath);
-			try {
-				BitmapScaler scaler = new BitmapScaler(imageFile, 512);
-				originalBitmap = scaler.getScaled();
-				imageView.setImageBitmap(scaler.getScaled());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+        imageViewResizedOriginal.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				changeBitmap = Bitmap.createBitmap(first_original);
+				originalBitmap.recycle();
+				originalBitmap = null;
+				imageView.setImageBitmap(changeBitmap);
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
 			}
-			changeBitmap = Filter.shadingFilter(originalBitmap, color);
-			originalBitmap.recycle();
-			originalBitmap = null;
-			imageView.setImageBitmap(changeBitmap);
-			originalBitmap = changeBitmap;
-        }
+		});
         
-        imageViewResized.setOnClickListener(new View.OnClickListener() {
+        imageViewResizedInvert.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
@@ -137,9 +269,228 @@ public class ImageGalleryDemoActivity extends Activity {
 				originalBitmap.recycle();
 				originalBitmap = null;
 				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = changeBitmap;
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
 			}
 		});
+        imageViewResizedBlackWhite.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				BlackWhiteDialog dialog = new BlackWhiteDialog(ImageGalleryDemoActivity.this,  listenerBlackWhite);
+ 				dialog.show();
+			}
+		});
+        imageViewResizedBrightness.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				BrightnessDialog dialog = new BrightnessDialog(ImageGalleryDemoActivity.this,  listenerBrightness);
+ 				dialog.show();
+			}
+		});
+        imageViewResizedContrast.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				ContrastDialog dialog = new ContrastDialog(ImageGalleryDemoActivity.this,  listenerContrast);
+ 				dialog.show();
+			}
+		});
+        imageViewResizedFlipVertical.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				changeBitmap = Filter.flipVertical(originalBitmap);
+				originalBitmap.recycle();
+				originalBitmap = null;
+				imageView.setImageBitmap(changeBitmap);
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
+			}
+		});
+        imageViewResizedFlipHorizontal.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				changeBitmap = Filter.flipHorizontal(originalBitmap);
+				originalBitmap.recycle();
+				originalBitmap = null;
+				imageView.setImageBitmap(changeBitmap);
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
+			}
+		});
+        imageViewResizedGrayscale.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				changeBitmap = Filter.grayscale(originalBitmap);
+				originalBitmap.recycle();
+				originalBitmap = null;
+				imageView.setImageBitmap(changeBitmap);
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
+			}
+		});
+        imageViewResizedGamma.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				GammaDialog dialog = new GammaDialog(ImageGalleryDemoActivity.this,  listenerGamma);
+ 				dialog.show();
+			}
+		});
+        imageViewResizedColorRGB.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				changeBitmap = Filter.colorFilter(originalBitmap, 1, 0, 0);
+				originalBitmap.recycle();
+				originalBitmap = null;
+				imageView.setImageBitmap(changeBitmap);
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
+			}
+		});
+        imageViewResizedSaturation.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				changeBitmap = Filter.saturationFilter(originalBitmap, 2);
+				originalBitmap.recycle();
+				originalBitmap = null;
+				imageView.setImageBitmap(changeBitmap);
+				originalBitmap = Bitmap.createBitmap(changeBitmap);
+				createSmallerImage();
+			}
+		});
+        imageViewResizedHue.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.hueFilter(originalBitmap, 2);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedShading.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				
+ 				
+ 				AmbilWarnaDialog dialog = new AmbilWarnaDialog(ImageGalleryDemoActivity.this, Color.parseColor("magenta"), listenerColor);
+ 				
+ 				dialog.show();
+ 				
+ 			}
+ 		});
+        imageViewResizedBlur.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.blur(originalBitmap);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedGausianBlur.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.gausianBlur(originalBitmap, 10, 5);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedSharpen.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.sharpen(originalBitmap);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedEdge.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.edge(originalBitmap);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedEmboss.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.emboss(originalBitmap);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedEngraving.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.engraving(originalBitmap);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
+        imageViewResizedSmooth.setOnClickListener(new View.OnClickListener() {
+			
+ 			@Override
+ 			public void onClick(View arg0) {
+ 				// TODO Auto-generated method stub
+ 				changeBitmap = Filter.smooth(originalBitmap);
+ 				originalBitmap.recycle();
+ 				originalBitmap = null;
+ 				imageView.setImageBitmap(changeBitmap);
+ 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+ 				createSmallerImage();
+ 			}
+ 		});
         /*
         filter.setOnClickListener(new View.OnClickListener() {
 			
@@ -231,17 +582,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				layout.addView(graphView);
 			}
 		});
-        
-        colorPicker.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent i = new Intent(ImageGalleryDemoActivity.this, net.viralpatel.android.imagegalleray.colorpicker.Test.class);
-				startActivity(i);
-				
-			}
-		});
+
 		*/
     }
 
@@ -249,14 +590,48 @@ public class ImageGalleryDemoActivity extends Activity {
 		// TODO Auto-generated method stub
 
 		Bitmap resized = Bitmap.createScaledBitmap(originalBitmap ,(int)(originalBitmap.getWidth()*0.4), (int)(originalBitmap.getHeight()*0.4), true);
-		Bitmap resizedFilter = Filter.invert(resized);
-		imageViewResized.setImageBitmap(resizedFilter);
-		imageViewResized1.setImageBitmap(resizedFilter);
-		imageViewResized2.setImageBitmap(resizedFilter);
-		imageViewResized3.setImageBitmap(resizedFilter);
-		imageViewResized4.setImageBitmap(resizedFilter);
-		imageViewResized5.setImageBitmap(resizedFilter);
-		imageViewResized6.setImageBitmap(resizedFilter);
+		Bitmap resizedOriginal = Bitmap.createScaledBitmap(first_original ,(int)(first_original.getWidth()*0.4), (int)(first_original.getHeight()*0.4), true);
+		Bitmap resizedFilterInvert = Filter.invert(resized);
+		Bitmap resizedFilterBlackWhite = Filter.blackWhite(resized, 10);
+		Bitmap resizedFilterBrightness = Filter.brightness(resized, -100);
+		Bitmap resizedFilterContrast = Filter.contrast(resized, 100);
+		Bitmap resizedFilterFlipVertical = Filter.flipVertical(resized);
+		Bitmap resizedFilterFlipHorizontal = Filter.flipHorizontal(resized);
+		Bitmap resizedFilterGrayscale = Filter.grayscale(resized);
+		Bitmap resizedFilterGamma = Filter.gammaCorection(resized, 1.8, 1.8, 1.8);
+		Bitmap resizedFilterColorRGB = Filter.colorFilter(resized, 1, 0, 0);
+		Bitmap resizedFilterSaturation = Filter.saturationFilter(resized, 2);
+		Bitmap resizedFilterHue = Filter.hueFilter(resized, 2);
+		Bitmap resizedFilterShading = Filter.shadingFilter(resized, Color.parseColor("magenta"));
+		Bitmap resizedFilterBlur = Filter.blur(resized);
+		Bitmap resizedFilterGausianBlur = Filter.gausianBlur(resized, 10, 5);
+		Bitmap resizedFilterSharpen = Filter.sharpen(resized);
+		Bitmap resizedFilterEdge = Filter.edge(resized);
+		Bitmap resizedFilterEmboss = Filter.emboss(resized);
+		Bitmap resizedFilterEngraving = Filter.engraving(resized);
+		Bitmap resizedFilterSmooth = Filter.smooth(resized);
+		
+		imageViewResizedOriginal.setImageBitmap(resizedOriginal);
+		imageViewResizedInvert.setImageBitmap(resizedFilterInvert);
+		imageViewResizedBlackWhite.setImageBitmap(resizedFilterBlackWhite);
+		imageViewResizedBrightness.setImageBitmap(resizedFilterBrightness);
+		imageViewResizedContrast.setImageBitmap(resizedFilterContrast);
+		imageViewResizedFlipVertical.setImageBitmap(resizedFilterFlipVertical);
+		imageViewResizedFlipHorizontal.setImageBitmap(resizedFilterFlipHorizontal);
+		imageViewResizedGrayscale.setImageBitmap(resizedFilterGrayscale);
+		imageViewResizedGamma.setImageBitmap(resizedFilterGamma);
+		imageViewResizedColorRGB.setImageBitmap(resizedFilterColorRGB);
+		imageViewResizedSaturation.setImageBitmap(resizedFilterSaturation);
+		imageViewResizedHue.setImageBitmap(resizedFilterHue);
+		imageViewResizedShading.setImageBitmap(resizedFilterShading);
+		imageViewResizedBlur.setImageBitmap(resizedFilterBlur);
+		imageViewResizedGausianBlur.setImageBitmap(resizedFilterGausianBlur);
+		imageViewResizedSharpen.setImageBitmap(resizedFilterSharpen);
+		imageViewResizedEdge.setImageBitmap(resizedFilterEdge);
+		imageViewResizedEmboss.setImageBitmap(resizedFilterEmboss);
+		imageViewResizedEngraving.setImageBitmap(resizedFilterEngraving);
+		imageViewResizedSmooth.setImageBitmap(resizedFilterSmooth);
+		
 	}
     
 	    
