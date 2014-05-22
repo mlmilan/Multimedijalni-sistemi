@@ -738,11 +738,11 @@ public class Filter {
 	    // setting values for every gamma channels
 	    for(int i = 0; i < MAX_SIZE; ++i) {
 	        gammaR[i] = (int)Math.min(MAX_VALUE_INT,
-	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL, REVERSE / red)) + 0.5));
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  red/REVERSE)) + 0.5));  // OVDE BILO REVERSE/red, ali mislim da treba obrnuto!!! proveriti, ovako se slaze sa onim sa wikipedia-e
 	        gammaG[i] = (int)Math.min(MAX_VALUE_INT,
-	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL, REVERSE / green)) + 0.5));
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  green/REVERSE)) + 0.5));
 	        gammaB[i] = (int)Math.min(MAX_VALUE_INT,
-	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL, REVERSE / blue)) + 0.5));
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  blue/REVERSE)) + 0.5));
 	    }
 	 
 	    // apply gamma table

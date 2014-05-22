@@ -9,21 +9,28 @@ import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.BlackWhiteDialog.OnBlackWhiteListener;
 import net.viralpatel.android.imagegalleray.colorpicker.BrightnessDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.BrightnessDialog.OnBrightnessListener;
+import net.viralpatel.android.imagegalleray.colorpicker.ColorDialog;
+import net.viralpatel.android.imagegalleray.colorpicker.ColorDialog.OnColorListener;
 import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog.OnContrastListener;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog.OnGammaListener;
+import net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.SlidingDrawer;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -38,17 +45,20 @@ public class ImageGalleryDemoActivity extends Activity {
     imageViewResizedHue, imageViewResizedShading, imageViewResizedBlur, imageViewResizedGausianBlur, 
     imageViewResizedSharpen, imageViewResizedEdge, imageViewResizedEmboss, imageViewResizedEngraving, 
     imageViewResizedSmooth, imageViewResizedOriginal;
+    private Button slideButton;
+    private WrappingSlidingDrawer slidingDrawer;
     private DrawOnTop mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
 	private int ccolor, sscale, bright, contrast;
-	private double gamma;
+	private double gamma, rred, ggreen, bblue;
 	public static final String PREFS_NAME = "picturePath";
 	private OnAmbilWarnaListener listenerColor;
 	private OnBlackWhiteListener listenerBlackWhite;
 	private OnBrightnessListener listenerBrightness;
 	private OnContrastListener listenerContrast;
 	private OnGammaListener listenerGamma;
+	private OnColorListener listenerRGB;
     
 	/** Called when the activity is first created. */
     @Override
@@ -94,6 +104,12 @@ public class ImageGalleryDemoActivity extends Activity {
         imageViewResizedEngraving = (ImageView) findViewById(R.id.imgViewEngraving);
         imageViewResizedSmooth = (ImageView) findViewById(R.id.imgViewSmooth);
         
+        Bitmap filterBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.filter);
+        
+        slideButton = (Button) findViewById(R.id.handle);
+        slidingDrawer = (WrappingSlidingDrawer) findViewById(R.id.drawer);
+        
+        slideButton.setCompoundDrawablesWithIntrinsicBounds(null, new BitmapDrawable(this.getResources(), filterBitmap), null, null);
         listenerColor = new OnAmbilWarnaListener() {
 				
 				@Override
@@ -199,6 +215,28 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				@Override
 				public void onCancel(GammaDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerRGB = new OnColorListener() {
+				
+				@Override
+				public void onOk(ColorDialog dialog, double red, double green, double blue) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					rred = red; ggreen = green; bblue = blue;
+					changeBitmap = Filter.colorFilter(originalBitmap, rred, ggreen, bblue);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(ColorDialog dialog) {
 					// TODO Auto-generated method stub
 					
 				}
@@ -348,12 +386,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				changeBitmap = Filter.colorFilter(originalBitmap, 1, 0, 0);
-				originalBitmap.recycle();
-				originalBitmap = null;
-				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				ColorDialog dialog = new ColorDialog(ImageGalleryDemoActivity.this,  listenerRGB);
+ 				dialog.show();
 			}
 		});
         imageViewResizedSaturation.setOnClickListener(new View.OnClickListener() {

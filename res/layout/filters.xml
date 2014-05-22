@@ -30,18 +30,39 @@
 			
 				</ImageView>
 				
+				
+				
+				  <net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer
+        android:id="@+id/drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:content="@+id/content"
+        android:handle="@+id/handle"
+        android:orientation="vertical"
+        android:padding="10dip" >
+        <Button
+            android:id="@+id/handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_filteri" >
+        </Button>
+				
 				<HorizontalScrollView
-			        android:id="@+id/horizontal"
+			        android:id="@+id/content"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content" 
 			        android:layout_gravity="bottom">
 			
 				<RelativeLayout
+				    android:id="@+id/contentLayout"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:layout_marginBottom="5dip"
 				    android:layout_gravity="bottom"
 				    android:background="@android:color/transparent" >
+				    
+				  
 			
 				    <!-- 
 				    <Button
@@ -497,7 +518,10 @@
 				    android:layout_below="@+id/tvSmooth">
 				        </ImageView>
 				</RelativeLayout>
-				</HorizontalScrollView>			
+				</HorizontalScrollView>
+				</net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer>
+				
+				
 			</FrameLayout>
 			
 			<LinearLayout android:layout_width="match_parent" android:orientation="vertical"

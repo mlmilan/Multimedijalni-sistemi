@@ -7,6 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,7 +30,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        Bitmap buttonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.load_image);
+        
         Button buttonLoadImage = (Button) findViewById(R.id.buttonLoadPicture);
+        
+        buttonLoadImage.setCompoundDrawablesWithIntrinsicBounds(null, new BitmapDrawable(this.getResources(), buttonBitmap), null, null);
 
         
         /*
