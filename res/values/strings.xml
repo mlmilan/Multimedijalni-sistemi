@@ -51,4 +51,6 @@
     <string name="text_contrast_text">Odaberite vrednost kontrasta koji ce biti primenjen na slici:</string>
     <string name="text_gamma_text">Odaberite vrednost gama parametra koji ce biti primenjen na slici:</string>
 	<string name="text_color_text">Odaberite vrednost R, G i B parametara koji ce biti primenjeni na slici:</string>
+	<string name="text_saturation_text">Odaberite vrednost saturation-a koji ce biti primenjen na slici:</string>
+	<string name="text_hue_text">Odaberite vrednost hue parametra koji ce biti primenjen na slici:</string>
 </resources>

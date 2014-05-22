@@ -15,6 +15,10 @@ import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog.OnContrastListener;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog.OnGammaListener;
+import net.viralpatel.android.imagegalleray.colorpicker.HueDialog;
+import net.viralpatel.android.imagegalleray.colorpicker.HueDialog.OnHueListener;
+import net.viralpatel.android.imagegalleray.colorpicker.SaturationDialog;
+import net.viralpatel.android.imagegalleray.colorpicker.SaturationDialog.OnSaturationListener;
 import net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -50,8 +54,9 @@ public class ImageGalleryDemoActivity extends Activity {
     private DrawOnTop mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
-	private int ccolor, sscale, bright, contrast;
+	private int ccolor, sscale, bright, contrast, hue;
 	private double gamma, rred, ggreen, bblue;
+	private float saturation;
 	public static final String PREFS_NAME = "picturePath";
 	private OnAmbilWarnaListener listenerColor;
 	private OnBlackWhiteListener listenerBlackWhite;
@@ -59,6 +64,8 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnContrastListener listenerContrast;
 	private OnGammaListener listenerGamma;
 	private OnColorListener listenerRGB;
+	private OnSaturationListener listenerSaturation;
+	private OnHueListener listenerHue;
     
 	/** Called when the activity is first created. */
     @Override
@@ -242,6 +249,50 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 			};
 			
+			listenerSaturation = new OnSaturationListener() {
+				
+				@Override
+				public void onOk(SaturationDialog dialog, float scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					saturation = scale;
+					changeBitmap = Filter.saturationFilter(originalBitmap, saturation);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(SaturationDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
+			listenerHue = new OnHueListener() {
+				
+				@Override
+				public void onOk(HueDialog dialog, int scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					hue = scale;
+					changeBitmap = Filter.hueFilter(originalBitmap, hue);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(HueDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         picturePath = settings.getString("putanja", "");
@@ -395,12 +446,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				changeBitmap = Filter.saturationFilter(originalBitmap, 2);
-				originalBitmap.recycle();
-				originalBitmap = null;
-				imageView.setImageBitmap(changeBitmap);
-				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				SaturationDialog dialog = new SaturationDialog(ImageGalleryDemoActivity.this,  listenerSaturation);
+ 				dialog.show();
 			}
 		});
         imageViewResizedHue.setOnClickListener(new View.OnClickListener() {
@@ -408,12 +455,8 @@ public class ImageGalleryDemoActivity extends Activity {
  			@Override
  			public void onClick(View arg0) {
  				// TODO Auto-generated method stub
- 				changeBitmap = Filter.hueFilter(originalBitmap, 2);
- 				originalBitmap.recycle();
- 				originalBitmap = null;
- 				imageView.setImageBitmap(changeBitmap);
- 				originalBitmap = Bitmap.createBitmap(changeBitmap);
- 				createSmallerImage();
+ 				HueDialog dialog = new HueDialog(ImageGalleryDemoActivity.this,  listenerHue);
+ 				dialog.show();
  			}
  		});
         imageViewResizedShading.setOnClickListener(new View.OnClickListener() {
@@ -621,7 +664,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resized = Bitmap.createScaledBitmap(originalBitmap ,(int)(originalBitmap.getWidth()*0.4), (int)(originalBitmap.getHeight()*0.4), true);
 		Bitmap resizedOriginal = Bitmap.createScaledBitmap(first_original ,(int)(first_original.getWidth()*0.4), (int)(first_original.getHeight()*0.4), true);
 		Bitmap resizedFilterInvert = Filter.invert(resized);
-		Bitmap resizedFilterBlackWhite = Filter.blackWhite(resized, 10);
+		Bitmap resizedFilterBlackWhite = Filter.blackWhite(resized, 50);
 		Bitmap resizedFilterBrightness = Filter.brightness(resized, -100);
 		Bitmap resizedFilterContrast = Filter.contrast(resized, 100);
 		Bitmap resizedFilterFlipVertical = Filter.flipVertical(resized);
@@ -629,8 +672,8 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resizedFilterGrayscale = Filter.grayscale(resized);
 		Bitmap resizedFilterGamma = Filter.gammaCorection(resized, 1.8, 1.8, 1.8);
 		Bitmap resizedFilterColorRGB = Filter.colorFilter(resized, 1, 0, 0);
-		Bitmap resizedFilterSaturation = Filter.saturationFilter(resized, 2);
-		Bitmap resizedFilterHue = Filter.hueFilter(resized, 2);
+		Bitmap resizedFilterSaturation = Filter.saturationFilter(resized, (float)0.5);
+		Bitmap resizedFilterHue = Filter.hueFilter(resized, 180);
 		Bitmap resizedFilterShading = Filter.shadingFilter(resized, Color.parseColor("magenta"));
 		Bitmap resizedFilterBlur = Filter.blur(resized);
 		Bitmap resizedFilterGausianBlur = Filter.gausianBlur(resized, 10, 5);

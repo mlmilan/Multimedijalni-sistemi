@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textViewHue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_hue_text" 
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"/>
+    <SeekBar
+        android:id="@+id/seekBarHue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:max="360" />
+    
+    <ImageView
+		android:id="@+id/imColors"
+		android:layout_width="match_parent"
+		android:layout_height="10dip"
+		android:layout_marginLeft="5dip"
+		android:layout_marginRight="5dip"
+		android:src="@drawable/hue"
+		android:scaleType="fitXY"
+		android:contentDescription="@string/text_color_picker"
+	/>
+
+    <TextView
+        android:id="@+id/tvHue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp"
+        android:text="" />
+
+</LinearLayout>

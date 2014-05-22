@@ -794,7 +794,7 @@ public class Filter {
         return bmOut;
     }
 	
-	public static Bitmap saturationFilter(Bitmap source, int level) {
+	public static Bitmap saturationFilter(Bitmap source, float level) {
 	    // get image size
 	    int width = source.getWidth();
 	    int height = source.getHeight();
@@ -812,10 +812,12 @@ public class Filter {
 	            // convert to HSV
 	            Color.colorToHSV(pixels[index], HSV);
 	            // increase Saturation level
-	            HSV[1] *= level;
+	          //  HSV[1] *= level; bilo ovo, ja stavila
+	            HSV[1] = level;
 	            HSV[1] = (float) Math.max(0.0, Math.min(HSV[1], 1.0));
 	            // take color back
-	            pixels[index] |= Color.HSVToColor(HSV);
+	            //pixels[index] |= Color.HSVToColor(HSV);  bilo ovo, ja stavila PROVERITI
+	            pixels[index] = Color.HSVToColor(HSV);
 	        }
 	    }
 	    // output bitmap
@@ -842,10 +844,11 @@ public class Filter {
 	            // convert to HSV
 	            Color.colorToHSV(pixels[index], HSV);
 	            // increase Saturation level
-	            HSV[0] *= level;
+	            HSV[0] = level;
 	            HSV[0] = (float) Math.max(0.0, Math.min(HSV[0], 360.0));
 	            // take color back
-	            pixels[index] |= Color.HSVToColor(HSV);
+	            //pixels[index] |= Color.HSVToColor(HSV);
+	            pixels[index] = Color.HSVToColor(HSV);
 	        }
 	    }
 	    // output bitmap                

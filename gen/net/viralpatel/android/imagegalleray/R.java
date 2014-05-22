@@ -27,10 +27,11 @@ public final class R {
         public static final int ambilwarna_hue=0x7f020003;
         public static final int ambilwarna_target=0x7f020004;
         public static final int filter=0x7f020005;
-        public static final int icon=0x7f020006;
-        public static final int images=0x7f020007;
-        public static final int load_image=0x7f020008;
-        public static final int logo_etf=0x7f020009;
+        public static final int hue=0x7f020006;
+        public static final int icon=0x7f020007;
+        public static final int images=0x7f020008;
+        public static final int load_image=0x7f020009;
+        public static final int logo_etf=0x7f02000a;
     }
     public static final class id {
         public static final int ambilwarna_cursor=0x7f070003;
@@ -41,11 +42,12 @@ public final class R {
         public static final int ambilwarna_viewSatBri=0x7f070001;
         public static final int ambilwarna_warnaBaru=0x7f070007;
         public static final int ambilwarna_warnaLama=0x7f070006;
-        public static final int buttonLoadPicture=0x7f07004a;
+        public static final int buttonLoadPicture=0x7f07004d;
         public static final int content=0x7f07001c;
         public static final int contentLayout=0x7f07001e;
         public static final int drawer=0x7f07001b;
         public static final int handle=0x7f07001d;
+        public static final int imColors=0x7f07004b;
         public static final int imgView=0x7f07001a;
         public static final int imgViewBlackWhite=0x7f070024;
         public static final int imgViewBlur=0x7f070038;
@@ -67,7 +69,7 @@ public final class R {
         public static final int imgViewShading=0x7f070036;
         public static final int imgViewSharpen=0x7f07003c;
         public static final int imgViewSmooth=0x7f070044;
-        public static final int rl=0x7f070049;
+        public static final int rl=0x7f07004c;
         public static final int seekBarBlackWhite=0x7f070009;
         public static final int seekBarBrightness=0x7f07000c;
         public static final int seekBarColorBlue=0x7f070013;
@@ -75,6 +77,8 @@ public final class R {
         public static final int seekBarColorRed=0x7f07000f;
         public static final int seekBarContrast=0x7f070016;
         public static final int seekBarGamma=0x7f070047;
+        public static final int seekBarHue=0x7f07004a;
+        public static final int seekBarSaturation=0x7f070050;
         public static final int tab1=0x7f070019;
         public static final int tab2=0x7f070045;
         public static final int tabhost=0x7f070018;
@@ -84,6 +88,8 @@ public final class R {
         public static final int textViewColor=0x7f07000e;
         public static final int textViewContrast=0x7f070015;
         public static final int textViewGamma=0x7f070046;
+        public static final int textViewHue=0x7f070049;
+        public static final int textViewSaturation=0x7f07004f;
         public static final int tvBlackWhite=0x7f070023;
         public static final int tvBlur=0x7f070037;
         public static final int tvBrightness=0x7f07000d;
@@ -103,7 +109,7 @@ public final class R {
         public static final int tvGrayscale=0x7f07002b;
         public static final int tvHue=0x7f070033;
         public static final int tvInvert=0x7f070021;
-        public static final int tvMessage=0x7f07004b;
+        public static final int tvMessage=0x7f07004e;
         public static final int tvOriginal=0x7f07001f;
         public static final int tvSaturation=0x7f070031;
         public static final int tvShading=0x7f070035;
@@ -122,7 +128,9 @@ public final class R {
         public static final int contrast=0x7f030004;
         public static final int filters=0x7f030005;
         public static final int gamma=0x7f030006;
-        public static final int main=0x7f030007;
+        public static final int hue=0x7f030007;
+        public static final int main=0x7f030008;
+        public static final int saturation=0x7f030009;
     }
     public static final class string {
         public static final int app_name=0x7f060001;
@@ -171,9 +179,11 @@ public final class R {
         public static final int text_gausian_blur=0x7f06001e;
         public static final int text_grayscale=0x7f060017;
         public static final int text_hue=0x7f06001b;
+        public static final int text_hue_text=0x7f06002d;
         public static final int text_invert=0x7f060011;
         public static final int text_original=0x7f060024;
         public static final int text_saturation=0x7f06001a;
+        public static final int text_saturation_text=0x7f06002c;
         public static final int text_shading=0x7f06001c;
         public static final int text_sharpen=0x7f06001f;
         public static final int text_smooth=0x7f060023;
