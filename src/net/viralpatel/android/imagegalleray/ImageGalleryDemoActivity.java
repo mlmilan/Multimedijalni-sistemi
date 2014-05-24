@@ -32,9 +32,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 import android.widget.SlidingDrawer;
 import android.widget.TabHost;
@@ -726,6 +730,21 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedSmooth.setImageBitmap(resizedFilterSmooth);
 		
 	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+ 
+        return super.onCreateOptionsMenu(menu);
+    }
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Take appropriate action for each action item click
+       Toast.makeText(this, "Kliknuto!", Toast.LENGTH_LONG).show();
+       return true;
+    }
     
 	    
 }
