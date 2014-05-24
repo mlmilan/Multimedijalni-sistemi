@@ -15,6 +15,8 @@ import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.ContrastDialog.OnContrastListener;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.GammaDialog.OnGammaListener;
+import net.viralpatel.android.imagegalleray.colorpicker.GausianBlurDialog;
+import net.viralpatel.android.imagegalleray.colorpicker.GausianBlurDialog.OnGausianBlurListener;
 import net.viralpatel.android.imagegalleray.colorpicker.HueDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.HueDialog.OnHueListener;
 import net.viralpatel.android.imagegalleray.colorpicker.SaturationDialog;
@@ -55,7 +57,7 @@ public class ImageGalleryDemoActivity extends Activity {
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
 	private int ccolor, sscale, bright, contrast, hue;
-	private double gamma, rred, ggreen, bblue;
+	private double gamma, rred, ggreen, bblue, ssigma;
 	private float saturation;
 	public static final String PREFS_NAME = "picturePath";
 	private OnAmbilWarnaListener listenerColor;
@@ -66,6 +68,7 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnColorListener listenerRGB;
 	private OnSaturationListener listenerSaturation;
 	private OnHueListener listenerHue;
+	private OnGausianBlurListener listenerGausianBlur;
     
 	/** Called when the activity is first created. */
     @Override
@@ -293,6 +296,28 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 			};
 			
+			listenerGausianBlur = new OnGausianBlurListener() {
+				
+				@Override
+				public void onOk(GausianBlurDialog dialog, double scale) {
+					// TODO Auto-generated method stub
+					//Toast.makeText(this, "Boja: " + color, Toast.LENGTH_LONG).show();
+					ssigma = scale;
+					changeBitmap = Filter.gausianBlur(originalBitmap, ssigma);
+	 				originalBitmap.recycle();
+	 				originalBitmap = null;
+	 				imageView.setImageBitmap(changeBitmap);
+	 				originalBitmap = Bitmap.createBitmap(changeBitmap);
+	 				createSmallerImage();
+				}
+				
+				@Override
+				public void onCancel(GausianBlurDialog dialog) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+			
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         picturePath = settings.getString("putanja", "");
@@ -490,12 +515,8 @@ public class ImageGalleryDemoActivity extends Activity {
  			@Override
  			public void onClick(View arg0) {
  				// TODO Auto-generated method stub
- 				changeBitmap = Filter.gausianBlur(originalBitmap, 10, 5);
- 				originalBitmap.recycle();
- 				originalBitmap = null;
- 				imageView.setImageBitmap(changeBitmap);
- 				originalBitmap = Bitmap.createBitmap(changeBitmap);
- 				createSmallerImage();
+ 				GausianBlurDialog dialog = new GausianBlurDialog(ImageGalleryDemoActivity.this,  listenerGausianBlur);
+ 				dialog.show();
  			}
  		});
         imageViewResizedSharpen.setOnClickListener(new View.OnClickListener() {
@@ -676,7 +697,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resizedFilterHue = Filter.hueFilter(resized, 180);
 		Bitmap resizedFilterShading = Filter.shadingFilter(resized, Color.parseColor("magenta"));
 		Bitmap resizedFilterBlur = Filter.blur(resized);
-		Bitmap resizedFilterGausianBlur = Filter.gausianBlur(resized, 10, 5);
+		Bitmap resizedFilterGausianBlur = Filter.gausianBlur(resized, 1);
 		Bitmap resizedFilterSharpen = Filter.sharpen(resized);
 		Bitmap resizedFilterEdge = Filter.edge(resized);
 		Bitmap resizedFilterEmboss = Filter.emboss(resized);

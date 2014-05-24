@@ -354,10 +354,16 @@ public class Filter {
 	}
 	
 	
-	private static void initBlur(double sigma, int ksize) {
-		if (ksize == 1 || ksize % 2 == 0) {
+	private static void initBlur(double sigma) {
+		
+		int ksize = (int) Math.ceil(sigma * 3 + 1);
+		
+		if (ksize == 1 /*|| ksize % 2 == 0*/) {
 			return;
 		}
+		
+		if (ksize % 2 == 0)
+			ksize++;
 
 		gaussianBlurRange = ksize / 2;
 		gaussianBlur = new double[ksize][ksize];
@@ -383,11 +389,11 @@ public class Filter {
 	}
 	
 	
-	public static Bitmap gausianBlur(Bitmap bitmap, double sigma, int ksize) {
+	public static Bitmap gausianBlur(Bitmap bitmap, double sigma) {
 		if (bitmap == null) {
 			return null;
 		}
-		initBlur(sigma, ksize);
+		initBlur(sigma);
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
 
