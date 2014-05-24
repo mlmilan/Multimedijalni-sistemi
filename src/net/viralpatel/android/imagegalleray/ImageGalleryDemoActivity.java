@@ -21,6 +21,7 @@ import net.viralpatel.android.imagegalleray.colorpicker.HueDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.HueDialog.OnHueListener;
 import net.viralpatel.android.imagegalleray.colorpicker.SaturationDialog;
 import net.viralpatel.android.imagegalleray.colorpicker.SaturationDialog.OnSaturationListener;
+import net.viralpatel.android.imagegalleray.colorpicker.Save;
 import net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -742,7 +743,9 @@ public class ImageGalleryDemoActivity extends Activity {
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Take appropriate action for each action item click
-       Toast.makeText(this, "Kliknuto!", Toast.LENGTH_LONG).show();
+      // Toast.makeText(this, "Kliknuto!", Toast.LENGTH_LONG).show();
+	   Save saveFile = new Save();
+	   saveFile.saveImage(ImageGalleryDemoActivity.this, originalBitmap);
        return true;
     }
     
