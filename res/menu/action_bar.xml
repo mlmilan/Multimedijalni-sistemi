@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
+    <item android:id="@+id/loadimage"
+          android:icon="@drawable/load_image"
+          android:title="@string/button_load"
+          android:showAsAction="ifRoom" />
+    
     <item android:id="@+id/saveimage"
           android:icon="@drawable/save"
           android:title="@string/button_save"

@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;

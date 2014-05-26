@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray;
+package com.example.imagegallery;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;

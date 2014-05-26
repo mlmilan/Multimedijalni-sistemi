@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;
@@ -9,27 +9,27 @@ import android.view.*;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class HueDialog {
-	public interface OnHueListener {
-		void onCancel(HueDialog dialog);
-		void onOk(HueDialog dialog, int hue);
+public class ContrastDialog {
+	public interface OnContrastListener {
+		void onCancel(ContrastDialog dialog);
+		void onOk(ContrastDialog dialog, int color);
 	}
 
 	final AlertDialog dialog;
-	final OnHueListener listener;
+	final OnContrastListener listener;
 	final SeekBar sb;
 	final TextView tv;
-	private int progres = 0;
+	private int progres = -100;
 
-	public HueDialog(final Context context, OnHueListener listener) {
+	public ContrastDialog(final Context context, OnContrastListener listener) {
 		this.listener = listener;
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.hue, null);
+		final View view = LayoutInflater.from(context).inflate(R.layout.contrast, null);
 		
-		sb = (SeekBar) view.findViewById(R.id.seekBarHue);
-		tv = (TextView) view.findViewById(R.id.tvHue);
+		sb = (SeekBar) view.findViewById(R.id.seekBarContrast);
+		tv = (TextView) view.findViewById(R.id.tvContrast);
 		
-		tv.setText(sb.getProgress()+ "/360");
+		tv.setText(sb.getProgress()-100 + "/(-100..100)");
 		sb.setOnSeekBarChangeListener(
 		                new OnSeekBarChangeListener() {
 							
@@ -38,7 +38,7 @@ public class HueDialog {
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
 								// TODO Auto-generated method stub
-								tv.setText(progres + "/360");
+								tv.setText(progres + "/(-100..100)");
 							}
 							
 							@Override
@@ -51,7 +51,7 @@ public class HueDialog {
 							public void onProgressChanged(SeekBar seekBar, int progress,
 									boolean fromUser) {
 								// TODO Auto-generated method stub
-								progres =  progress;
+								progres = progress - 100;
 							}
 						});
 
@@ -61,24 +61,25 @@ public class HueDialog {
 		dialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (HueDialog.this.listener != null) {
-						HueDialog.this.listener.onOk(HueDialog.this, getProgres());
+					if (ContrastDialog.this.listener != null) {
+						ContrastDialog.this.listener.onOk(ContrastDialog.this, getProgres());
+						Log.d("progres:", Integer.toString(getProgres()));
 					}
 				}
 
 			})
 			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (HueDialog.this.listener != null) {
-						HueDialog.this.listener.onCancel(HueDialog.this);
+					if (ContrastDialog.this.listener != null) {
+						ContrastDialog.this.listener.onCancel(ContrastDialog.this);
 					}
 				}
 			})
 			.setOnCancelListener(new OnCancelListener() {
 				// if back button is used, call back our listener.
 				@Override public void onCancel(DialogInterface paramDialogInterface) {
-					if (HueDialog.this.listener != null) {
-						HueDialog.this.listener.onCancel(HueDialog.this);
+					if (ContrastDialog.this.listener != null) {
+						ContrastDialog.this.listener.onCancel(ContrastDialog.this);
 					}
 
 				}

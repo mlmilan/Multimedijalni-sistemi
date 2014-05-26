@@ -1,6 +1,7 @@
-package net.viralpatel.android.imagegalleray;
+package com.example.imagegallery;
 
 
+import net.viralpatel.android.imagegalleray.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -30,36 +31,32 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        Thread timer = new Thread() {
+			
+			public void run() {
+				try {
+					sleep(5000);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				finally {
+					Intent openStartingPoint = new Intent(MainActivity.this, ImageGalleryDemoActivity.class);  
+					startActivity(openStartingPoint);  
+				}
+			}
+		};
+		
+		timer.start();
+        
+        /*
+        
         Bitmap buttonBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.load_image);
         
         Button buttonLoadImage = (Button) findViewById(R.id.buttonLoadPicture);
         
         buttonLoadImage.setCompoundDrawablesWithIntrinsicBounds(null, new BitmapDrawable(this.getResources(), buttonBitmap), null, null);
 
-        
-        /*
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            color = extras.getInt("color");
-            //Toast.makeText(getBaseContext(), "Boja: " + color, Toast.LENGTH_LONG).show();
-            
-            imageView = (ImageView) findViewById(R.id.imgView);
-			File imageF = new File(putanja);
-			try {
-				BitmapScaler scaler = new BitmapScaler(imageF, 512);
-				originalBitmap = scaler.getScaled();
-				imageView.setImageBitmap(scaler.getScaled());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			changeBitmap = Filter.shadingFilter(originalBitmap, color);
-			originalBitmap.recycle();
-			originalBitmap = null;
-			imageView.setImageBitmap(changeBitmap);
-			originalBitmap = changeBitmap;
-        }
-        */
         buttonLoadImage.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -72,9 +69,11 @@ public class MainActivity extends Activity {
 				startActivityForResult(i, RESULT_LOAD_IMAGE);
 			}
 		});
+		
+		*/
     }
     
-    
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
@@ -91,18 +90,7 @@ public class MainActivity extends Activity {
 			picturePath = cursor.getString(columnIndex);
 			Log.d("PUTANJA", picturePath);
 			cursor.close();
-			/*
-			imageView = (ImageView) findViewById(R.id.imgView);
-			File imageF = new File(picturePath);
-			try {
-				BitmapScaler scaler = new BitmapScaler(imageF, 512);
-				originalBitmap = scaler.getScaled();
-				imageView.setImageBitmap(scaler.getScaled());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
+
 			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		    SharedPreferences.Editor editor = settings.edit();
 		    editor.putString("putanja", picturePath);
@@ -151,5 +139,13 @@ public class MainActivity extends Activity {
 			// show it
 			alertDialog.show();
 		}
-	    
+	    */
+    
+    @Override
+	protected void onPause() {  
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish(); 
+	}
+    
 }

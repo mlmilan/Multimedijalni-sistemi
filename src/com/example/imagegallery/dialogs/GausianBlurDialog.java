@@ -1,34 +1,35 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.OnCancelListener;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class BlackWhiteDialog {
-	public interface OnBlackWhiteListener {
-		void onCancel(BlackWhiteDialog dialog);
-		void onOk(BlackWhiteDialog dialog, int color);
+public class GausianBlurDialog {
+	public interface OnGausianBlurListener {
+		void onCancel(GausianBlurDialog dialog);
+		void onOk(GausianBlurDialog dialog, double sigma);
 	}
 
 	final AlertDialog dialog;
-	final OnBlackWhiteListener listener;
+	final OnGausianBlurListener listener;
 	final SeekBar sb;
 	final TextView tv;
-	private int progres = 0;
+	private double progres = 0;
 
-	public BlackWhiteDialog(final Context context, OnBlackWhiteListener listener) {
+	public GausianBlurDialog(final Context context, OnGausianBlurListener listener) {
 		this.listener = listener;
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.black_white, null);
+		final View view = LayoutInflater.from(context).inflate(R.layout.gausian_blur, null);
 		
-		sb = (SeekBar) view.findViewById(R.id.seekBarBlackWhite);
-		tv = (TextView) view.findViewById(R.id.textViewBlackWhite);
+		sb = (SeekBar) view.findViewById(R.id.seekBarGausianBlur);
+		tv = (TextView) view.findViewById(R.id.tvGausianBlur);
 		
-		tv.setText(sb.getProgress() + "/" + sb.getMax());
+		tv.setText(sb.getProgress()+ "/2");
 		sb.setOnSeekBarChangeListener(
 		                new OnSeekBarChangeListener() {
 							
@@ -37,7 +38,7 @@ public class BlackWhiteDialog {
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
 								// TODO Auto-generated method stub
-								tv.setText(progres + "/" + sb.getMax());
+								tv.setText(progres + "/2");
 							}
 							
 							@Override
@@ -50,7 +51,7 @@ public class BlackWhiteDialog {
 							public void onProgressChanged(SeekBar seekBar, int progress,
 									boolean fromUser) {
 								// TODO Auto-generated method stub
-								progres = progress;
+								progres =  (double)progress/100.0;
 							}
 						});
 
@@ -60,24 +61,24 @@ public class BlackWhiteDialog {
 		dialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (BlackWhiteDialog.this.listener != null) {
-						BlackWhiteDialog.this.listener.onOk(BlackWhiteDialog.this, getProgres());
+					if (GausianBlurDialog.this.listener != null) {
+						GausianBlurDialog.this.listener.onOk(GausianBlurDialog.this, getProgres());
 					}
 				}
 
 			})
 			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (BlackWhiteDialog.this.listener != null) {
-						BlackWhiteDialog.this.listener.onCancel(BlackWhiteDialog.this);
+					if (GausianBlurDialog.this.listener != null) {
+						GausianBlurDialog.this.listener.onCancel(GausianBlurDialog.this);
 					}
 				}
 			})
 			.setOnCancelListener(new OnCancelListener() {
 				// if back button is used, call back our listener.
 				@Override public void onCancel(DialogInterface paramDialogInterface) {
-					if (BlackWhiteDialog.this.listener != null) {
-						BlackWhiteDialog.this.listener.onCancel(BlackWhiteDialog.this);
+					if (GausianBlurDialog.this.listener != null) {
+						GausianBlurDialog.this.listener.onCancel(GausianBlurDialog.this);
 					}
 
 				}
@@ -88,7 +89,7 @@ public class BlackWhiteDialog {
 
 	}
 	
-	private int getProgres() {
+	private double getProgres() {
 		// TODO Auto-generated method stub
 		return progres;
 	}

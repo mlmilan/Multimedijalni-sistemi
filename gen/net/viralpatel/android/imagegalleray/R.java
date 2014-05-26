@@ -43,7 +43,6 @@ public final class R {
         public static final int ambilwarna_viewSatBri=0x7f080001;
         public static final int ambilwarna_warnaBaru=0x7f080007;
         public static final int ambilwarna_warnaLama=0x7f080006;
-        public static final int buttonLoadPicture=0x7f08004f;
         public static final int content=0x7f08001c;
         public static final int contentLayout=0x7f08001e;
         public static final int drawer=0x7f08001b;
@@ -70,6 +69,7 @@ public final class R {
         public static final int imgViewShading=0x7f080036;
         public static final int imgViewSharpen=0x7f08003c;
         public static final int imgViewSmooth=0x7f080044;
+        public static final int loadimage=0x7f080052;
         public static final int rl=0x7f08004e;
         public static final int saveimage=0x7f080053;
         public static final int seekBarBlackWhite=0x7f080009;
@@ -81,7 +81,7 @@ public final class R {
         public static final int seekBarGamma=0x7f080047;
         public static final int seekBarGausianBlur=0x7f08004a;
         public static final int seekBarHue=0x7f08004c;
-        public static final int seekBarSaturation=0x7f080052;
+        public static final int seekBarSaturation=0x7f080051;
         public static final int tab1=0x7f080019;
         public static final int tab2=0x7f080045;
         public static final int tabhost=0x7f080018;
@@ -93,7 +93,7 @@ public final class R {
         public static final int textViewGamma=0x7f080046;
         public static final int textViewGausianBlur=0x7f080049;
         public static final int textViewHue=0x7f08004b;
-        public static final int textViewSaturation=0x7f080051;
+        public static final int textViewSaturation=0x7f080050;
         public static final int tvBlackWhite=0x7f080023;
         public static final int tvBlur=0x7f080037;
         public static final int tvBrightness=0x7f08000d;
@@ -113,7 +113,7 @@ public final class R {
         public static final int tvGrayscale=0x7f08002b;
         public static final int tvHue=0x7f080033;
         public static final int tvInvert=0x7f080021;
-        public static final int tvMessage=0x7f080050;
+        public static final int tvMessage=0x7f08004f;
         public static final int tvOriginal=0x7f08001f;
         public static final int tvSaturation=0x7f080031;
         public static final int tvShading=0x7f080035;

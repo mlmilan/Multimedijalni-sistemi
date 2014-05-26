@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;
@@ -9,27 +9,27 @@ import android.view.*;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class GammaDialog {
-	public interface OnGammaListener {
-		void onCancel(GammaDialog dialog);
-		void onOk(GammaDialog dialog, double color);
+public class SaturationDialog {
+	public interface OnSaturationListener {
+		void onCancel(SaturationDialog dialog);
+		void onOk(SaturationDialog dialog, float saturation);
 	}
 
 	final AlertDialog dialog;
-	final OnGammaListener listener;
+	final OnSaturationListener listener;
 	final SeekBar sb;
 	final TextView tv;
-	private double progres = 0;
+	private float progres = 0;
 
-	public GammaDialog(final Context context, OnGammaListener listener) {
+	public SaturationDialog(final Context context, OnSaturationListener listener) {
 		this.listener = listener;
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.gamma, null);
+		final View view = LayoutInflater.from(context).inflate(R.layout.saturation, null);
 		
-		sb = (SeekBar) view.findViewById(R.id.seekBarGamma);
-		tv = (TextView) view.findViewById(R.id.tvGamma);
+		sb = (SeekBar) view.findViewById(R.id.seekBarSaturation);
+		tv = (TextView) view.findViewById(R.id.tvSaturation);
 		
-		tv.setText(sb.getProgress()/10 + "/5");
+		tv.setText(sb.getProgress()/1000 + "/1");
 		sb.setOnSeekBarChangeListener(
 		                new OnSeekBarChangeListener() {
 							
@@ -38,7 +38,7 @@ public class GammaDialog {
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
 								// TODO Auto-generated method stub
-								tv.setText(progres + "/5");
+								tv.setText(progres + "/1");
 							}
 							
 							@Override
@@ -51,7 +51,7 @@ public class GammaDialog {
 							public void onProgressChanged(SeekBar seekBar, int progress,
 									boolean fromUser) {
 								// TODO Auto-generated method stub
-								progres = (double)progress/10.0;
+								progres = (float) (progress/1000.0);
 							}
 						});
 
@@ -61,25 +61,24 @@ public class GammaDialog {
 		dialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (GammaDialog.this.listener != null) {
-						GammaDialog.this.listener.onOk(GammaDialog.this, getProgres());
-						Log.d("progres:", Double.toString(getProgres()));
+					if (SaturationDialog.this.listener != null) {
+						SaturationDialog.this.listener.onOk(SaturationDialog.this, getProgres());
 					}
 				}
 
 			})
 			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (GammaDialog.this.listener != null) {
-						GammaDialog.this.listener.onCancel(GammaDialog.this);
+					if (SaturationDialog.this.listener != null) {
+						SaturationDialog.this.listener.onCancel(SaturationDialog.this);
 					}
 				}
 			})
 			.setOnCancelListener(new OnCancelListener() {
 				// if back button is used, call back our listener.
 				@Override public void onCancel(DialogInterface paramDialogInterface) {
-					if (GammaDialog.this.listener != null) {
-						GammaDialog.this.listener.onCancel(GammaDialog.this);
+					if (SaturationDialog.this.listener != null) {
+						SaturationDialog.this.listener.onCancel(SaturationDialog.this);
 					}
 
 				}
@@ -90,7 +89,7 @@ public class GammaDialog {
 
 	}
 	
-	private double getProgres() {
+	private float getProgres() {
 		// TODO Auto-generated method stub
 		return progres;
 	}

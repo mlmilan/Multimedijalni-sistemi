@@ -22,7 +22,7 @@
     <!--  Elements -->
     <string name="button_load">Ucitaj sliku</string>
     <string name="button_save">Sacuvaj</string>
-    <string name="message">Ovo je android aplikacija za obradu slika. Kliknite na dugme ispod da biste ucitali sliku.</string>
+    <string name="message">Dobrodosli! Ovo je android aplikacija za obradu slika.</string>
     <string name="img">Glavna slika</string>
     <string name="img_invert">Filter</string>
     <string name="text_invert">Invert</string>

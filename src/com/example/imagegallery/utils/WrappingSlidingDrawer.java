@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -6,20 +6,11 @@
     android:id="@+id/rl"
     android:background="@drawable/images"
     >
-     
-	<Button
-	    android:id="@+id/buttonLoadPicture"
-	    android:layout_width="100dip"
-	    android:layout_height="130dip"
-	    android:layout_centerHorizontal="true"
-	    android:layout_centerVertical="true"
-	    android:text="@string/button_load" />
 
 	<TextView
 	    android:id="@+id/tvMessage"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/buttonLoadPicture"
 	    android:layout_alignParentLeft="true"
 	    android:layout_marginBottom="60dp"
 	    android:layout_marginTop="50dp"

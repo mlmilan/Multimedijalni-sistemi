@@ -1,35 +1,34 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.OnCancelListener;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class GausianBlurDialog {
-	public interface OnGausianBlurListener {
-		void onCancel(GausianBlurDialog dialog);
-		void onOk(GausianBlurDialog dialog, double sigma);
+public class BrightnessDialog {
+	public interface OnBrightnessListener {
+		void onCancel(BrightnessDialog dialog);
+		void onOk(BrightnessDialog dialog, int color);
 	}
 
 	final AlertDialog dialog;
-	final OnGausianBlurListener listener;
+	final OnBrightnessListener listener;
 	final SeekBar sb;
 	final TextView tv;
-	private double progres = 0;
+	private int progres = -255;
 
-	public GausianBlurDialog(final Context context, OnGausianBlurListener listener) {
+	public BrightnessDialog(final Context context, OnBrightnessListener listener) {
 		this.listener = listener;
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.gausian_blur, null);
+		final View view = LayoutInflater.from(context).inflate(R.layout.brightness, null);
 		
-		sb = (SeekBar) view.findViewById(R.id.seekBarGausianBlur);
-		tv = (TextView) view.findViewById(R.id.tvGausianBlur);
+		sb = (SeekBar) view.findViewById(R.id.seekBarBrightness);
+		tv = (TextView) view.findViewById(R.id.tvBrightness);
 		
-		tv.setText(sb.getProgress()+ "/2");
+		tv.setText(sb.getProgress()-255 + "/(-255..255)");
 		sb.setOnSeekBarChangeListener(
 		                new OnSeekBarChangeListener() {
 							
@@ -38,7 +37,7 @@ public class GausianBlurDialog {
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
 								// TODO Auto-generated method stub
-								tv.setText(progres + "/2");
+								tv.setText(progres + "/(-255..255)");
 							}
 							
 							@Override
@@ -51,7 +50,7 @@ public class GausianBlurDialog {
 							public void onProgressChanged(SeekBar seekBar, int progress,
 									boolean fromUser) {
 								// TODO Auto-generated method stub
-								progres =  (double)progress/100.0;
+								progres = progress - 255;
 							}
 						});
 
@@ -61,24 +60,24 @@ public class GausianBlurDialog {
 		dialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (GausianBlurDialog.this.listener != null) {
-						GausianBlurDialog.this.listener.onOk(GausianBlurDialog.this, getProgres());
+					if (BrightnessDialog.this.listener != null) {
+						BrightnessDialog.this.listener.onOk(BrightnessDialog.this, getProgres());
 					}
 				}
 
 			})
 			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (GausianBlurDialog.this.listener != null) {
-						GausianBlurDialog.this.listener.onCancel(GausianBlurDialog.this);
+					if (BrightnessDialog.this.listener != null) {
+						BrightnessDialog.this.listener.onCancel(BrightnessDialog.this);
 					}
 				}
 			})
 			.setOnCancelListener(new OnCancelListener() {
 				// if back button is used, call back our listener.
 				@Override public void onCancel(DialogInterface paramDialogInterface) {
-					if (GausianBlurDialog.this.listener != null) {
-						GausianBlurDialog.this.listener.onCancel(GausianBlurDialog.this);
+					if (BrightnessDialog.this.listener != null) {
+						BrightnessDialog.this.listener.onCancel(BrightnessDialog.this);
 					}
 
 				}
@@ -89,7 +88,7 @@ public class GausianBlurDialog {
 
 	}
 	
-	private double getProgres() {
+	private int getProgres() {
 		// TODO Auto-generated method stub
 		return progres;
 	}

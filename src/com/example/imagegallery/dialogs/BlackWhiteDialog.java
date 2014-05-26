@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;
@@ -8,27 +8,27 @@ import android.view.*;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class BrightnessDialog {
-	public interface OnBrightnessListener {
-		void onCancel(BrightnessDialog dialog);
-		void onOk(BrightnessDialog dialog, int color);
+public class BlackWhiteDialog {
+	public interface OnBlackWhiteListener {
+		void onCancel(BlackWhiteDialog dialog);
+		void onOk(BlackWhiteDialog dialog, int color);
 	}
 
 	final AlertDialog dialog;
-	final OnBrightnessListener listener;
+	final OnBlackWhiteListener listener;
 	final SeekBar sb;
 	final TextView tv;
-	private int progres = -255;
+	private int progres = 0;
 
-	public BrightnessDialog(final Context context, OnBrightnessListener listener) {
+	public BlackWhiteDialog(final Context context, OnBlackWhiteListener listener) {
 		this.listener = listener;
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.brightness, null);
+		final View view = LayoutInflater.from(context).inflate(R.layout.black_white, null);
 		
-		sb = (SeekBar) view.findViewById(R.id.seekBarBrightness);
-		tv = (TextView) view.findViewById(R.id.tvBrightness);
+		sb = (SeekBar) view.findViewById(R.id.seekBarBlackWhite);
+		tv = (TextView) view.findViewById(R.id.textViewBlackWhite);
 		
-		tv.setText(sb.getProgress()-255 + "/(-255..255)");
+		tv.setText(sb.getProgress() + "/" + sb.getMax());
 		sb.setOnSeekBarChangeListener(
 		                new OnSeekBarChangeListener() {
 							
@@ -37,7 +37,7 @@ public class BrightnessDialog {
 							@Override
 							public void onStopTrackingTouch(SeekBar seekBar) {
 								// TODO Auto-generated method stub
-								tv.setText(progres + "/(-255..255)");
+								tv.setText(progres + "/" + sb.getMax());
 							}
 							
 							@Override
@@ -50,7 +50,7 @@ public class BrightnessDialog {
 							public void onProgressChanged(SeekBar seekBar, int progress,
 									boolean fromUser) {
 								// TODO Auto-generated method stub
-								progres = progress - 255;
+								progres = progress;
 							}
 						});
 
@@ -60,24 +60,24 @@ public class BrightnessDialog {
 		dialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (BrightnessDialog.this.listener != null) {
-						BrightnessDialog.this.listener.onOk(BrightnessDialog.this, getProgres());
+					if (BlackWhiteDialog.this.listener != null) {
+						BlackWhiteDialog.this.listener.onOk(BlackWhiteDialog.this, getProgres());
 					}
 				}
 
 			})
 			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (BrightnessDialog.this.listener != null) {
-						BrightnessDialog.this.listener.onCancel(BrightnessDialog.this);
+					if (BlackWhiteDialog.this.listener != null) {
+						BlackWhiteDialog.this.listener.onCancel(BlackWhiteDialog.this);
 					}
 				}
 			})
 			.setOnCancelListener(new OnCancelListener() {
 				// if back button is used, call back our listener.
 				@Override public void onCancel(DialogInterface paramDialogInterface) {
-					if (BrightnessDialog.this.listener != null) {
-						BrightnessDialog.this.listener.onCancel(BrightnessDialog.this);
+					if (BlackWhiteDialog.this.listener != null) {
+						BlackWhiteDialog.this.listener.onCancel(BlackWhiteDialog.this);
 					}
 
 				}

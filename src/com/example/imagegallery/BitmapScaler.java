@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray;
+package com.example.imagegallery;
 
 import java.io.File;
 import java.io.FileInputStream;

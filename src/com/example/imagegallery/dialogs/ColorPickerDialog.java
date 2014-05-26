@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.app.*;
@@ -9,16 +9,16 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
-public class AmbilWarnaDialog {
-	public interface OnAmbilWarnaListener {
-		void onCancel(AmbilWarnaDialog dialog);
-		void onOk(AmbilWarnaDialog dialog, int color);
+public class ColorPickerDialog {
+	public interface OnColorPickerListener {
+		void onCancel(ColorPickerDialog dialog);
+		void onOk(ColorPickerDialog dialog, int color);
 	}
 
 	final AlertDialog dialog;
-	final OnAmbilWarnaListener listener;
+	final OnColorPickerListener listener;
 	final View viewHue;
-	final AmbilWarnaKotak viewSatVal;
+	final ColorPickerView viewSatVal;
 	final ImageView viewCursor;
 	final View viewOldColor;
 	final View viewNewColor;
@@ -36,13 +36,13 @@ public class AmbilWarnaDialog {
 	 * @param listener
 	 *            an OnAmbilWarnaListener, allowing you to get back error or
 	 */
-	public AmbilWarnaDialog(final Context context, int color, OnAmbilWarnaListener listener) {
+	public ColorPickerDialog(final Context context, int color, OnColorPickerListener listener) {
 		this.listener = listener;
 		Color.colorToHSV(color, currentColorHsv);
 
 		final View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
 		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
-		viewSatVal = (AmbilWarnaKotak) view.findViewById(R.id.ambilwarna_viewSatBri);
+		viewSatVal = (ColorPickerView) view.findViewById(R.id.ambilwarna_viewSatBri);
 		viewCursor = (ImageView) view.findViewById(R.id.ambilwarna_cursor);
 		viewOldColor = view.findViewById(R.id.ambilwarna_warnaLama);
 		viewNewColor = view.findViewById(R.id.ambilwarna_warnaBaru);
@@ -106,24 +106,24 @@ public class AmbilWarnaDialog {
 		dialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (AmbilWarnaDialog.this.listener != null) {
-						AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, getColor());
+					if (ColorPickerDialog.this.listener != null) {
+						ColorPickerDialog.this.listener.onOk(ColorPickerDialog.this, getColor());
 						Log.d("boja", Integer.toString(getColor()));
 					}
 				}
 			})
 			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (AmbilWarnaDialog.this.listener != null) {
-						AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+					if (ColorPickerDialog.this.listener != null) {
+						ColorPickerDialog.this.listener.onCancel(ColorPickerDialog.this);
 					}
 				}
 			})
 			.setOnCancelListener(new OnCancelListener() {
 				// if back button is used, call back our listener.
 				@Override public void onCancel(DialogInterface paramDialogInterface) {
-					if (AmbilWarnaDialog.this.listener != null) {
-						AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+					if (ColorPickerDialog.this.listener != null) {
+						ColorPickerDialog.this.listener.onCancel(ColorPickerDialog.this);
 					}
 
 				}

@@ -1,11 +1,12 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import net.viralpatel.android.imagegalleray.ImageGalleryDemoActivity;
+import com.example.imagegallery.ImageGalleryDemoActivity;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;

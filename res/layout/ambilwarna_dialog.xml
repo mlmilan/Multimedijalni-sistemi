@@ -12,7 +12,7 @@
 	android:clipToPadding="false"
 	android:layout_gravity="center"
 >
-	<net.viralpatel.android.imagegalleray.colorpicker.AmbilWarnaKotak
+	<com.example.imagegallery.dialogs.ColorPickerView
 		android:id="@+id/ambilwarna_viewSatBri"
 		android:layout_width="@dimen/ambilwarna_hsvWidth"
 		android:layout_height="@dimen/ambilwarna_hsvHeight"

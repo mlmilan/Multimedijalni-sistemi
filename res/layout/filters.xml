@@ -32,7 +32,7 @@
 				
 				
 				
-				  <net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer
+		<com.example.imagegallery.utils.WrappingSlidingDrawer
         android:id="@+id/drawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -519,7 +519,7 @@
 				        </ImageView>
 				</RelativeLayout>
 				</HorizontalScrollView>
-				</net.viralpatel.android.imagegalleray.colorpicker.WrappingSlidingDrawer>
+				</com.example.imagegallery.utils.WrappingSlidingDrawer>
 				
 				
 			</FrameLayout>

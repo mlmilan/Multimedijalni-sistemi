@@ -1,4 +1,4 @@
-package net.viralpatel.android.imagegalleray.colorpicker;
+package com.example.imagegallery.dialogs;
 
 import android.content.*;
 import android.graphics.*;
@@ -6,20 +6,20 @@ import android.graphics.Shader.TileMode;
 import android.util.*;
 import android.view.*;
 
-public class AmbilWarnaKotak extends View {
+public class ColorPickerView extends View {
 	Paint paint;
 	Shader luar;
 	final float[] color = { 1.f, 1.f, 1.f };
 
-	public AmbilWarnaKotak(Context context) {
+	public ColorPickerView(Context context) {
 		this(context, null);
 	}
 
-	public AmbilWarnaKotak(Context context, AttributeSet attrs) {
+	public ColorPickerView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public AmbilWarnaKotak(Context context, AttributeSet attrs, int defStyle) {
+	public ColorPickerView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
