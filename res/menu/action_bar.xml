@@ -4,12 +4,20 @@
     <item android:id="@+id/loadimage"
           android:icon="@drawable/load_image"
           android:title="@string/button_load"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="always" />
     
     <item android:id="@+id/saveimage"
           android:icon="@drawable/save"
           android:title="@string/button_save"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="always" />
+    <item android:id="@+id/histogramimage"
+          android:icon="@drawable/histogram"
+          android:title="@string/button_histogramimage"
+          android:showAsAction="always" />
+    <item android:id="@+id/histogramcamera"
+          android:icon="@drawable/camera"
+          android:title="@string/button_histogramcamera"
+          android:showAsAction="always" />
     
 
 </menu>

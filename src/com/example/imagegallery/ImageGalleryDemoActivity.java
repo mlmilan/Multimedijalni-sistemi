@@ -2,6 +2,7 @@ package com.example.imagegallery;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.example.imagegallery.dialogs.ColorPickerDialog;
 import com.example.imagegallery.dialogs.BlackWhiteDialog;
@@ -27,6 +28,7 @@ import com.example.imagegallery.utils.WrappingSlidingDrawer;
 import net.viralpatel.android.imagegalleray.R;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,20 +37,26 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.PopupWindow;
 import android.widget.ImageView.ScaleType;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -72,7 +80,7 @@ public class ImageGalleryDemoActivity extends Activity {
 			imageViewResizedOriginal;
 	private Button slideButton;
 	private WrappingSlidingDrawer slidingDrawer;
-	private DrawOnTop mDrawOnTop;
+	private HistogramImage mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
 	private int ccolor, sscale, bright, contrast, hue;
@@ -87,21 +95,30 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnSaturationListener listenerSaturation;
 	private OnHueListener listenerHue;
 	private OnGausianBlurListener listenerGausianBlur;
-
+	public PopupWindow popup;
+	private int width, height;
+	private boolean click = true;
+	private ImageView close;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.filters);
-		
+
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		width = size.x;
+		height = size.y;
+
+		popup = new PopupWindow(this);
 
 		slideButton = (Button) findViewById(R.id.handle);
 		slidingDrawer = (WrappingSlidingDrawer) findViewById(R.id.drawer);
 
-	
-
 		slideButton.setVisibility(View.GONE);
 		slidingDrawer.setVisibility(View.GONE);
+
 		TabHost th = (TabHost) findViewById(R.id.tabhost);
 		th.setup();
 
@@ -114,9 +131,9 @@ public class ImageGalleryDemoActivity extends Activity {
 		spec.setContent(R.id.tab2);
 		spec.setIndicator("Operations");
 		th.addTab(spec);
-		
+
 		if (getIntent().getBooleanExtra("EXIT", false)) {
-		    finish();
+			finish();
 		}
 
 		// Button filter = (Button) findViewById(R.id.buttonFilter);
@@ -145,7 +162,6 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedEngraving = (ImageView) findViewById(R.id.imgViewEngraving);
 		imageViewResizedSmooth = (ImageView) findViewById(R.id.imgViewSmooth);
 
-	
 		/*
 		 * filter.setOnClickListener(new View.OnClickListener() {
 		 * 
@@ -299,7 +315,44 @@ public class ImageGalleryDemoActivity extends Activity {
 
 		case R.id.saveimage:
 			Save saveFile = new Save();
-			saveFile.saveImage(ImageGalleryDemoActivity.this, originalBitmap);
+			if (originalBitmap != null)
+				saveFile.saveImage(ImageGalleryDemoActivity.this,
+						originalBitmap);
+			return true;
+
+		case R.id.histogramimage:
+			if (originalBitmap != null) {
+				mDrawOnTop = new HistogramImage(ImageGalleryDemoActivity.this,
+						originalBitmap);
+				popup.setContentView(mDrawOnTop);
+
+				close = (ImageView) mDrawOnTop.findViewById(1);
+				
+				close.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						popup.dismiss();
+					}
+				});
+				
+				if (click) {
+					popup.showAtLocation(mDrawOnTop, Gravity.CENTER, 10, 10);
+					int w = (int) (width * 0.7);
+					int h = (int) (height * 0.7);
+					popup.update(0, 0, w, h);
+					click = false;
+				} else {
+					popup.dismiss();
+					click = true;
+				}
+			}
+			return true;
+			
+		case R.id.histogramcamera:
+			Intent hist = new Intent(ImageGalleryDemoActivity.this, HistogramRealTime.class);
+			startActivity(hist);
 			return true;
 
 		default:
@@ -589,10 +642,10 @@ public class ImageGalleryDemoActivity extends Activity {
 		}
 
 		createSmallerImage();
-		
+
 		Bitmap filterBitmap = BitmapFactory.decodeResource(this.getResources(),
 				R.drawable.filter);
-		
+
 		slideButton.setCompoundDrawablesWithIntrinsicBounds(null,
 				new BitmapDrawable(this.getResources(), filterBitmap), null,
 				null);
@@ -867,7 +920,8 @@ public class ImageGalleryDemoActivity extends Activity {
 				.setCancelable(false)
 				.setPositiveButton("DA", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						Intent intent = new Intent(getApplicationContext(), ImageGalleryDemoActivity.class);
+						Intent intent = new Intent(getApplicationContext(),
+								ImageGalleryDemoActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						intent.putExtra("EXIT", true);
 						startActivity(intent);

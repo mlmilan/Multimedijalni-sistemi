@@ -2,7 +2,7 @@
 <resources>
 	<!-- App -->
     <string name="hello">Hello World, Main!</string>
-    <string name="app_name">Android photoshop</string>
+    <string name="app_name">Android</string>
     
     <!-- Color Picker -->
     <string name="dialog_color_picker">Color Picker</string>
@@ -22,6 +22,8 @@
     <!--  Elements -->
     <string name="button_load">Ucitaj sliku</string>
     <string name="button_save">Sacuvaj</string>
+    <string name="button_histogramimage">Histogram</string>
+    <string name="button_histogramcamera">Histogram</string>
     <string name="message">Dobrodosli! Ovo je android aplikacija za obradu slika.</string>
     <string name="img">Glavna slika</string>
     <string name="img_invert">Filter</string>
@@ -45,6 +47,7 @@
     <string name="text_engraving">Engraving</string>
     <string name="text_smooth">Smooth</string>
     <string name="text_original">Original</string>
+    <string name="text_close">Close</string>
     <string name="text_color_picker">ColorPicker</string>
     <string name="text_filteri">Filteri</string>
     <string name="text_bw">Odaberite skalu za primenu crno-belog filtera:</string>

@@ -1,18 +1,50 @@
 package com.example.imagegallery;
 
-import java.nio.ByteBuffer;
+import java.io.IOException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
+import android.os.Bundle;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 
-public class DrawOnTop extends View {
+
+public class HistogramRealTime extends Activity {    
+    private Preview mPreview;
+    private DrawOnTop mDrawOnTop;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Hide the window title.
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // Create our Preview view and set it as the content of our activity.
+        // Create our DrawOnTop view.
+        mDrawOnTop = new DrawOnTop(this);
+        mPreview = new Preview(this, mDrawOnTop);
+        setContentView(mPreview);
+        addContentView(mDrawOnTop, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    }
+}
+
+//----------------------------------------------------------------------
+
+class DrawOnTop extends View {
 	Bitmap mBitmap;
 	Paint mPaintBlack;
 	Paint mPaintYellow;
@@ -27,11 +59,8 @@ public class DrawOnTop extends View {
 	int[] mBlueHistogram;
 	double[] mBinSquared;
 
-    public DrawOnTop(Context context, Bitmap b) {
+    public DrawOnTop(Context context) {
         super(context);
-        mBitmap = b;
-        mImageWidth = mBitmap.getWidth();
-        mImageHeight = mBitmap.getHeight();
         
         mPaintBlack = new Paint();
         mPaintBlack.setStyle(Paint.Style.FILL);
@@ -58,15 +87,9 @@ public class DrawOnTop extends View {
         mPaintBlue.setColor(Color.BLUE);
         mPaintBlue.setTextSize(25);
         
-        //mBitmap = null;,
-        mRGBData = new int[mImageWidth * mImageHeight]; 
-		mYUVData = new byte[mBitmap.getByteCount()]; 
-		
-		ByteBuffer buffer = ByteBuffer.allocate(mBitmap.getByteCount()); //Create a new buffer
-		mBitmap.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
-		
-		mYUVData = buffer.array();
-
+        mBitmap = null;
+        mYUVData = null;
+        mRGBData = null;
         mRedHistogram = new int[256];
         mGreenHistogram = new int[256];
         mBlueHistogram = new int[256];
@@ -88,13 +111,13 @@ public class DrawOnTop extends View {
         	int marginWidth = (canvasWidth - newImageWidth)/2;
         	        	
         	// Convert from YUV to RGB
-        //	decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
+        	decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
         	
-        	mBitmap.getPixels(mRGBData, 0, mBitmap.getWidth(), 0, 0, mBitmap.getWidth(), mBitmap.getHeight());
+        	//mBitmap.getPixels(mRGBData, 0, mBitmap.getWidth(), 0, 0, mBitmap.getWidth(), mBitmap.getHeight());
         	
         	// Draw bitmap
-        	//mBitmap.setPixels(mRGBData, 0, mImageWidth, 0, 0, 
-        			//mImageWidth, mImageHeight);
+        	mBitmap.setPixels(mRGBData, 0, mImageWidth, 0, 0, 
+        			mImageWidth, mImageHeight);
         	Rect src = new Rect(0, 0, mImageWidth, mImageHeight);
         	Rect dst = new Rect(marginWidth, 0, 
         			canvasWidth-marginWidth, canvasHeight);
@@ -165,14 +188,14 @@ public class DrawOnTop extends View {
         	float barWidth = ((float)newImageWidth) / 256;
         	float barMarginHeight = 2;
         	RectF barRect = new RectF();
-        	barRect.bottom = canvasHeight - 600;  // bilo 200
+        	barRect.bottom = canvasHeight - 600;
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
         		float prob = (float)mRedHistogram[bin] / (float)redHistogramSum;
         		barRect.top = barRect.bottom - 
-        			Math.min(200,prob*barMaxHeight) - barMarginHeight;  // bilo 80
+        			Math.min(200,prob*barMaxHeight) - barMarginHeight;
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintRed);
@@ -181,7 +204,7 @@ public class DrawOnTop extends View {
         	} // bin
         	
         	// Draw green intensity histogram
-        	barRect.bottom = canvasHeight - 300; // bilo 100
+        	barRect.bottom = canvasHeight - 300;
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
@@ -284,4 +307,86 @@ public class DrawOnTop extends View {
     		} // pix
     	}
     }
+} 
+
+// ----------------------------------------------------------------------
+
+class Preview extends SurfaceView implements SurfaceHolder.Callback {
+    SurfaceHolder mHolder;
+    Camera mCamera;
+    DrawOnTop mDrawOnTop;
+    boolean mFinished;
+
+    Preview(Context context, DrawOnTop drawOnTop) {
+        super(context);
+        
+        mDrawOnTop = drawOnTop;
+        mFinished = false;
+
+        // Install a SurfaceHolder.Callback so we get notified when the
+        // underlying surface is created and destroyed.
+        mHolder = getHolder();
+        mHolder.addCallback(this);
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+
+    public void surfaceCreated(SurfaceHolder holder) {
+        mCamera = Camera.open();
+        try {
+           mCamera.setPreviewDisplay(holder);
+           
+           // Preview callback used whenever new viewfinder frame is available
+           mCamera.setPreviewCallback(new PreviewCallback() {
+        	  public void onPreviewFrame(byte[] data, Camera camera)
+        	  {
+        		  if ( (mDrawOnTop == null) || mFinished )
+        			  return;
+        		  
+        		  if (mDrawOnTop.mBitmap == null)
+        		  {
+        			  // Initialize the draw-on-top companion
+        			  Camera.Parameters params = camera.getParameters();
+        			  mDrawOnTop.mImageWidth = params.getPreviewSize().width;
+        			  mDrawOnTop.mImageHeight = params.getPreviewSize().height;
+        			  mDrawOnTop.mBitmap = Bitmap.createBitmap(mDrawOnTop.mImageWidth, 
+        					  mDrawOnTop.mImageHeight, Bitmap.Config.RGB_565);
+        			  mDrawOnTop.mRGBData = new int[mDrawOnTop.mImageWidth * mDrawOnTop.mImageHeight]; 
+        			  mDrawOnTop.mYUVData = new byte[data.length];        			  
+        		  }
+        		  
+        		  // Pass YUV data to draw-on-top companion
+        		 System.arraycopy(data, 0, mDrawOnTop.mYUVData, 0, data.length);
+    			 mDrawOnTop.invalidate();
+        	  }
+           });
+        } 
+        catch (IOException exception) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // Surface will be destroyed when we return, so stop the preview.
+        // Because the CameraDevice object is not a shared resource, it's very
+        // important to release it when the activity is paused.
+    	mFinished = true;
+    	mCamera.setPreviewCallback(null);
+        mCamera.stopPreview();
+        mCamera.release();
+        mCamera = null;
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+        // Now that the size is known, set up the camera parameters and begin
+        // the preview.
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setPreviewSize(320, 240);
+        parameters.setPreviewFrameRate(15);
+        parameters.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        mCamera.setParameters(parameters);
+        mCamera.startPreview();
+    }
+
 }
