@@ -339,8 +339,8 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				if (click) {
 					popup.showAtLocation(mDrawOnTop, Gravity.CENTER, 10, 10);
-					int w = (int) (width * 0.7);
-					int h = (int) (height * 0.7);
+					int w = (int) (width * 0.85);
+					int h = (int) (height * 0.85);
 					popup.update(0, 0, w, h);
 					click = false;
 				} else {

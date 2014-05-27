@@ -184,7 +184,7 @@ class DrawOnTop extends View {
         	canvas.drawText(imageStdDevStr, marginWidth+10, 60, mPaintYellow);
         	
         	// Draw red intensity histogram
-        	float barMaxHeight = 3000;
+        	float barMaxHeight = 12000;
         	float barWidth = ((float)newImageWidth) / 256;
         	float barMarginHeight = 2;
         	RectF barRect = new RectF();
@@ -381,7 +381,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         // Now that the size is known, set up the camera parameters and begin
         // the preview.
         Camera.Parameters parameters = mCamera.getParameters();
-        parameters.setPreviewSize(320, 240);
+        parameters.setPreviewSize(320, 480); // bilo 240
         parameters.setPreviewFrameRate(15);
         parameters.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
