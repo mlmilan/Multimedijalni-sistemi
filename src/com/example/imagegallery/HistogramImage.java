@@ -578,7 +578,7 @@ public class HistogramImage extends RelativeLayout implements OnTouchListener {
 						"Broj piksela koji imaju osvetljenje plave boje koje ste odabrali ("
 								+ Integer.toString((int) (bright)) + ") je "
 								+ Integer.toString(numOfPxls) + ".",
-						Toast.LENGTH_SHORT).show();
+						Toast.LENGTH_SHORT).show(); 
 			}
 		}
 		}

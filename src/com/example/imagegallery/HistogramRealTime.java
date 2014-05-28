@@ -1,18 +1,25 @@
 package com.example.imagegallery;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -40,6 +47,7 @@ public class HistogramRealTime extends Activity {
         setContentView(mPreview);
         addContentView(mDrawOnTop, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
+    
 }
 
 //----------------------------------------------------------------------
@@ -307,19 +315,21 @@ class DrawOnTop extends View {
     		} // pix
     	}
     }
+    
+  
 } 
 
-// ----------------------------------------------------------------------
 
 class Preview extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     Camera mCamera;
     DrawOnTop mDrawOnTop;
     boolean mFinished;
+    Context mContext;
 
     Preview(Context context, DrawOnTop drawOnTop) {
         super(context);
-        
+        mContext = context;
         mDrawOnTop = drawOnTop;
         mFinished = false;
 
@@ -332,6 +342,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 
     public void surfaceCreated(SurfaceHolder holder) {
         mCamera = Camera.open();
+        setCameraDisplayOrientation();
         try {
            mCamera.setPreviewDisplay(holder);
            
@@ -346,10 +357,13 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         		  {
         			  // Initialize the draw-on-top companion
         			  Camera.Parameters params = camera.getParameters();
+        			  Log.d("Widht i height su: ", params.getPreviewSize().width + " " + params.getPreviewSize().height);
         			  mDrawOnTop.mImageWidth = params.getPreviewSize().width;
         			  mDrawOnTop.mImageHeight = params.getPreviewSize().height;
+     
         			  mDrawOnTop.mBitmap = Bitmap.createBitmap(mDrawOnTop.mImageWidth, 
         					  mDrawOnTop.mImageHeight, Bitmap.Config.RGB_565);
+        			  
         			  mDrawOnTop.mRGBData = new int[mDrawOnTop.mImageWidth * mDrawOnTop.mImageHeight]; 
         			  mDrawOnTop.mYUVData = new byte[data.length];        			  
         		  }
@@ -388,5 +402,45 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         mCamera.setParameters(parameters);
         mCamera.startPreview();
     }
+    
+    public void setCameraDisplayOrientation() 
+    {        
+         if (mCamera == null)
+         {
+             Log.d("tag","setCameraDisplayOrientation - camera null");
+             return;             
+         }
+
+         Camera.CameraInfo info = new Camera.CameraInfo();
+         Camera.getCameraInfo(CameraInfo.CAMERA_FACING_BACK, info);
+
+         WindowManager winManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+         int rotation = winManager.getDefaultDisplay().getRotation();
+
+         int degrees = 0;
+
+         switch (rotation) 
+         {
+             case Surface.ROTATION_0: degrees = 0; break;
+             case Surface.ROTATION_90: degrees = 90; break;
+             case Surface.ROTATION_180: degrees = 180; break;
+             case Surface.ROTATION_270: degrees = 270; break;
+         }
+
+         int result;
+         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) 
+         {
+             result = (info.orientation + degrees) % 360;
+             result = (360 - result) % 360;  // compensate the mirror
+         } else {  // back-facing
+             result = (info.orientation - degrees + 360) % 360;
+         }
+         mCamera.setDisplayOrientation(result);
+    }
+    
+
 
 }
+
+// ----------------------------------------------------------------------
+
