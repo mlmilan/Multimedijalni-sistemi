@@ -103,6 +103,12 @@ public class ImageGalleryDemoActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (getIntent().getBooleanExtra("EXIT", false)) {
+			finish();
+		}
+		
+		
 		setContentView(R.layout.filters);
 
 		Display display = getWindowManager().getDefaultDisplay();
@@ -132,9 +138,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		spec.setIndicator("Operations");
 		th.addTab(spec);
 
-		if (getIntent().getBooleanExtra("EXIT", false)) {
-			finish();
-		}
+		
 
 		// Button filter = (Button) findViewById(R.id.buttonFilter);
 		// Button histogram = (Button) findViewById(R.id.buttonHistogram);

@@ -1,25 +1,20 @@
 package com.example.imagegallery;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
+import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -27,6 +22,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 
+// ----------------------------------------------------------------------
 
 public class HistogramRealTime extends Activity {    
     private Preview mPreview;
@@ -47,7 +43,6 @@ public class HistogramRealTime extends Activity {
         setContentView(mPreview);
         addContentView(mDrawOnTop, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
-    
 }
 
 //----------------------------------------------------------------------
@@ -117,6 +112,7 @@ class DrawOnTop extends View {
         	int newImageWidth = canvasWidth;
         	int newImageHeight = canvasHeight;
         	int marginWidth = (canvasWidth - newImageWidth)/2;
+        
         	        	
         	// Convert from YUV to RGB
         	decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
@@ -130,6 +126,10 @@ class DrawOnTop extends View {
         	Rect dst = new Rect(marginWidth, 0, 
         			canvasWidth-marginWidth, canvasHeight);
         	canvas.drawBitmap(mBitmap, src, dst, mPaintBlack);
+        	
+            canvas.save();
+        	canvas.translate(canvas.getHeight()/(float)1.3-2, canvas.getHeight()-2); //canvas.getWidth()/2
+        	canvas.rotate(-90);
         	
         	// Draw black borders        	        	
         	canvas.drawRect(0, 0, marginWidth, canvasHeight, mPaintBlack);
@@ -174,36 +174,36 @@ class DrawOnTop extends View {
         	double imageRedStdDev = Math.sqrt( imageRed2ndMoment - imageRedMean*imageRedMean );
         	double imageGreenStdDev = Math.sqrt( imageGreen2ndMoment - imageGreenMean*imageGreenMean );
         	double imageBlueStdDev = Math.sqrt( imageBlue2ndMoment - imageBlueMean*imageBlueMean );
-        	
+        	//canvas.rotate(270);  // dodato
         	// Draw mean
         	String imageMeanStr = "Mean (R,G,B): " + String.format("%.4g", imageRedMean) + ", " + String.format("%.4g", imageGreenMean) + ", " + String.format("%.4g", imageBlueMean);
-        	canvas.drawText(imageMeanStr, marginWidth+10-1, 30-1, mPaintBlack);
-        	canvas.drawText(imageMeanStr, marginWidth+10+1, 30-1, mPaintBlack);
-        	canvas.drawText(imageMeanStr, marginWidth+10+1, 30+1, mPaintBlack);
-        	canvas.drawText(imageMeanStr, marginWidth+10-1, 30+1, mPaintBlack);
-        	canvas.drawText(imageMeanStr, marginWidth+10, 30, mPaintYellow);
+        	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5-1, mPaintBlack);  // bilo marginWidth+10-1, 30-1
+        	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5-1, mPaintBlack);  // bilo marginWidth+10+1, 30-1
+        	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5+1, mPaintBlack);  // bilo marginWidth+10+1, 30+1
+        	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5+1, mPaintBlack);  // bilo marginWidth+10-1, 30+1
+        	canvas.drawText(imageMeanStr, marginWidth+10, -canvasWidth/(float)2.5, mPaintYellow);     // bilo marginWidth+10, 30
         	
         	// Draw standard deviation
         	String imageStdDevStr = "Std Dev (R,G,B): " + String.format("%.4g", imageRedStdDev) + ", " + String.format("%.4g", imageGreenStdDev) + ", " + String.format("%.4g", imageBlueStdDev);
-        	canvas.drawText(imageStdDevStr, marginWidth+10-1, 60-1, mPaintBlack);
-        	canvas.drawText(imageStdDevStr, marginWidth+10+1, 60-1, mPaintBlack);
-        	canvas.drawText(imageStdDevStr, marginWidth+10+1, 60+1, mPaintBlack);
-        	canvas.drawText(imageStdDevStr, marginWidth+10-1, 60+1, mPaintBlack);
-        	canvas.drawText(imageStdDevStr, marginWidth+10, 60, mPaintYellow);
+        	canvas.drawText(imageStdDevStr, marginWidth+10-1, -canvasWidth/(float)2.5+31, mPaintBlack); // bilo 60-1
+        	canvas.drawText(imageStdDevStr, marginWidth+10+1, -canvasWidth/(float)2.5+31, mPaintBlack); // bilo 60-1
+        	canvas.drawText(imageStdDevStr, marginWidth+10+1, -canvasWidth/(float)2.5+33, mPaintBlack); // bilo 60+1
+        	canvas.drawText(imageStdDevStr, marginWidth+10-1, -canvasWidth/(float)2.5+33, mPaintBlack); // bilo 60+1
+        	canvas.drawText(imageStdDevStr, marginWidth+10, -canvasWidth/(float)2.5+32, mPaintYellow);    // bilo 60
         	
         	// Draw red intensity histogram
-        	float barMaxHeight = 12000;
+        	float barMaxHeight = 12000;  // bilo 3000
         	float barWidth = ((float)newImageWidth) / 256;
         	float barMarginHeight = 2;
         	RectF barRect = new RectF();
-        	barRect.bottom = canvasHeight - 600;
+        	barRect.bottom = canvasHeight - 600;  // bilo -200
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
         		float prob = (float)mRedHistogram[bin] / (float)redHistogramSum;
         		barRect.top = barRect.bottom - 
-        			Math.min(200,prob*barMaxHeight) - barMarginHeight;
+        			Math.min(200,prob*barMaxHeight) - barMarginHeight;  // bilo min 80
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintRed);
@@ -212,12 +212,12 @@ class DrawOnTop extends View {
         	} // bin
         	
         	// Draw green intensity histogram
-        	barRect.bottom = canvasHeight - 300;
+        	barRect.bottom = canvasHeight - 300;  // bilo -100
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
-        		barRect.top = barRect.bottom - Math.min(200, ((float)mGreenHistogram[bin])/((float)greenHistogramSum) * barMaxHeight) - barMarginHeight;
+        		barRect.top = barRect.bottom - Math.min(200, ((float)mGreenHistogram[bin])/((float)greenHistogramSum) * barMaxHeight) - barMarginHeight; // bilo min 80
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintGreen);
@@ -231,7 +231,7 @@ class DrawOnTop extends View {
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
-        		barRect.top = barRect.bottom - Math.min(200, ((float)mBlueHistogram[bin])/((float)blueHistogramSum) * barMaxHeight) - barMarginHeight;
+        		barRect.top = barRect.bottom - Math.min(200, ((float)mBlueHistogram[bin])/((float)blueHistogramSum) * barMaxHeight) - barMarginHeight;  // bilo min 80
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintBlue);
@@ -241,6 +241,8 @@ class DrawOnTop extends View {
         } // end if statement
         
         super.onDraw(canvas);
+        
+        canvas.restore();
         
     } // end onDraw method
 
@@ -315,21 +317,19 @@ class DrawOnTop extends View {
     		} // pix
     	}
     }
-    
-  
 } 
 
+// ----------------------------------------------------------------------
 
 class Preview extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     Camera mCamera;
     DrawOnTop mDrawOnTop;
     boolean mFinished;
-    Context mContext;
 
     Preview(Context context, DrawOnTop drawOnTop) {
         super(context);
-        mContext = context;
+        
         mDrawOnTop = drawOnTop;
         mFinished = false;
 
@@ -342,7 +342,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 
     public void surfaceCreated(SurfaceHolder holder) {
         mCamera = Camera.open();
-        setCameraDisplayOrientation();
         try {
            mCamera.setPreviewDisplay(holder);
            
@@ -357,13 +356,10 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         		  {
         			  // Initialize the draw-on-top companion
         			  Camera.Parameters params = camera.getParameters();
-        			  Log.d("Widht i height su: ", params.getPreviewSize().width + " " + params.getPreviewSize().height);
         			  mDrawOnTop.mImageWidth = params.getPreviewSize().width;
         			  mDrawOnTop.mImageHeight = params.getPreviewSize().height;
-     
         			  mDrawOnTop.mBitmap = Bitmap.createBitmap(mDrawOnTop.mImageWidth, 
         					  mDrawOnTop.mImageHeight, Bitmap.Config.RGB_565);
-        			  
         			  mDrawOnTop.mRGBData = new int[mDrawOnTop.mImageWidth * mDrawOnTop.mImageHeight]; 
         			  mDrawOnTop.mYUVData = new byte[data.length];        			  
         		  }
@@ -395,52 +391,12 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         // Now that the size is known, set up the camera parameters and begin
         // the preview.
         Camera.Parameters parameters = mCamera.getParameters();
-        parameters.setPreviewSize(320, 480); // bilo 240
+        parameters.setPreviewSize(320, 240);
         parameters.setPreviewFrameRate(15);
         parameters.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         mCamera.setParameters(parameters);
         mCamera.startPreview();
     }
-    
-    public void setCameraDisplayOrientation() 
-    {        
-         if (mCamera == null)
-         {
-             Log.d("tag","setCameraDisplayOrientation - camera null");
-             return;             
-         }
-
-         Camera.CameraInfo info = new Camera.CameraInfo();
-         Camera.getCameraInfo(CameraInfo.CAMERA_FACING_BACK, info);
-
-         WindowManager winManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-         int rotation = winManager.getDefaultDisplay().getRotation();
-
-         int degrees = 0;
-
-         switch (rotation) 
-         {
-             case Surface.ROTATION_0: degrees = 0; break;
-             case Surface.ROTATION_90: degrees = 90; break;
-             case Surface.ROTATION_180: degrees = 180; break;
-             case Surface.ROTATION_270: degrees = 270; break;
-         }
-
-         int result;
-         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) 
-         {
-             result = (info.orientation + degrees) % 360;
-             result = (360 - result) % 360;  // compensate the mirror
-         } else {  // back-facing
-             result = (info.orientation - degrees + 360) % 360;
-         }
-         mCamera.setDisplayOrientation(result);
-    }
-    
-
 
 }
-
-// ----------------------------------------------------------------------
-
