@@ -26,6 +26,7 @@ import com.example.imagegallery.utils.Save;
 import com.example.imagegallery.utils.WrappingSlidingDrawer;
 
 import net.viralpatel.android.imagegalleray.R;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -59,14 +60,18 @@ import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
 
 public class ImageGalleryDemoActivity extends Activity {
 
 	private static int RESULT_LOAD_IMAGE = 1;
+	private static int RESULT_LOAD_OPERATIONS_IMAGE = 2;
 	private String picturePath;
+	private String pictureOperationsPath;
 	public static final String PREFS_NAME = "picturePath";
-	private Bitmap changeBitmap = null;
-	private Bitmap originalBitmap = null, first_original = null;
+	private Bitmap changeBitmap = null, changeBitmapOperations = null;
+	private Bitmap originalBitmap = null, first_original = null,
+			originalOperationsBitmap = null, first_original_operations = null;
 	private ImageView imageView, imageViewResizedInvert,
 			imageViewResizedBlackWhite, imageViewResizedBrightness,
 			imageViewResizedContrast, imageViewResizedFlipVertical,
@@ -77,9 +82,13 @@ public class ImageGalleryDemoActivity extends Activity {
 			imageViewResizedGausianBlur, imageViewResizedSharpen,
 			imageViewResizedEdge, imageViewResizedEmboss,
 			imageViewResizedEngraving, imageViewResizedSmooth,
-			imageViewResizedOriginal;
+			imageViewResizedOriginal, imageViewOperations, imageViewResizedOriginalOperations,
+			imageViewResizedBlend, imageViewResizedMultiply, imageViewResizedDifference,
+			imageViewResizedLighter, imageViewResizedDarker;
 	private Button slideButton;
+	private Button slideButtonOperations;
 	private WrappingSlidingDrawer slidingDrawer;
+	private WrappingSlidingDrawer slidingDrawerOperations;
 	private HistogramImage mDrawOnTop;
 	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
 	private boolean first = true;
@@ -100,6 +109,7 @@ public class ImageGalleryDemoActivity extends Activity {
 	private boolean click = true;
 	private ImageView close;
 	/** Called when the activity is first created. */
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -120,10 +130,14 @@ public class ImageGalleryDemoActivity extends Activity {
 		popup = new PopupWindow(this);
 
 		slideButton = (Button) findViewById(R.id.handle);
+		slideButtonOperations = (Button) findViewById(R.id.handleOperations);
 		slidingDrawer = (WrappingSlidingDrawer) findViewById(R.id.drawer);
+		slidingDrawerOperations = (WrappingSlidingDrawer) findViewById(R.id.drawerOperations);
 
 		slideButton.setVisibility(View.GONE);
-		slidingDrawer.setVisibility(View.GONE);
+		slidingDrawer.setVisibility(View.GONE);	
+		slideButtonOperations.setVisibility(View.GONE);
+		slidingDrawerOperations.setVisibility(View.GONE);
 
 		TabHost th = (TabHost) findViewById(R.id.tabhost);
 		th.setup();
@@ -137,16 +151,14 @@ public class ImageGalleryDemoActivity extends Activity {
 		spec.setContent(R.id.tab2);
 		spec.setIndicator("Operations");
 		th.addTab(spec);
-
 		
-
 		// Button filter = (Button) findViewById(R.id.buttonFilter);
 		// Button histogram = (Button) findViewById(R.id.buttonHistogram);
 		// Button grafik = (Button) findViewById(R.id.buttonGrafik);
 		// Button colorPicker = (Button) findViewById(R.id.buttonColorPicker);
 		imageView = (ImageView) findViewById(R.id.imgView);
 		imageViewResizedOriginal = (ImageView) findViewById(R.id.imgViewOriginal);
-		imageViewResizedInvert = (ImageView) findViewById(R.id.imgViewInvert);
+		imageViewResizedInvert = (ImageView) findViewById(R.id.imgViewInvert);		
 		imageViewResizedBlackWhite = (ImageView) findViewById(R.id.imgViewBlackWhite);
 		imageViewResizedBrightness = (ImageView) findViewById(R.id.imgViewBrightness);
 		imageViewResizedContrast = (ImageView) findViewById(R.id.imgViewContrast);
@@ -166,10 +178,17 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedEngraving = (ImageView) findViewById(R.id.imgViewEngraving);
 		imageViewResizedSmooth = (ImageView) findViewById(R.id.imgViewSmooth);
 
+		imageViewOperations = (ImageView) findViewById(R.id.imgViewOperations);
+		imageViewResizedOriginalOperations = (ImageView) findViewById(R.id.imgViewOriginalOperations);
+		imageViewResizedBlend = (ImageView) findViewById(R.id.imgViewBlend);
+		imageViewResizedMultiply = (ImageView) findViewById(R.id.imgViewMultiply);
+		imageViewResizedDifference = (ImageView) findViewById(R.id.imgViewDifference);
+		imageViewResizedLighter = (ImageView) findViewById(R.id.imgViewLighter);
+		imageViewResizedDarker = (ImageView) findViewById(R.id.imgViewDarker);
 		/*
 		 * filter.setOnClickListener(new View.OnClickListener() {
 		 * 
-		 * @Override public void onClick(View arg0) { // TODO Auto-generated
+		 * @Override public void onClick(View arg0) {
 		 * method stub
 		 * 
 		 * 
@@ -208,7 +227,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		 * 
 		 * } }); histogram.setOnClickListener(new View.OnClickListener() {
 		 * 
-		 * @Override public void onClick(View arg0) { // TODO Auto-generated
+		 * @Override public void onClick(View arg0) { 
 		 * method stub mDrawOnTop = new DrawOnTop(ImageGalleryDemoActivity.this,
 		 * originalBitmap);
 		 * ImageGalleryDemoActivity.this.addContentView(mDrawOnTop, new
@@ -221,7 +240,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		 * 
 		 * grafik.setOnClickListener(new View.OnClickListener() {
 		 * 
-		 * @Override public void onClick(View arg0) { // TODO Auto-generated
+		 * @Override public void onClick(View arg0) {
 		 * method stub // graph with dynamically genereated horizontal and
 		 * vertical labels GraphViewSeries exampleSeries = new
 		 * GraphViewSeries(new GraphViewData[] { new GraphViewData(tElapsed1,
@@ -239,8 +258,31 @@ public class ImageGalleryDemoActivity extends Activity {
 		 */
 	}
 
+	private void createSmallerImageOperations() {
+		Bitmap resized = Bitmap.createScaledBitmap(originalBitmap,
+				(int) (originalBitmap.getWidth() * 0.4),
+				(int) (originalBitmap.getHeight() * 0.4), true);
+		Bitmap resizedOperation = Bitmap.createScaledBitmap(originalOperationsBitmap,
+				(int) (originalOperationsBitmap.getWidth() * 0.4),
+				(int) (originalOperationsBitmap.getHeight() * 0.4), true);
+		Bitmap resizedOriginalOperation = Bitmap.createScaledBitmap(first_original_operations,
+				(int) (first_original_operations.getWidth() * 0.4),
+				(int) (first_original_operations.getHeight() * 0.4), true);
+		Bitmap resizedOperationBlend = Operation.blend(resized, resizedOperation, 0.5);
+		Bitmap resizedOperationMultiply = Operation.multiply(resized, resizedOperation);
+		Bitmap resizedOperationDifference = Operation.difference(resized, resizedOperation);
+		Bitmap resizedOperationLighter = Operation.lighter(resized, resizedOperation);
+		Bitmap resizedOperationDarker = Operation.darker(resized, resizedOperation);
+		imageViewResizedOriginalOperations.setImageBitmap(resizedOriginalOperation);
+		imageViewResizedBlend.setImageBitmap(resizedOperationBlend);
+		imageViewResizedMultiply.setImageBitmap(resizedOperationMultiply);
+		imageViewResizedDifference.setImageBitmap(resizedOperationDifference);
+		imageViewResizedLighter.setImageBitmap(resizedOperationLighter);
+		imageViewResizedDarker.setImageBitmap(resizedOperationDarker);
+	}
+	
 	private void createSmallerImage() {
-		// TODO Auto-generated method stub
+		
 
 		Bitmap resized = Bitmap.createScaledBitmap(originalBitmap,
 				(int) (originalBitmap.getWidth() * 0.4),
@@ -277,8 +319,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedBrightness.setImageBitmap(resizedFilterBrightness);
 		imageViewResizedContrast.setImageBitmap(resizedFilterContrast);
 		imageViewResizedFlipVertical.setImageBitmap(resizedFilterFlipVertical);
-		imageViewResizedFlipHorizontal
-				.setImageBitmap(resizedFilterFlipHorizontal);
+		imageViewResizedFlipHorizontal.setImageBitmap(resizedFilterFlipHorizontal);
 		imageViewResizedGrayscale.setImageBitmap(resizedFilterGrayscale);
 		imageViewResizedGamma.setImageBitmap(resizedFilterGamma);
 		imageViewResizedColorRGB.setImageBitmap(resizedFilterColorRGB);
@@ -316,7 +357,17 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			startActivityForResult(i, RESULT_LOAD_IMAGE);
 			return true;
+		case R.id.loadOperationsImage:
+			if (originalBitmap == null) {
+				Toast.makeText(this, "Ucitajte prvo glavnu sliku!", Toast.LENGTH_LONG).show();
+				return false;
+			}
+			Intent j = new Intent(
+					Intent.ACTION_PICK,
+					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
+			startActivityForResult(j, RESULT_LOAD_OPERATIONS_IMAGE);		
+			return true;
 		case R.id.saveimage:
 			Save saveFile = new Save();
 			if (originalBitmap != null)
@@ -336,7 +387,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
+						
 						popup.dismiss();
 					}
 				});
@@ -393,15 +444,199 @@ public class ImageGalleryDemoActivity extends Activity {
 			loadImages();
 
 		}
+		
+		if (requestCode == RESULT_LOAD_OPERATIONS_IMAGE && resultCode == RESULT_OK
+				&& null != data) {
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+			Cursor cursor = getContentResolver().query(selectedImage,
+					filePathColumn, null, null, null);
+			cursor.moveToFirst();
+
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			picturePath = cursor.getString(columnIndex);
+			Log.d("PUTANJA", picturePath);
+			cursor.close();
+
+			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putString("putanja", picturePath);
+
+			// Commit the edits!
+			editor.commit();
+
+			loadOperationsImages();
+
+		}
+	}
+	
+	private void loadOperationsImages() {
+		// Restore preferences
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		pictureOperationsPath = settings.getString("putanja", "");
+
+		File imageF = new File(picturePath);
+		try {
+			BitmapScaler scaler = new BitmapScaler(imageF, 512);
+			originalOperationsBitmap = scaler.getScaled();
+
+			ExifInterface exif = new ExifInterface(picturePath);
+			int orientation = exif.getAttributeInt(
+					ExifInterface.TAG_ORIENTATION, 1);
+			Log.d("EXIF", "Exif: " + orientation);
+			Matrix matrix = new Matrix();
+			if (orientation == 6) {
+				matrix.postRotate(90);
+			} else if (orientation == 3) {
+				matrix.postRotate(180);
+			} else if (orientation == 8) {
+				matrix.postRotate(270);
+			}
+			
+			originalOperationsBitmap = Bitmap.createBitmap(originalOperationsBitmap, 0, 0,
+					originalOperationsBitmap.getWidth(), originalOperationsBitmap.getHeight(),
+					matrix, true); // rotating bitmap
+			first_original_operations = Bitmap.createBitmap(originalOperationsBitmap);
+			if (originalOperationsBitmap.getWidth() <= originalOperationsBitmap.getHeight())
+				imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+			else
+				imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+			imageViewOperations.setImageBitmap(originalOperationsBitmap);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		createSmallerImageOperations();
+		
+		Bitmap filterBitmap = BitmapFactory.decodeResource(this.getResources(),
+				R.drawable.filter);
+
+		slideButtonOperations.setCompoundDrawablesWithIntrinsicBounds(null,
+				new BitmapDrawable(this.getResources(), filterBitmap), null,
+				null);
+		slideButtonOperations.setVisibility(View.VISIBLE);
+		slidingDrawerOperations.setVisibility(View.VISIBLE);
+		
+		
+		imageViewResizedOriginalOperations.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				changeBitmapOperations = Bitmap.createBitmap(first_original_operations);
+				originalOperationsBitmap.recycle();
+				originalOperationsBitmap = null;
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				createSmallerImageOperations();
+			}
+		});
+		
+		imageViewResizedBlend.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				changeBitmapOperations = Operation.blend(originalBitmap, originalOperationsBitmap, 0.5);
+				originalOperationsBitmap.recycle();
+				originalOperationsBitmap = null;
+				
+				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
+					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+				else
+					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+				
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+			}
+		});
+		
+		imageViewResizedMultiply.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				changeBitmapOperations = Operation.multiply(originalBitmap, originalOperationsBitmap);
+				originalOperationsBitmap.recycle();
+				originalOperationsBitmap = null;
+				
+				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
+					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+				else
+					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+				
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+			}
+		});
+		
+		imageViewResizedDifference.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				changeBitmapOperations = Operation.difference(originalBitmap, originalOperationsBitmap);
+				originalOperationsBitmap.recycle();
+				originalOperationsBitmap = null;
+				
+				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
+					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+				else
+					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+				
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+			}
+		});
+		
+		imageViewResizedLighter.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				changeBitmapOperations = Operation.lighter(originalBitmap, originalOperationsBitmap);
+				originalOperationsBitmap.recycle();
+				originalOperationsBitmap = null;
+				
+				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
+					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+				else
+					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+				
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+			}
+		});
+		
+		imageViewResizedDarker.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+				changeBitmapOperations = Operation.darker(originalBitmap, originalOperationsBitmap);
+				originalOperationsBitmap.recycle();
+				originalOperationsBitmap = null;
+				
+				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
+					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+				else
+					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+				
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+			}
+		});
+
 	}
 
 	private void loadImages() {
-		// TODO Auto-generated method stub
+		
 		listenerColor = new OnColorPickerListener() {
 
 			@Override
 			public void onOk(ColorPickerDialog dialog, int color) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				ccolor = color;
@@ -415,7 +650,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(ColorPickerDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -424,7 +659,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(BlackWhiteDialog dialog, int scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				sscale = scale;
@@ -438,7 +673,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(BlackWhiteDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -447,7 +682,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(BrightnessDialog dialog, int scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				bright = scale;
@@ -461,7 +696,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(BrightnessDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -470,7 +705,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(ContrastDialog dialog, int scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				contrast = scale;
@@ -484,7 +719,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(ContrastDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -493,7 +728,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(GammaDialog dialog, double scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				gamma = scale;
@@ -508,7 +743,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(GammaDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -518,7 +753,7 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onOk(ColorDialog dialog, double red, double green,
 					double blue) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				rred = red;
@@ -535,7 +770,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(ColorDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -544,7 +779,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(SaturationDialog dialog, float scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				saturation = scale;
@@ -559,7 +794,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(SaturationDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -568,7 +803,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(HueDialog dialog, int scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				hue = scale;
@@ -582,7 +817,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(HueDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -591,7 +826,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(GausianBlurDialog dialog, double scale) {
-				// TODO Auto-generated method stub
+				
 				// Toast.makeText(this, "Boja: " + color,
 				// Toast.LENGTH_LONG).show();
 				ssigma = scale;
@@ -605,7 +840,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onCancel(GausianBlurDialog dialog) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		};
@@ -641,7 +876,6 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setScaleType(ScaleType.FIT_CENTER);
 			imageView.setImageBitmap(originalBitmap);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -659,7 +893,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Bitmap.createBitmap(first_original);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -673,7 +907,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Filter.invert(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -687,7 +921,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						BlackWhiteDialog dialog = new BlackWhiteDialog(
 								ImageGalleryDemoActivity.this,
 								listenerBlackWhite);
@@ -699,7 +933,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						BrightnessDialog dialog = new BrightnessDialog(
 								ImageGalleryDemoActivity.this,
 								listenerBrightness);
@@ -710,7 +944,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				ContrastDialog dialog = new ContrastDialog(
 						ImageGalleryDemoActivity.this, listenerContrast);
 				dialog.show();
@@ -721,7 +955,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						changeBitmap = Filter.flipVertical(originalBitmap);
 						originalBitmap.recycle();
 						originalBitmap = null;
@@ -735,7 +969,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						changeBitmap = Filter.flipHorizontal(originalBitmap);
 						originalBitmap.recycle();
 						originalBitmap = null;
@@ -749,7 +983,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						changeBitmap = Filter.grayscale(originalBitmap);
 						originalBitmap.recycle();
 						originalBitmap = null;
@@ -762,7 +996,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				GammaDialog dialog = new GammaDialog(
 						ImageGalleryDemoActivity.this, listenerGamma);
 				dialog.show();
@@ -772,7 +1006,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				ColorDialog dialog = new ColorDialog(
 						ImageGalleryDemoActivity.this, listenerRGB);
 				dialog.show();
@@ -783,7 +1017,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						SaturationDialog dialog = new SaturationDialog(
 								ImageGalleryDemoActivity.this,
 								listenerSaturation);
@@ -794,7 +1028,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				HueDialog dialog = new HueDialog(ImageGalleryDemoActivity.this,
 						listenerHue);
 				dialog.show();
@@ -804,7 +1038,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 
 				ColorPickerDialog dialog = new ColorPickerDialog(
 						ImageGalleryDemoActivity.this, Color
@@ -818,7 +1052,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Filter.blur(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -832,7 +1066,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						GausianBlurDialog dialog = new GausianBlurDialog(
 								ImageGalleryDemoActivity.this,
 								listenerGausianBlur);
@@ -843,7 +1077,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Filter.sharpen(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -856,7 +1090,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Filter.edge(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -869,7 +1103,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Filter.emboss(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -883,7 +1117,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						// TODO Auto-generated method stub
+						
 						changeBitmap = Filter.engraving(originalBitmap);
 						originalBitmap.recycle();
 						originalBitmap = null;
@@ -896,7 +1130,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				changeBitmap = Filter.smooth(originalBitmap);
 				originalBitmap.recycle();
 				originalBitmap = null;
@@ -910,7 +1144,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
+		
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				ImageGalleryDemoActivity.this);

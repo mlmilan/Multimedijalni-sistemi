@@ -523,9 +523,179 @@
 				
 				
 			</FrameLayout>
+			<FrameLayout 
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			    android:id="@+id/tab2">
 			
-			<LinearLayout android:layout_width="match_parent" android:orientation="vertical"
-			         	    android:layout_height="match_parent" android:id="@+id/tab2"></LinearLayout>
+				<ImageView
+				    android:id="@+id/imgViewOperations"
+				    android:layout_width="fill_parent"
+				    android:layout_height="fill_parent"
+				    android:contentDescription="@string/img">			
+				</ImageView>
+				
+				<com.example.imagegallery.utils.WrappingSlidingDrawer
+			        android:id="@+id/drawerOperations"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="bottom"
+			        android:content="@+id/contentOperations"
+			        android:handle="@+id/handleOperations"
+			        android:orientation="vertical"
+			        android:padding="10dip" >
+			       
+				    <Button
+			            android:id="@+id/handleOperations"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:text="@string/text_operacije" >
+			        </Button>
+							
+					<HorizontalScrollView
+				        android:id="@+id/contentOperations"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content" 
+				        android:layout_gravity="bottom">
+					
+						
+						<RelativeLayout
+						    android:id="@+id/contentLayoutOperations"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_marginBottom="5dip"
+						    android:layout_gravity="bottom"
+						    android:background="@android:color/transparent" >
+							
+							<TextView
+			            		android:id="@+id/tvOriginalOperations"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_original"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" />
+				    
+				    		<ImageView
+				    			android:id="@+id/imgViewOriginalOperations"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="5dip"
+				    			android:layout_below="@+id/tvOriginalOperations" >				         
+				     		</ImageView>
+				   				   
+				   			<TextView
+			            		android:id="@+id/tvBlend"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_blend"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold"
+			            		android:layout_alignLeft="@+id/imgViewBlend" />	
+			            					    
+				    		<ImageView
+				    			android:id="@+id/imgViewBlend"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="5dip"
+				    			android:layout_toRightOf="@+id/imgViewOriginalOperations"
+				    			android:layout_below="@+id/tvBlend" >
+						     </ImageView>
+				         
+						    <TextView
+			            		android:id="@+id/tvMultiply"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_multiply"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" 
+			            		android:layout_alignLeft="@+id/imgViewMultiply"/>
+				    		<ImageView
+				    			android:id="@+id/imgViewMultiply"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="5dip"
+				    			android:layout_toRightOf="@+id/imgViewBlend"
+				    			android:layout_below="@+id/tvMultiply">
+				        	</ImageView>
+				        
+				    		<TextView
+			            		android:id="@+id/tvDifference"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_difference"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" 
+			            		android:layout_alignLeft="@+id/imgViewDifference"/>
+				    		<ImageView
+				    			android:id="@+id/imgViewDifference"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="5dip"
+				    			android:layout_toRightOf="@+id/imgViewMultiply"
+				    			android:layout_below="@+id/tvDifference">
+				        	</ImageView>	
+				        	
+				    		<TextView
+			            		android:id="@+id/tvLighter"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_lighter"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" 
+			            		android:layout_alignLeft="@+id/imgViewLighter"/>
+				    		<ImageView
+				    			android:id="@+id/imgViewLighter"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="5dip"
+				    			android:layout_toRightOf="@+id/imgViewDifference"
+				    			android:layout_below="@+id/tvLighter">	
+				    		</ImageView>	
+				    		<TextView
+			            		android:id="@+id/tvDarker"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_darker"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" 
+			            		android:layout_alignLeft="@+id/imgViewDarker"/>
+				    		<ImageView
+				    			android:id="@+id/imgViewDarker"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="5dip"
+				    			android:layout_toRightOf="@+id/imgViewLighter"
+				    			android:layout_below="@+id/tvDarker">	
+				    		</ImageView>	
+						</RelativeLayout>
+					</HorizontalScrollView>
+				</com.example.imagegallery.utils.WrappingSlidingDrawer>
+
+			</FrameLayout>
          </FrameLayout>
     </LinearLayout>
 </TabHost>

@@ -38,8 +38,13 @@
     <string name="text_colorRGB">ColorRGB</string>
     <string name="text_saturation">Saturation</string>
     <string name="text_hue">Hue</string>
+    <string name="text_multiply">Multiply</string>
+    <string name="text_difference">Difference</string>
+    <string name="text_lighter">Lighter</string>    
+    <string name="text_darker">Darker</string>    
     <string name="text_shading">Shading</string>
     <string name="text_blur">Blur</string>
+    <string name="text_blend">Blend</string>
     <string name="text_gausian_blur">GausianBlur</string>
     <string name="text_sharpen">Sharpen</string>
     <string name="text_edge">Edge</string>
@@ -50,6 +55,7 @@
     <string name="text_close">Close</string>
     <string name="text_color_picker">ColorPicker</string>
     <string name="text_filteri">Filteri</string>
+    <string name="text_operacije">Operacije</string>
     <string name="text_bw">Odaberite skalu za primenu crno-belog filtera:</string>
     <string name="text_brightness_text">Odaberite vrednost osvetljaja koji ce biti primenjen na slici:</string>
     <string name="text_contrast_text">Odaberite vrednost kontrasta koji ce biti primenjen na slici:</string>
