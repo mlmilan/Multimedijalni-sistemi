@@ -26,18 +26,19 @@ public final class R {
         public static final int ambilwarna_cursor=0x7f020002;
         public static final int ambilwarna_hue=0x7f020003;
         public static final int ambilwarna_target=0x7f020004;
-        public static final int camera=0x7f020005;
-        public static final int close=0x7f020006;
-        public static final int filter=0x7f020007;
-        public static final int histogram=0x7f020008;
-        public static final int hue=0x7f020009;
-        public static final int icon=0x7f02000a;
-        public static final int images=0x7f02000b;
-        public static final int load_image=0x7f02000c;
-        public static final int logo_etf=0x7f02000d;
-        public static final int maximize=0x7f02000e;
-        public static final int restore=0x7f02000f;
-        public static final int save=0x7f020010;
+        public static final int blend=0x7f020005;
+        public static final int camera=0x7f020006;
+        public static final int close=0x7f020007;
+        public static final int filter=0x7f020008;
+        public static final int histogram=0x7f020009;
+        public static final int hue=0x7f02000a;
+        public static final int icon=0x7f02000b;
+        public static final int images=0x7f02000c;
+        public static final int load_image=0x7f02000d;
+        public static final int logo_etf=0x7f02000e;
+        public static final int maximize=0x7f02000f;
+        public static final int restore=0x7f020010;
+        public static final int save=0x7f020011;
     }
     public static final class id {
         public static final int ambilwarna_cursor=0x7f080003;

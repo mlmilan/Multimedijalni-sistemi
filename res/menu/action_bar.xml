@@ -7,7 +7,7 @@
           android:showAsAction="always" />
     
     <item android:id="@+id/loadOperationsImage"
-          android:icon="@drawable/load_image"
+          android:icon="@drawable/blend"
           android:title="@string/button_load"
           android:showAsAction="always" />
     
