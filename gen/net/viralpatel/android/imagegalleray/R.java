@@ -41,6 +41,7 @@ public final class R {
         public static final int pie=0x7f020011;
         public static final int restore=0x7f020012;
         public static final int save=0x7f020013;
+        public static final int statistika=0x7f020014;
     }
     public static final class id {
         public static final int ambilwarna_cursor=0x7f080003;

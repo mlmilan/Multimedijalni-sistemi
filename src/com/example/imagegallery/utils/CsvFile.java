@@ -61,7 +61,7 @@ public class CsvFile {
 
 	}
 	
-	public long findAverage(String filter) {   // vraca zbir vremena izvrsavanja odgovarajuceg filtera
+	public double findAverage(String filter) {   // vraca zbir vremena izvrsavanja odgovarajuceg filtera
 
 		long ukupno_vreme = 0;
 		int broj_izvrsavanja = 0;

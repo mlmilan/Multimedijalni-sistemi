@@ -5,7 +5,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.example.imagegallery.dialogs.BlendDialog;
 import com.example.imagegallery.dialogs.BlendDialog.OnBlendListener;
@@ -29,6 +34,7 @@ import com.example.imagegallery.dialogs.HueDialog.OnHueListener;
 import com.example.imagegallery.dialogs.SaturationDialog.OnSaturationListener;
 import com.example.imagegallery.utils.CsvFile;
 import com.example.imagegallery.utils.Save;
+import com.example.imagegallery.utils.ValueComparator;
 import com.example.imagegallery.utils.WrappingSlidingDrawer;
 import com.jjoe64.graphview.CustomLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -125,9 +131,12 @@ public class ImageGalleryDemoActivity extends Activity {
 	public PopupWindow popup, popupGraphics;
 	private int width, height;
 	private boolean click = true, clickGraphics = true;
-	private ImageView close, closeGraphics;
+	private ImageView close, closeGraphics, dataGraphics;
 	private TabHost th;
 	private CsvFile csv;
+	private double invert, blackWhite, brightness, ccontrast, flipVertical, flipHorizontal, grayscale, gammaCorection, 
+	rgb, ssaturation, hhue, color, blur, gausianBlur, sharpen, edge, emboss, engraving, smooth;
+	private HashMap<String, Double> times = new HashMap<String, Double>();
 	/** Called when the activity is first created. */
 	@SuppressLint("NewApi")
 	@Override
@@ -230,32 +239,38 @@ public class ImageGalleryDemoActivity extends Activity {
 
 	private void initGraphics() {
 		// TODO Auto-generated method stub
+		
+		
+		
+		
+		
 		imageViewFiltersGraphics.setOnClickListener(new View.OnClickListener() {
 			  
+			
 			  @Override public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
 			 
-		    
+		   initValuesForGraphics();
 				  
 			GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
-						   	  new GraphViewData(0, csv.findAverage("InvertFilter"))
-						    , new GraphViewData(2, csv.findAverage("BlackWhiteFilter"))
-						    , new GraphViewData(4, csv.findAverage("BrightnessFilter"))
-						    , new GraphViewData(6, csv.findAverage("ContrastFilter"))
-						   	, new GraphViewData(8, csv.findAverage("FlipVerticalFilter"))
-						   	, new GraphViewData(10, csv.findAverage("FlipHorizontalFilter"))
-						   	, new GraphViewData(12, csv.findAverage("GrayscaleFilter"))
-						   	, new GraphViewData(14, csv.findAverage("GammaCorectionFilter"))
-						   	, new GraphViewData(16, csv.findAverage("RGBFilter"))
-						   	, new GraphViewData(18, csv.findAverage("SaturationFilter"))
-						   	, new GraphViewData(20, csv.findAverage("HueFilter"))
-						   	, new GraphViewData(22, csv.findAverage("ColorFilter"))
-						   	, new GraphViewData(24, csv.findAverage("BlurFilter"))
-						   	, new GraphViewData(26, csv.findAverage("GausianBlurFilter"))
-						   	, new GraphViewData(28, csv.findAverage("SharpenFilter"))
-						   	, new GraphViewData(30, csv.findAverage("EdgeFilter"))
-						   	, new GraphViewData(32, csv.findAverage("EmbossFilter"))
-						   	, new GraphViewData(34, csv.findAverage("EngravingFilter"))
-						   	, new GraphViewData(36, csv.findAverage("SmoothFilter"))
+						   	  new GraphViewData(0, invert)
+						    , new GraphViewData(2, blackWhite)
+						    , new GraphViewData(4, brightness)
+						    , new GraphViewData(6, ccontrast)
+						   	, new GraphViewData(8, flipVertical)
+						   	, new GraphViewData(10, flipHorizontal)
+						   	, new GraphViewData(12, grayscale)
+						   	, new GraphViewData(14, gammaCorection)
+						   	, new GraphViewData(16, rgb)
+						   	, new GraphViewData(18, ssaturation)
+						   	, new GraphViewData(20, hhue)
+						   	, new GraphViewData(22, color)
+						   	, new GraphViewData(24, blur)
+						   	, new GraphViewData(26, gausianBlur)
+						   	, new GraphViewData(28, sharpen)
+						   	, new GraphViewData(30, edge)
+						   	, new GraphViewData(32, emboss)
+						   	, new GraphViewData(34, engraving)
+						   	, new GraphViewData(36, smooth)
 						   	, new GraphViewData(38, 0.0d)
 						});
 			
@@ -278,8 +293,17 @@ public class ImageGalleryDemoActivity extends Activity {
 			  closeGraphics.setId(1);
 			  closeGraphics.setLayoutParams(imageParams);
 			  graphView.addView(closeGraphics);
-			  graphView.setScalable(true);
-			  graphView.setScrollable(true);
+			  
+			  RelativeLayout.LayoutParams imageParamsData = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				imageParams.addRule(RelativeLayout.LEFT_OF, 1);
+			  
+			  dataGraphics = new ImageView(ImageGalleryDemoActivity.this);
+			  dataGraphics.setBackgroundResource(R.drawable.statistika);
+			  dataGraphics.setId(2);
+			  dataGraphics.setLayoutParams(imageParamsData);
+			  graphView.addView(dataGraphics);
 			  
 			  popupGraphics.setContentView(graphView);
 			  
@@ -304,8 +328,82 @@ public class ImageGalleryDemoActivity extends Activity {
 					click = true;
 				}
 			  
+			  
+			  
+			  dataGraphics.setOnClickListener(new View.OnClickListener() {
+					
+				  @Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						String ispis = "";
+						ispis += "Invert: " + Double.toString(invert) + "\n";
+						ispis += "BlackWhite: " + Double.toString(blackWhite) + "\n";
+						ispis += "Brightness: " + Double.toString(brightness) + "\n";
+						ispis += "Contrast: " + Double.toString(ccontrast) + "\n";
+						ispis += "FlipVertical: " + Double.toString(flipVertical) + "\n";
+						ispis += "FlipHorizontal: " + Double.toString(flipHorizontal) + "\n";
+						ispis += "Grayscale: " + Double.toString(grayscale) + "\n";
+						ispis += "Gamma corection: " + Double.toString(gammaCorection) + "\n";
+						ispis += "RGB: " + Double.toString(rgb) + "\n";
+						ispis += "Saturation: " + Double.toString(ssaturation) + "\n";
+						ispis += "Hue: " + Double.toString(hhue) + "\n";
+						ispis += "Color: " + Double.toString(color) + "\n";
+						ispis += "Blur: " + Double.toString(blur) + "\n";
+						ispis += "Gausian blur: " + Double.toString(gausianBlur) + "\n";
+						ispis += "Sharpen: " + Double.toString(sharpen) + "\n";
+						ispis += "Edge: " + Double.toString(edge) + "\n";
+						ispis += "Emboss" + Double.toString(emboss) + "\n";
+						ispis += "Engraving: " + Double.toString(engraving) + "\n";
+						ispis += "Smooth: " + Double.toString(smooth) + "\n";
+						
+						ispis += "Filteri poredjani od najsporijeg do najbrzeg:" + "\n";
+						
+						
+						
+						
+						ValueComparator bvc =  new ValueComparator(times);
+				        TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
+				        sorted_map.putAll(times);
+				        ispis += sorted_map.toString() + " \n ";
+				        
+						
+						
+						ispis += "Filter kome najmanje vremena treba za izvrsavanje je " + sorted_map.lastKey() + " \n ";
+						ispis += "Filter kome najvise vremena treba za izvrsavanje je " + sorted_map.firstKey() + " \n ";
+						
+						Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG).show();
+						
+					}
+				});
+
 			  }
 			  });
+		
+		
+		
+	}
+	
+	private void initValuesForGraphics() {
+		// TODO Auto-generated method stub
+		
+		times.clear();
+		
+		invert = csv.findAverage("InvertFilter"); blackWhite = csv.findAverage("BlackWhiteFilter"); 
+ 		brightness = csv.findAverage("BrightnessFilter"); ccontrast = csv.findAverage("ContrastFilter");
+ 		flipVertical = csv.findAverage("FlipVerticalFilter"); flipHorizontal = csv.findAverage("FlipHorizontalFilter"); 
+ 		grayscale = csv.findAverage("GrayscaleFilter"); gammaCorection = csv.findAverage("GammaCorectionFilter");
+ 		rgb = csv.findAverage("RGBFilter"); ssaturation = csv.findAverage("SaturationFilter"); 
+ 		hhue = csv.findAverage("HueFilter"); color = csv.findAverage("ColorFilter"); 
+ 		blur = csv.findAverage("BlurFilter"); gausianBlur = csv.findAverage("GausianBlurFilter");
+ 		sharpen = csv.findAverage("SharpenFilter"); edge = csv.findAverage("EdgeFilter");
+ 		emboss = csv.findAverage("EmbossFilter"); engraving = csv.findAverage("EngravingFilter");
+ 		smooth = csv.findAverage("SmoothFilter");
+ 		
+ 		times.put("Invert", invert); times.put("BlackWhite", blackWhite); times.put("Brightness", brightness); times.put("Contrast", ccontrast);
+ 		times.put("FlipVertical", flipVertical); times.put("FlipHorizontal", flipHorizontal); times.put("Grayscale", grayscale);
+ 		times.put("GammaCorection", gammaCorection); times.put("RGB", rgb); times.put("Saturation", ssaturation); times.put("Hue", hhue);
+ 		times.put("Color", color); times.put("Blur", blur); times.put("GausianBlur", gausianBlur); times.put("Sharpen", sharpen);
+ 		times.put("Edge", edge); times.put("Emboss", emboss); times.put("Engraving", engraving); times.put("Smooth", smooth);
 		
 	}
 
