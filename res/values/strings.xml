@@ -64,4 +64,5 @@
 	<string name="text_saturation_text">Odaberite vrednost saturation-a koji ce biti primenjen na slici:</string>
 	<string name="text_hue_text">Odaberite vrednost hue parametra koji ce biti primenjen na slici:</string>
 	<string name="text_gausianBlur_text">Odaberite vrednost sigma parametra koji ce biti primenjen na slici:</string>
+	<string name="text_blend_text">Odaberite vrednost alfa parametra koji ce biti primenjen na slikama:</string>
 </resources>

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.example.imagegallery.dialogs.BlendDialog;
+import com.example.imagegallery.dialogs.BlendDialog.OnBlendListener;
 import com.example.imagegallery.dialogs.ColorPickerDialog;
 import com.example.imagegallery.dialogs.BlackWhiteDialog;
 import com.example.imagegallery.dialogs.BrightnessDialog;
@@ -94,7 +96,7 @@ public class ImageGalleryDemoActivity extends Activity {
 	private boolean first = true;
 	private int ccolor, sscale, bright, contrast, hue;
 	private double gamma, rred, ggreen, bblue, ssigma;
-	private float saturation;
+	private float saturation, alfa;
 	private OnColorPickerListener listenerColor;
 	private OnBlackWhiteListener listenerBlackWhite;
 	private OnBrightnessListener listenerBrightness;
@@ -104,10 +106,12 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnSaturationListener listenerSaturation;
 	private OnHueListener listenerHue;
 	private OnGausianBlurListener listenerGausianBlur;
+	private OnBlendListener listenerBlend;
 	public PopupWindow popup;
 	private int width, height;
 	private boolean click = true;
 	private ImageView close;
+	private TabHost th;
 	/** Called when the activity is first created. */
 	@SuppressLint("NewApi")
 	@Override
@@ -139,7 +143,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		slideButtonOperations.setVisibility(View.GONE);
 		slidingDrawerOperations.setVisibility(View.GONE);
 
-		TabHost th = (TabHost) findViewById(R.id.tabhost);
+		th = (TabHost) findViewById(R.id.tabhost);
 		th.setup();
 
 		TabSpec spec = th.newTabSpec("tag1");
@@ -265,15 +269,15 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resizedOperation = Bitmap.createScaledBitmap(originalOperationsBitmap,
 				(int) (originalOperationsBitmap.getWidth() * 0.4),
 				(int) (originalOperationsBitmap.getHeight() * 0.4), true);
-		Bitmap resizedOriginalOperation = Bitmap.createScaledBitmap(first_original_operations,
-				(int) (first_original_operations.getWidth() * 0.4),
-				(int) (first_original_operations.getHeight() * 0.4), true);
+		//Bitmap resizedOriginalOperation = Bitmap.createScaledBitmap(first_original_operations,
+		//		(int) (first_original_operations.getWidth() * 0.4),
+		//		(int) (first_original_operations.getHeight() * 0.4), true);
 		Bitmap resizedOperationBlend = Operation.blend(resized, resizedOperation, 0.5);
 		Bitmap resizedOperationMultiply = Operation.multiply(resized, resizedOperation);
 		Bitmap resizedOperationDifference = Operation.difference(resized, resizedOperation);
 		Bitmap resizedOperationLighter = Operation.lighter(resized, resizedOperation);
 		Bitmap resizedOperationDarker = Operation.darker(resized, resizedOperation);
-		imageViewResizedOriginalOperations.setImageBitmap(resizedOriginalOperation);
+		//imageViewResizedOriginalOperations.setImageBitmap(resizedOriginalOperation);
 		imageViewResizedBlend.setImageBitmap(resizedOperationBlend);
 		imageViewResizedMultiply.setImageBitmap(resizedOperationMultiply);
 		imageViewResizedDifference.setImageBitmap(resizedOperationDifference);
@@ -287,9 +291,10 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resized = Bitmap.createScaledBitmap(originalBitmap,
 				(int) (originalBitmap.getWidth() * 0.4),
 				(int) (originalBitmap.getHeight() * 0.4), true);
-		Bitmap resizedOriginal = Bitmap.createScaledBitmap(first_original,
-				(int) (first_original.getWidth() * 0.4),
-				(int) (first_original.getHeight() * 0.4), true);
+		//Bitmap resizedOriginal = Bitmap.createScaledBitmap(first_original,
+		//		(int) (first_original.getWidth() * 0.4),
+		//		(int) (first_original.getHeight() * 0.4), true);
+		
 		Bitmap resizedFilterInvert = Filter.invert(resized);
 		Bitmap resizedFilterBlackWhite = Filter.blackWhite(resized, 50);
 		Bitmap resizedFilterBrightness = Filter.brightness(resized, -100);
@@ -313,7 +318,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resizedFilterEngraving = Filter.engraving(resized);
 		Bitmap resizedFilterSmooth = Filter.smooth(resized);
 
-		imageViewResizedOriginal.setImageBitmap(resizedOriginal);
+		//imageViewResizedOriginal.setImageBitmap(resizedOriginal);
 		imageViewResizedInvert.setImageBitmap(resizedFilterInvert);
 		imageViewResizedBlackWhite.setImageBitmap(resizedFilterBlackWhite);
 		imageViewResizedBrightness.setImageBitmap(resizedFilterBrightness);
@@ -369,16 +374,26 @@ public class ImageGalleryDemoActivity extends Activity {
 			startActivityForResult(j, RESULT_LOAD_OPERATIONS_IMAGE);		
 			return true;
 		case R.id.saveimage:
+			int tab_index_save = th.getCurrentTab(); 
 			Save saveFile = new Save();
-			if (originalBitmap != null)
+			if (originalBitmap != null && tab_index_save == 0)
 				saveFile.saveImage(ImageGalleryDemoActivity.this,
 						originalBitmap);
+			if (originalOperationsBitmap != null && tab_index_save == 1)
+				saveFile.saveImage(ImageGalleryDemoActivity.this,
+						originalOperationsBitmap);
 			return true;
 
 		case R.id.histogramimage:
-			if (originalBitmap != null) {
-				mDrawOnTop = new HistogramImage(ImageGalleryDemoActivity.this,
+			
+			int tab_index = th.getCurrentTab();   // 0 ako su unarne operacije, 1 ako su binarne
+			if ((tab_index == 0 && originalBitmap != null) || (tab_index == 1 && originalOperationsBitmap != null)) {
+				if (tab_index == 0)
+					mDrawOnTop = new HistogramImage(ImageGalleryDemoActivity.this,
 						originalBitmap);
+				else 
+					mDrawOnTop = new HistogramImage(ImageGalleryDemoActivity.this,
+							originalOperationsBitmap);
 				popup.setContentView(mDrawOnTop);
 
 				close = (ImageView) mDrawOnTop.findViewById(1);
@@ -440,6 +455,18 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			// Commit the edits!
 			editor.commit();
+			
+			if (originalBitmap != null && !originalBitmap.isRecycled()) {
+			    originalBitmap.recycle();
+			    originalBitmap = null; 
+			    System.gc();
+			}
+			
+			if (first_original != null && !first_original.isRecycled()) {
+			    first_original.recycle();
+			    first_original = null; 
+			    System.gc();
+			}
 
 			loadImages();
 
@@ -465,6 +492,18 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			// Commit the edits!
 			editor.commit();
+			
+			if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+			    originalOperationsBitmap.recycle();
+			    originalOperationsBitmap = null; 
+			    System.gc();
+			}
+			
+			if (first_original_operations != null && !first_original_operations.isRecycled()) {
+			    first_original_operations.recycle();
+			    first_original_operations = null; 
+			    System.gc();
+			}
 
 			loadOperationsImages();
 
@@ -472,11 +511,45 @@ public class ImageGalleryDemoActivity extends Activity {
 	}
 	
 	private void loadOperationsImages() {
+		
+		listenerBlend = new OnBlendListener() {
+
+			@Override
+			public void onOk(BlendDialog dialog, float scale) {
+				
+				// Toast.makeText(this, "Boja: " + color,
+				// Toast.LENGTH_LONG).show();
+				alfa = scale;
+				changeBitmapOperations = Operation.blend(originalBitmap, originalOperationsBitmap, alfa);
+				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+				    originalOperationsBitmap.recycle();
+				    originalOperationsBitmap = null; 
+				    System.gc();
+				}
+				
+				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
+					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+				else
+					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+				
+				imageViewOperations.setImageBitmap(changeBitmapOperations);
+				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				createSmallerImageOperations();
+			}
+
+			@Override
+			public void onCancel(BlendDialog dialog) {
+				
+
+			}
+		};
+		
+		
 		// Restore preferences
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		pictureOperationsPath = settings.getString("putanja", "");
 
-		File imageF = new File(picturePath);
+		final File imageF = new File(picturePath);
 		try {
 			BitmapScaler scaler = new BitmapScaler(imageF, 512);
 			originalOperationsBitmap = scaler.getScaled();
@@ -498,6 +571,10 @@ public class ImageGalleryDemoActivity extends Activity {
 					originalOperationsBitmap.getWidth(), originalOperationsBitmap.getHeight(),
 					matrix, true); // rotating bitmap
 			first_original_operations = Bitmap.createBitmap(originalOperationsBitmap);
+			Bitmap resizedOriginalOperation = Bitmap.createScaledBitmap(first_original_operations,
+							(int) (first_original_operations.getWidth() * 0.4),
+							(int) (first_original_operations.getHeight() * 0.4), true);
+			imageViewResizedOriginalOperations.setImageBitmap(resizedOriginalOperation);
 			if (originalOperationsBitmap.getWidth() <= originalOperationsBitmap.getHeight())
 				imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
 			else
@@ -523,13 +600,46 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				
+				/*
 				changeBitmapOperations = Bitmap.createBitmap(first_original_operations);
-				originalOperationsBitmap.recycle();
-				originalOperationsBitmap = null;
+				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+				    originalOperationsBitmap.recycle();
+				    originalOperationsBitmap = null; 
+				    System.gc();
+				}
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
-				createSmallerImageOperations();
+				*/
+				try {
+					BitmapScaler scaler = new BitmapScaler(imageF, 512);
+					originalOperationsBitmap = scaler.getScaled();
+
+					ExifInterface exif = new ExifInterface(picturePath);
+					int orientation = exif.getAttributeInt(
+							ExifInterface.TAG_ORIENTATION, 1);
+					Log.d("EXIF", "Exif: " + orientation);
+					Matrix matrix = new Matrix();
+					if (orientation == 6) {
+						matrix.postRotate(90);
+					} else if (orientation == 3) {
+						matrix.postRotate(180);
+					} else if (orientation == 8) {
+						matrix.postRotate(270);
+					}
+					
+					originalOperationsBitmap = Bitmap.createBitmap(originalOperationsBitmap, 0, 0,
+							originalOperationsBitmap.getWidth(), originalOperationsBitmap.getHeight(),
+							matrix, true); // rotating bitmap
+					if (originalOperationsBitmap.getWidth() <= originalOperationsBitmap.getHeight())
+						imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
+					else
+						imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
+					imageViewOperations.setImageBitmap(originalOperationsBitmap);
+					createSmallerImageOperations();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		
@@ -538,17 +648,9 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				
-				changeBitmapOperations = Operation.blend(originalBitmap, originalOperationsBitmap, 0.5);
-				originalOperationsBitmap.recycle();
-				originalOperationsBitmap = null;
-				
-				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
-					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
-				else
-					imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
-				
-				imageViewOperations.setImageBitmap(changeBitmapOperations);
-				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				BlendDialog dialog = new BlendDialog(
+						ImageGalleryDemoActivity.this, listenerBlend);
+				dialog.show();
 			}
 		});
 		
@@ -558,8 +660,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmapOperations = Operation.multiply(originalBitmap, originalOperationsBitmap);
-				originalOperationsBitmap.recycle();
-				originalOperationsBitmap = null;
+				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+				    originalOperationsBitmap.recycle();
+				    originalOperationsBitmap = null; 
+				    System.gc();
+				}
 				
 				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
 					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
@@ -568,6 +673,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				createSmallerImageOperations();
 			}
 		});
 		
@@ -577,9 +683,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmapOperations = Operation.difference(originalBitmap, originalOperationsBitmap);
-				originalOperationsBitmap.recycle();
-				originalOperationsBitmap = null;
-				
+				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+				    originalOperationsBitmap.recycle();
+				    originalOperationsBitmap = null; 
+				    System.gc();
+				}
 				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
 					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
 				else
@@ -587,6 +695,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				createSmallerImageOperations();
 			}
 		});
 		
@@ -596,8 +705,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmapOperations = Operation.lighter(originalBitmap, originalOperationsBitmap);
-				originalOperationsBitmap.recycle();
-				originalOperationsBitmap = null;
+				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+				    originalOperationsBitmap.recycle();
+				    originalOperationsBitmap = null; 
+				    System.gc();
+				}
 				
 				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
 					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
@@ -606,6 +718,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				createSmallerImageOperations();
 			}
 		});
 		
@@ -615,8 +728,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmapOperations = Operation.darker(originalBitmap, originalOperationsBitmap);
-				originalOperationsBitmap.recycle();
-				originalOperationsBitmap = null;
+				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
+				    originalOperationsBitmap.recycle();
+				    originalOperationsBitmap = null; 
+				    System.gc();
+				}
 				
 				if (changeBitmapOperations.getWidth() <= changeBitmapOperations.getHeight())
 					imageViewOperations.setScaleType(ScaleType.CENTER_CROP);
@@ -625,6 +741,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
+				createSmallerImageOperations();
 			}
 		});
 
@@ -641,8 +758,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				// Toast.LENGTH_LONG).show();
 				ccolor = color;
 				changeBitmap = Filter.shadingFilter(originalBitmap, ccolor);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -664,8 +784,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				// Toast.LENGTH_LONG).show();
 				sscale = scale;
 				changeBitmap = Filter.blackWhite(originalBitmap, sscale);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -687,8 +810,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				// Toast.LENGTH_LONG).show();
 				bright = scale;
 				changeBitmap = Filter.brightness(originalBitmap, bright);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -710,8 +836,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				// Toast.LENGTH_LONG).show();
 				contrast = scale;
 				changeBitmap = Filter.contrast(originalBitmap, contrast);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -734,8 +863,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				gamma = scale;
 				changeBitmap = Filter.gammaCorection(originalBitmap, gamma,
 						gamma, gamma);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -761,8 +893,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				bblue = blue;
 				changeBitmap = Filter.colorFilter(originalBitmap, rred, ggreen,
 						bblue);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -785,8 +920,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				saturation = scale;
 				changeBitmap = Filter.saturationFilter(originalBitmap,
 						saturation);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -808,8 +946,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				// Toast.LENGTH_LONG).show();
 				hue = scale;
 				changeBitmap = Filter.hueFilter(originalBitmap, hue);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -831,8 +972,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				// Toast.LENGTH_LONG).show();
 				ssigma = scale;
 				changeBitmap = Filter.gausianBlur(originalBitmap, ssigma);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -848,17 +992,17 @@ public class ImageGalleryDemoActivity extends Activity {
 		// Restore preferences
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		picturePath = settings.getString("putanja", "");
-
-		File imageF = new File(picturePath);
+		
+		final File imageF = new File(picturePath);
 		try {
+			
 			BitmapScaler scaler = new BitmapScaler(imageF, 512);
 			originalBitmap = scaler.getScaled();
-
+			Matrix matrix = new Matrix();
 			ExifInterface exif = new ExifInterface(picturePath);
 			int orientation = exif.getAttributeInt(
 					ExifInterface.TAG_ORIENTATION, 1);
 			Log.d("EXIF", "Exif: " + orientation);
-			Matrix matrix = new Matrix();
 			if (orientation == 6) {
 				matrix.postRotate(90);
 			} else if (orientation == 3) {
@@ -869,7 +1013,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0,
 					originalBitmap.getWidth(), originalBitmap.getHeight(),
 					matrix, true); // rotating bitmap
-			first_original = Bitmap.createBitmap(originalBitmap);
+			first_original = Bitmap.createScaledBitmap(originalBitmap, originalBitmap.getWidth(), originalBitmap.getHeight(), true);
+			Bitmap resizedOriginal = Bitmap.createScaledBitmap(first_original,
+								(int) (first_original.getWidth() * 0.4),
+								(int) (first_original.getHeight() * 0.4), true);
+			imageViewResizedOriginal.setImageBitmap(resizedOriginal);
 			if (originalBitmap.getWidth() <= originalBitmap.getHeight())
 				imageView.setScaleType(ScaleType.CENTER_CROP);
 			else
@@ -878,7 +1026,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		createSmallerImage();
 
 		Bitmap filterBitmap = BitmapFactory.decodeResource(this.getResources(),
@@ -894,12 +1042,48 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				
-				changeBitmap = Bitmap.createBitmap(first_original);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				/*	changeBitmap = Bitmap.createBitmap(first_original);
+				
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
+				
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+				*/
+				BitmapScaler bscaler;
+				Matrix mmatrix = new Matrix();
+				try {
+					bscaler = new BitmapScaler(imageF, 512);
+					originalBitmap = bscaler.getScaled();
+
+					ExifInterface exif = new ExifInterface(picturePath);
+					int orientation = exif.getAttributeInt(
+							ExifInterface.TAG_ORIENTATION, 1);
+					Log.d("EXIF", "Exif: " + orientation);
+					if (orientation == 6) {
+						mmatrix.postRotate(90);
+					} else if (orientation == 3) {
+						mmatrix.postRotate(180);
+					} else if (orientation == 8) {
+						mmatrix.postRotate(270);
+					}
+						
+						originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0,
+								originalBitmap.getWidth(), originalBitmap.getHeight(),
+								mmatrix, true); // rotating bitmap
+						
+						imageView.setImageBitmap(originalBitmap);
+						createSmallerImage();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				
 			}
 		});
 
@@ -909,8 +1093,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmap = Filter.invert(originalBitmap);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -957,8 +1144,11 @@ public class ImageGalleryDemoActivity extends Activity {
 					public void onClick(View arg0) {
 						
 						changeBitmap = Filter.flipVertical(originalBitmap);
-						originalBitmap.recycle();
-						originalBitmap = null;
+						if (originalBitmap != null && !originalBitmap.isRecycled()) {
+						    originalBitmap.recycle();
+						    originalBitmap = null; 
+						    System.gc();
+						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
@@ -971,8 +1161,11 @@ public class ImageGalleryDemoActivity extends Activity {
 					public void onClick(View arg0) {
 						
 						changeBitmap = Filter.flipHorizontal(originalBitmap);
-						originalBitmap.recycle();
-						originalBitmap = null;
+						if (originalBitmap != null && !originalBitmap.isRecycled()) {
+						    originalBitmap.recycle();
+						    originalBitmap = null; 
+						    System.gc();
+						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
@@ -985,8 +1178,11 @@ public class ImageGalleryDemoActivity extends Activity {
 					public void onClick(View arg0) {
 						
 						changeBitmap = Filter.grayscale(originalBitmap);
-						originalBitmap.recycle();
-						originalBitmap = null;
+						if (originalBitmap != null && !originalBitmap.isRecycled()) {
+						    originalBitmap.recycle();
+						    originalBitmap = null; 
+						    System.gc();
+						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
@@ -1054,8 +1250,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmap = Filter.blur(originalBitmap);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -1079,8 +1278,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmap = Filter.sharpen(originalBitmap);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -1092,8 +1294,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmap = Filter.edge(originalBitmap);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -1105,8 +1310,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmap = Filter.emboss(originalBitmap);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
@@ -1119,8 +1327,11 @@ public class ImageGalleryDemoActivity extends Activity {
 					public void onClick(View arg0) {
 						
 						changeBitmap = Filter.engraving(originalBitmap);
-						originalBitmap.recycle();
-						originalBitmap = null;
+						if (originalBitmap != null && !originalBitmap.isRecycled()) {
+						    originalBitmap.recycle();
+						    originalBitmap = null; 
+						    System.gc();
+						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
@@ -1132,8 +1343,11 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onClick(View arg0) {
 				
 				changeBitmap = Filter.smooth(originalBitmap);
-				originalBitmap.recycle();
-				originalBitmap = null;
+				if (originalBitmap != null && !originalBitmap.isRecycled()) {
+				    originalBitmap.recycle();
+				    originalBitmap = null; 
+				    System.gc();
+				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
