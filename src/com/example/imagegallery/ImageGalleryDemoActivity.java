@@ -78,8 +78,6 @@ import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class ImageGalleryDemoActivity extends Activity {
 
@@ -103,14 +101,14 @@ public class ImageGalleryDemoActivity extends Activity {
 			imageViewResizedEngraving, imageViewResizedSmooth,
 			imageViewResizedOriginal, imageViewOperations, imageViewResizedOriginalOperations,
 			imageViewResizedBlend, imageViewResizedMultiply, imageViewResizedDifference,
-			imageViewResizedLighter, imageViewResizedDarker;
+			imageViewResizedLighter, imageViewResizedDarker, imageViewFiltersGraphics;
 	private Button slideButton;
 	private Button slideButtonOperations;
+	private Button slideButtonGraphics;
 	private WrappingSlidingDrawer slidingDrawer;
 	private WrappingSlidingDrawer slidingDrawerOperations;
+	private WrappingSlidingDrawer slidingDrawerGraphics;
 	private HistogramImage mDrawOnTop;
-	private long tStart, tEnd, tElapsed1, tElapsed2, bmpSize1, bmpSize2;
-	private boolean first = true;
 	private int ccolor, sscale, bright, contrast, hue;
 	private double gamma, rred, ggreen, bblue, ssigma;
 	private float saturation, alfa;
@@ -124,10 +122,10 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnHueListener listenerHue;
 	private OnGausianBlurListener listenerGausianBlur;
 	private OnBlendListener listenerBlend;
-	public PopupWindow popup;
+	public PopupWindow popup, popupGraphics;
 	private int width, height;
-	private boolean click = true;
-	private ImageView close;
+	private boolean click = true, clickGraphics = true;
+	private ImageView close, closeGraphics;
 	private TabHost th;
 	private CsvFile csv;
 	/** Called when the activity is first created. */
@@ -150,18 +148,30 @@ public class ImageGalleryDemoActivity extends Activity {
 		height = size.y;
 
 		popup = new PopupWindow(this);
+		popupGraphics = new PopupWindow(this);
 		
 		csv = new CsvFile();
 		
 		slideButton = (Button) findViewById(R.id.handle);
 		slideButtonOperations = (Button) findViewById(R.id.handleOperations);
+		slideButtonGraphics = (Button) findViewById(R.id.handleGraphics);
 		slidingDrawer = (WrappingSlidingDrawer) findViewById(R.id.drawer);
 		slidingDrawerOperations = (WrappingSlidingDrawer) findViewById(R.id.drawerOperations);
+		slidingDrawerGraphics = (WrappingSlidingDrawer) findViewById(R.id.drawerGraphics);
 
 		slideButton.setVisibility(View.GONE);
 		slidingDrawer.setVisibility(View.GONE);	
 		slideButtonOperations.setVisibility(View.GONE);
 		slidingDrawerOperations.setVisibility(View.GONE);
+		
+		Bitmap pieBitmap = BitmapFactory.decodeResource(this.getResources(),
+				R.drawable.pie);
+
+		slideButtonGraphics.setCompoundDrawablesWithIntrinsicBounds(null,
+				new BitmapDrawable(this.getResources(), pieBitmap), null,
+				null);
+		slideButtonGraphics.setVisibility(View.VISIBLE);
+		slidingDrawerGraphics.setVisibility(View.VISIBLE);
 
 		th = (TabHost) findViewById(R.id.tabhost);
 		th.setup();
@@ -181,10 +191,6 @@ public class ImageGalleryDemoActivity extends Activity {
 		spec.setIndicator("Graphics");
 		th.addTab(spec);
 		
-		// Button filter = (Button) findViewById(R.id.buttonFilter);
-		// Button histogram = (Button) findViewById(R.id.buttonHistogram);
-		Button grafik = (Button) findViewById(R.id.buttonGrafik);
-		// Button colorPicker = (Button) findViewById(R.id.buttonColorPicker);
 		imageView = (ImageView) findViewById(R.id.imgView);
 		imageViewResizedOriginal = (ImageView) findViewById(R.id.imgViewOriginal);
 		imageViewResizedInvert = (ImageView) findViewById(R.id.imgViewInvert);		
@@ -215,54 +221,92 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedLighter = (ImageView) findViewById(R.id.imgViewLighter);
 		imageViewResizedDarker = (ImageView) findViewById(R.id.imgViewDarker);
 		
-		 grafik.setOnClickListener(new View.OnClickListener() {
-		  
-		  @Override public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
-		 
-			  
-		GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
-					   	  new GraphViewData(0, 2.0d)
-					    , new GraphViewData(2, 3.0d)
-					    , new GraphViewData(4, 10.0d)
-					    , new GraphViewData(6, 5.0d)
-					   	, new GraphViewData(8, 0.0d)
-					});
+		imageViewFiltersGraphics = (ImageView) findViewById(R.id.imgViewFiltersGraphics);
 		
-		  GraphView graphView = new BarGraphView(
-		  ImageGalleryDemoActivity.this, "GraphViewDemo");
-		  /*
-		  graphView.getGraphViewStyle().setNumHorizontalLabels(4);
-		  CustomLabelFormatter clf = new CustomLabelFormatter() {
-			
-			@Override
-			public String formatLabel(double arg0, boolean arg1) {
-				// TODO Auto-generated method stub
-						// TODO Auto-generated method stub
-						return "" + (int) arg0;
-			}
-		};
-		 //  ((LineGraphView) graphView).setDrawDataPoints(true); 
-		  graphView.setBackgroundColor(Color.BLACK);
-		  
-		  String[] labels = new String[4];
-		  int min = 0, max = 4;
-			
-		  
-		  for (int i=min; i<max; i++)
-			  labels[i] = clf.formatLabel(min + ((max-min)*i/4), true);
+		initGraphics();
+		
 		 
-		//  graphView.setCustomLabelFormatter(clf);
-		 * 
-		 */
-		  graphView.setBackgroundColor(Color.BLACK);
-		  graphView.setHorizontalLabels(new String[] {"inv", "gs", "bw", "gb", "", ""});
-		  
-		  graphView.addSeries(exampleSeries); // data 
-		  FrameLayout layout =
-		  (FrameLayout) findViewById(R.id.tab3);
-		  layout.addView(graphView); }
-		  });
-		 
+	}
+
+	private void initGraphics() {
+		// TODO Auto-generated method stub
+		imageViewFiltersGraphics.setOnClickListener(new View.OnClickListener() {
+			  
+			  @Override public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
+			 
+		    
+				  
+			GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
+						   	  new GraphViewData(0, csv.findAverage("InvertFilter"))
+						    , new GraphViewData(2, csv.findAverage("BlackWhiteFilter"))
+						    , new GraphViewData(4, csv.findAverage("BrightnessFilter"))
+						    , new GraphViewData(6, csv.findAverage("ContrastFilter"))
+						   	, new GraphViewData(8, csv.findAverage("FlipVerticalFilter"))
+						   	, new GraphViewData(10, csv.findAverage("FlipHorizontalFilter"))
+						   	, new GraphViewData(12, csv.findAverage("GrayscaleFilter"))
+						   	, new GraphViewData(14, csv.findAverage("GammaCorectionFilter"))
+						   	, new GraphViewData(16, csv.findAverage("RGBFilter"))
+						   	, new GraphViewData(18, csv.findAverage("SaturationFilter"))
+						   	, new GraphViewData(20, csv.findAverage("HueFilter"))
+						   	, new GraphViewData(22, csv.findAverage("ColorFilter"))
+						   	, new GraphViewData(24, csv.findAverage("BlurFilter"))
+						   	, new GraphViewData(26, csv.findAverage("GausianBlurFilter"))
+						   	, new GraphViewData(28, csv.findAverage("SharpenFilter"))
+						   	, new GraphViewData(30, csv.findAverage("EdgeFilter"))
+						   	, new GraphViewData(32, csv.findAverage("EmbossFilter"))
+						   	, new GraphViewData(34, csv.findAverage("EngravingFilter"))
+						   	, new GraphViewData(36, csv.findAverage("SmoothFilter"))
+						   	, new GraphViewData(38, 0.0d)
+						});
+			
+			  GraphView graphView = new BarGraphView(
+			  ImageGalleryDemoActivity.this, "Graficki prikaz filtera");
+
+			 
+			  graphView.setBackgroundColor(Color.BLACK);
+			  graphView.setHorizontalLabels(new String[] {"osn.", "hue/sat/col", "konv.", ""});
+			  graphView.addSeries(exampleSeries); // data 
+			  
+			  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				imageParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+				imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			  
+			  closeGraphics = new ImageView(ImageGalleryDemoActivity.this);
+			  closeGraphics.setBackgroundResource(R.drawable.close);
+			  closeGraphics.setId(1);
+			  closeGraphics.setLayoutParams(imageParams);
+			  graphView.addView(closeGraphics);
+			  graphView.setScalable(true);
+			  graphView.setScrollable(true);
+			  
+			  popupGraphics.setContentView(graphView);
+			  
+				
+			  closeGraphics.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						popupGraphics.dismiss();
+					}
+				});
+			  
+			  if (clickGraphics) {
+					popupGraphics.showAtLocation(graphView, Gravity.CENTER, 10, 10);
+					int w = (int) (width * 0.9);
+					int h = (int) (height * 0.9);
+					popupGraphics.update(0, 0, w, h);
+					click = false;
+				} else {
+					popupGraphics.dismiss();
+					click = true;
+				}
+			  
+			  }
+			  });
+		
 	}
 
 	private void createSmallerImageOperations() {

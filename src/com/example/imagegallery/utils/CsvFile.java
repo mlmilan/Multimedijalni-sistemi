@@ -61,24 +61,29 @@ public class CsvFile {
 
 	}
 	
-	public String findSum(String filter, List<String[]> content ) {   // vraca zbir vremena izvrsavanja odgovarajuceg filtera
+	public long findAverage(String filter) {   // vraca zbir vremena izvrsavanja odgovarajuceg filtera
 
+		long ukupno_vreme = 0;
+		int broj_izvrsavanja = 0;
 		try {
 			String[] row = null;
+			
 			CSVReader csvReader = new CSVReader(new FileReader(csv));
 			System.out.println("usao");
 			
-			//List<String[]> content = csvReader.readAll();
+			List<String[]> content = csvReader.readAll();
 			 
 			for (Object object : content) {
 				System.out.println("usao u for");
 			    row = (String[]) object;
 			    
-			    System.out.println(row[0] + "#" + row[1] + "#" + row[2]);
+			    System.out.println(row[0] + "#" + row[1]);
 			     
 			    if (row[0].equals(filter)){
-			    	csvReader.close();
-			    	return row[1];
+			    	//csvReader.close();
+			    	//return row[1];
+			    	ukupno_vreme += Long.parseLong(row[1]);
+			    	broj_izvrsavanja++;
 			    }
 			}
 			/*
@@ -100,7 +105,9 @@ public class CsvFile {
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
-		return null;
+		if (broj_izvrsavanja != 0)
+			return ukupno_vreme/broj_izvrsavanja;
+		else return 0;
 	}
 	
 	private String findNum(String filter) {  // vraca broj izvrsavanja odgovarajuceg filtera

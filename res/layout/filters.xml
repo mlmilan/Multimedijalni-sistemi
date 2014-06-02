@@ -661,14 +661,6 @@
 			    android:layout_height="fill_parent"
 			    android:id="@+id/tab3">
 			
-				 <Button
-				        android:id="@+id/buttonGrafik"
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="left|top"
-				        android:padding="12dip"
-				        android:text="Grafik" />
-				 
 				<com.example.imagegallery.utils.WrappingSlidingDrawer
 			        android:id="@+id/drawerGraphics"
 			        android:layout_width="wrap_content"
@@ -683,26 +675,41 @@
 			            android:id="@+id/handleGraphics"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content"
-			            android:text="@string/text_grafici" >
+			            android:text="@string/text_grafici" 
+			            android:gravity="center"
+			            >
 			        </Button>
 							
-					<HorizontalScrollView
-				        android:id="@+id/contentGraphics"
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content" 
-				        android:layout_gravity="bottom">
-					
-						
 						<RelativeLayout
-						    android:id="@+id/contentLayoutGraphics"
+						    android:id="@+id/contentGraphics"
 						    android:layout_width="wrap_content"
 						    android:layout_height="wrap_content"
 						    android:layout_marginBottom="5dip"
 						    android:layout_gravity="bottom"
 						    android:background="@android:color/transparent" >
-								
+								<TextView
+			            		android:id="@+id/tvFiltersGraphics"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text="@string/text_filters_graphics"
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" />
+				    
+				    		<ImageView
+				    			android:id="@+id/imgViewFiltersGraphics"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:src="@drawable/barchart"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="10dip"
+				    			android:layout_below="@+id/tvFiltersGraphics" >				         
+				     		</ImageView>
+				     		
+				     		
 						</RelativeLayout>
-					</HorizontalScrollView>
 				</com.example.imagegallery.utils.WrappingSlidingDrawer>
 
 			</FrameLayout>
