@@ -21,7 +21,8 @@
 			    android:layout_width="fill_parent"
 			    android:layout_height="fill_parent"
 			    android:id="@+id/tab1">
-			
+			    			   
+			    
 				<ImageView
 				    android:id="@+id/imgView"
 				    android:layout_width="fill_parent"
@@ -29,7 +30,6 @@
 				    android:contentDescription="@string/img">
 			
 				</ImageView>
-				
 				
 				
 		<com.example.imagegallery.utils.WrappingSlidingDrawer
@@ -63,48 +63,6 @@
 				    android:background="@android:color/transparent" >
 				    
 				  
-			
-				    <!-- 
-				    <Button
-				        android:id="@+id/buttonFilter"
-				        android:layout_width="0dip"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="left|bottom"
-				        android:layout_marginBottom="10dip"
-				        android:layout_weight="1"
-				        android:padding="12dip"
-				        android:text="Filter" />
-			
-				    <Button
-				        android:id="@+id/buttonHistogram"
-				        android:layout_width="0dip"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="center|bottom"
-				        android:layout_marginBottom="10dip"
-				        android:layout_weight="1"
-				        android:padding="12dip"
-				        android:text="Hist" />
-			
-				    <Button
-				        android:id="@+id/buttonGrafik"
-				        android:layout_width="0dip"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="center|bottom"
-				        android:layout_marginBottom="10dip"
-				        android:layout_weight="1"
-				        android:padding="12dip"
-				        android:text="Grafik" />
-			
-				    <Button
-				        android:id="@+id/buttonColorPicker"
-				        android:layout_width="0dip"
-				        android:layout_height="wrap_content"
-				        android:layout_gravity="right|bottom"
-				        android:layout_marginBottom="10dip"
-				        android:layout_weight="1"
-				        android:padding="12dip"
-				        android:text="Color" />
-				     -->
 				     <TextView
 			            android:id="@+id/tvOriginal"
 			            android:layout_width="wrap_content"
@@ -608,6 +566,7 @@
 				    			android:layout_toRightOf="@+id/imgViewOriginalOperations"
 				    			android:layout_below="@+id/tvBlend" >
 						     </ImageView>
+	
 				         
 						    <TextView
 			            		android:id="@+id/tvMultiply"
@@ -691,6 +650,57 @@
 				    			android:layout_toRightOf="@+id/imgViewLighter"
 				    			android:layout_below="@+id/tvDarker">	
 				    		</ImageView>	
+						</RelativeLayout>
+					</HorizontalScrollView>
+				</com.example.imagegallery.utils.WrappingSlidingDrawer>
+
+			</FrameLayout>
+			
+			<FrameLayout 
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			    android:id="@+id/tab3">
+			
+				 <Button
+				        android:id="@+id/buttonGrafik"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="left|top"
+				        android:padding="12dip"
+				        android:text="Grafik" />
+				 
+				<com.example.imagegallery.utils.WrappingSlidingDrawer
+			        android:id="@+id/drawerGraphics"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="bottom"
+			        android:content="@+id/contentGraphics"
+			        android:handle="@+id/handleGraphics"
+			        android:orientation="vertical"
+			        android:padding="10dip" >
+			       
+				    <Button
+			            android:id="@+id/handleGraphics"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:text="@string/text_grafici" >
+			        </Button>
+							
+					<HorizontalScrollView
+				        android:id="@+id/contentGraphics"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content" 
+				        android:layout_gravity="bottom">
+					
+						
+						<RelativeLayout
+						    android:id="@+id/contentLayoutGraphics"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_marginBottom="5dip"
+						    android:layout_gravity="bottom"
+						    android:background="@android:color/transparent" >
+								
 						</RelativeLayout>
 					</HorizontalScrollView>
 				</com.example.imagegallery.utils.WrappingSlidingDrawer>

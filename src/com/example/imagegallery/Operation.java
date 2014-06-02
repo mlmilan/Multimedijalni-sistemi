@@ -94,6 +94,7 @@ public class Operation {
 			}
 		return returnBitmap;
 	}
+	
 	private static double luminance(int pixel) {
 		return (0.2126 * Color.red(pixel)) + (0.7152 * Color.green(pixel)) + (0.0722 * Color.blue(pixel));
 	}
