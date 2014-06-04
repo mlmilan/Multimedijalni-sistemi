@@ -64,6 +64,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
@@ -107,7 +108,7 @@ public class ImageGalleryDemoActivity extends Activity {
 			imageViewResizedEngraving, imageViewResizedSmooth,
 			imageViewResizedOriginal, imageViewOperations, imageViewResizedOriginalOperations,
 			imageViewResizedBlend, imageViewResizedMultiply, imageViewResizedDifference,
-			imageViewResizedLighter, imageViewResizedDarker, imageViewFiltersGraphics;
+			imageViewResizedLighter, imageViewResizedDarker, imageViewFiltersGraphics, imageViewGausianBlurGraphics;
 	private Button slideButton;
 	private Button slideButtonOperations;
 	private Button slideButtonGraphics;
@@ -128,14 +129,17 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnHueListener listenerHue;
 	private OnGausianBlurListener listenerGausianBlur;
 	private OnBlendListener listenerBlend;
-	public PopupWindow popup, popupGraphics;
+	public PopupWindow popup, popupGraphics, popupGausianBlur;
 	private int width, height;
-	private boolean click = true, clickGraphics = true;
+	private boolean click = true, clickGraphics = true, clickGausianBlur = true;
 	private ImageView close, closeGraphics, dataGraphics;
 	private TabHost th;
 	private CsvFile csv;
 	private double invert, blackWhite, brightness, ccontrast, flipVertical, flipHorizontal, grayscale, gammaCorection, 
 	rgb, ssaturation, hhue, color, blur, gausianBlur, sharpen, edge, emboss, engraving, smooth;
+	private int timesGausianBlur;
+	private long[] millisecondsGausianBlur;
+	private double[] sigmaGausianBlur;
 	private HashMap<String, Double> times = new HashMap<String, Double>();
 	/** Called when the activity is first created. */
 	@SuppressLint("NewApi")
@@ -158,6 +162,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 		popup = new PopupWindow(this);
 		popupGraphics = new PopupWindow(this);
+		popupGausianBlur = new PopupWindow(this);
 		
 		csv = new CsvFile();
 		
@@ -187,17 +192,17 @@ public class ImageGalleryDemoActivity extends Activity {
 
 		TabSpec spec = th.newTabSpec("tag1");
 		spec.setContent(R.id.tab1);
-		spec.setIndicator("Filters");
+		spec.setIndicator("Filteri");
 		th.addTab(spec);
 
 		spec = th.newTabSpec("tag2");
 		spec.setContent(R.id.tab2);
-		spec.setIndicator("Operations");
+		spec.setIndicator("Operacije");
 		th.addTab(spec);
 		
 		spec = th.newTabSpec("tag3");
 		spec.setContent(R.id.tab3);
-		spec.setIndicator("Graphics");
+		spec.setIndicator("Grafici");
 		th.addTab(spec);
 		
 		imageView = (ImageView) findViewById(R.id.imgView);
@@ -231,6 +236,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedDarker = (ImageView) findViewById(R.id.imgViewDarker);
 		
 		imageViewFiltersGraphics = (ImageView) findViewById(R.id.imgViewFiltersGraphics);
+		imageViewGausianBlurGraphics = (ImageView) findViewById(R.id.imgViewGausianBlurGraphics);
 		
 		initGraphics();
 		
@@ -297,7 +303,7 @@ public class ImageGalleryDemoActivity extends Activity {
 			  RelativeLayout.LayoutParams imageParamsData = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				imageParams.addRule(RelativeLayout.LEFT_OF, 1);
+				imageParamsData.addRule(RelativeLayout.LEFT_OF, 1);
 			  
 			  dataGraphics = new ImageView(ImageGalleryDemoActivity.this);
 			  dataGraphics.setBackgroundResource(R.drawable.statistika);
@@ -322,10 +328,10 @@ public class ImageGalleryDemoActivity extends Activity {
 					int w = (int) (width * 0.9);
 					int h = (int) (height * 0.9);
 					popupGraphics.update(0, 0, w, h);
-					click = false;
+					clickGraphics = false;
 				} else {
 					popupGraphics.dismiss();
-					click = true;
+					clickGraphics = true;
 				}
 			  
 			  
@@ -335,26 +341,26 @@ public class ImageGalleryDemoActivity extends Activity {
 				  @Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						String ispis = "";
-						ispis += "Invert: " + Double.toString(invert) + "\n";
-						ispis += "BlackWhite: " + Double.toString(blackWhite) + "\n";
-						ispis += "Brightness: " + Double.toString(brightness) + "\n";
-						ispis += "Contrast: " + Double.toString(ccontrast) + "\n";
-						ispis += "FlipVertical: " + Double.toString(flipVertical) + "\n";
-						ispis += "FlipHorizontal: " + Double.toString(flipHorizontal) + "\n";
-						ispis += "Grayscale: " + Double.toString(grayscale) + "\n";
-						ispis += "Gamma corection: " + Double.toString(gammaCorection) + "\n";
-						ispis += "RGB: " + Double.toString(rgb) + "\n";
-						ispis += "Saturation: " + Double.toString(ssaturation) + "\n";
-						ispis += "Hue: " + Double.toString(hhue) + "\n";
-						ispis += "Color: " + Double.toString(color) + "\n";
-						ispis += "Blur: " + Double.toString(blur) + "\n";
-						ispis += "Gausian blur: " + Double.toString(gausianBlur) + "\n";
-						ispis += "Sharpen: " + Double.toString(sharpen) + "\n";
-						ispis += "Edge: " + Double.toString(edge) + "\n";
-						ispis += "Emboss" + Double.toString(emboss) + "\n";
-						ispis += "Engraving: " + Double.toString(engraving) + "\n";
-						ispis += "Smooth: " + Double.toString(smooth) + "\n";
+						String ispis = "Vremena potrebna za izvrsavanje odgovarajucih filtera su sledeca:\n";
+						ispis += "Invert: " + Double.toString(invert) + "ms  ";
+						ispis += "BlackWhite: " + Double.toString(blackWhite) + "ms\n";
+						ispis += "Brightness: " + Double.toString(brightness) + "ms  ";
+						ispis += "Contrast: " + Double.toString(ccontrast) + "ms\n";
+						ispis += "FlipVertical: " + Double.toString(flipVertical) + "ms  ";
+						ispis += "FlipHorizontal: " + Double.toString(flipHorizontal) + "ms\n";
+						ispis += "Grayscale: " + Double.toString(grayscale) + "ms  ";
+						ispis += "Gamma corection: " + Double.toString(gammaCorection) + "ms\n";
+						ispis += "RGB: " + Double.toString(rgb) + "ms  ";
+						ispis += "Saturation: " + Double.toString(ssaturation) + "ms\n";
+						ispis += "Hue: " + Double.toString(hhue) + "ms  ";
+						ispis += "Color: " + Double.toString(color) + "ms\n";
+						ispis += "Blur: " + Double.toString(blur) + "ms  ";
+						ispis += "Gausian blur: " + Double.toString(gausianBlur) + "ms\n";
+						ispis += "Sharpen: " + Double.toString(sharpen) + "ms  ";
+						ispis += "Edge: " + Double.toString(edge) + "ms\n";
+						ispis += "Emboss" + Double.toString(emboss) + "ms  ";
+						ispis += "Engraving: " + Double.toString(engraving) + "ms\n";
+						ispis += "Smooth: " + Double.toString(smooth) + "ms  ";
 						
 						ispis += "Filteri poredjani od najsporijeg do najbrzeg:" + "\n";
 						
@@ -371,13 +377,107 @@ public class ImageGalleryDemoActivity extends Activity {
 						ispis += "Filter kome najmanje vremena treba za izvrsavanje je " + sorted_map.lastKey() + " \n ";
 						ispis += "Filter kome najvise vremena treba za izvrsavanje je " + sorted_map.firstKey() + " \n ";
 						
-						Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG).show();
+						final Toast toast = Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG);
+						toast.setDuration(10000);  // NE RADI!!!
+						toast.show();
 						
 					}
 				});
 
 			  }
 			  });
+		
+		imageViewGausianBlurGraphics.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				initValuesForGausianBlurGraphics();
+				
+				GraphViewData[] datas = new GraphViewData[timesGausianBlur + 1];
+				datas[0] = new GraphViewData(0, 0);
+				for (int i=0; i<timesGausianBlur; i++) {
+					datas[i+1] = new GraphViewData(sigmaGausianBlur[i], millisecondsGausianBlur[i]);
+					System.out.println(sigmaGausianBlur[i] + " " + millisecondsGausianBlur[i]);
+				}
+				
+				
+				GraphViewSeries lineChart = new GraphViewSeries(datas);
+				
+				GraphView graphView = new LineGraphView(
+						  ImageGalleryDemoActivity.this, "Graficki prikaz gausian blura");
+
+						 
+						  ((LineGraphView) graphView).setDrawBackground(true);
+						  ((LineGraphView) graphView).setBackgroundColor(Color.GRAY);
+						  graphView.addSeries(lineChart); // data 
+						  
+						  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
+									RelativeLayout.LayoutParams.WRAP_CONTENT,
+									RelativeLayout.LayoutParams.WRAP_CONTENT);
+							imageParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+							imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+						  
+						  closeGraphics = new ImageView(ImageGalleryDemoActivity.this);
+						  closeGraphics.setBackgroundResource(R.drawable.close);
+						  closeGraphics.setId(1);
+						  closeGraphics.setLayoutParams(imageParams);
+						  graphView.addView(closeGraphics);
+						  
+						  RelativeLayout.LayoutParams imageParamsData = new RelativeLayout.LayoutParams(
+									RelativeLayout.LayoutParams.WRAP_CONTENT,
+									RelativeLayout.LayoutParams.WRAP_CONTENT);
+							imageParamsData.addRule(RelativeLayout.LEFT_OF, 1);
+						  
+						  dataGraphics = new ImageView(ImageGalleryDemoActivity.this);
+						  dataGraphics.setBackgroundResource(R.drawable.statistika);
+						  dataGraphics.setId(2);
+						  dataGraphics.setLayoutParams(imageParamsData);
+						  graphView.addView(dataGraphics);
+						  
+						  popupGausianBlur.setContentView(graphView);
+						  
+							
+						  closeGraphics.setOnClickListener(new OnClickListener() {
+
+								@Override
+								public void onClick(View v) {
+									
+									popupGausianBlur.dismiss();
+								}
+							});
+						  
+						  if (clickGausianBlur) {
+							  popupGausianBlur.showAtLocation(graphView, Gravity.CENTER, 10, 10);
+								int w = (int) (width * 0.9);
+								int h = (int) (height * 0.9);
+								popupGausianBlur.update(0, 0, w, h);
+								clickGausianBlur = false;
+							} else {
+								popupGausianBlur.dismiss();
+								clickGausianBlur = true;
+							}
+						  
+						  dataGraphics.setOnClickListener(new View.OnClickListener() {
+								
+							  @Override
+								public void onClick(View v) {
+									// TODO Auto-generated method stub
+									String ispis = "Vremena potrebna za izvrsavanje gausian blur filtera u zavisnosti od vrednosti sigma su sledeca:\n";
+									
+									for (int i=0; i<timesGausianBlur; i++) {
+										ispis += "Sigma: " + sigmaGausianBlur[i] + " -> " + millisecondsGausianBlur[i] + "ms \n";
+									}
+									
+									ispis += "Zakljucak: sa porastom parametra sigma, jako se povecava vreme potrebno za izvrsenje gausian blur filtera!";
+									
+									final Toast toast = Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG);
+									toast.show();
+									
+								}
+							});
+			}
+		});
 		
 		
 		
@@ -386,7 +486,7 @@ public class ImageGalleryDemoActivity extends Activity {
 	private void initValuesForGraphics() {
 		// TODO Auto-generated method stub
 		
-		times.clear();
+		times.clear(); millisecondsGausianBlur = null; sigmaGausianBlur = null;
 		
 		invert = csv.findAverage("InvertFilter"); blackWhite = csv.findAverage("BlackWhiteFilter"); 
  		brightness = csv.findAverage("BrightnessFilter"); ccontrast = csv.findAverage("ContrastFilter");
@@ -404,6 +504,36 @@ public class ImageGalleryDemoActivity extends Activity {
  		times.put("GammaCorection", gammaCorection); times.put("RGB", rgb); times.put("Saturation", ssaturation); times.put("Hue", hhue);
  		times.put("Color", color); times.put("Blur", blur); times.put("GausianBlur", gausianBlur); times.put("Sharpen", sharpen);
  		times.put("Edge", edge); times.put("Emboss", emboss); times.put("Engraving", engraving); times.put("Smooth", smooth);
+		
+	}
+	
+	private void initValuesForGausianBlurGraphics() {
+		
+		timesGausianBlur = csv.findTimeGausianBlur();
+ 		millisecondsGausianBlur = new long[timesGausianBlur];
+ 		sigmaGausianBlur = new double[timesGausianBlur];
+ 		String[] milliseconds = new String[timesGausianBlur];
+ 		String[] sigma = new String[timesGausianBlur];
+ 		milliseconds = csv.findMillisecondsGausianBlur();
+ 		sigma = csv.findSigmaGausianBlur();
+ 		for (int i=0; i<timesGausianBlur; i++) {
+ 			millisecondsGausianBlur[i] = Long.parseLong(milliseconds[i]);
+ 			sigmaGausianBlur[i] = Double.parseDouble(sigma[i]);
+ 		}
+ 		
+ 		for (int i=0; i<timesGausianBlur-1; i++) 
+ 			for (int j=i+1; j<timesGausianBlur; j++) {
+ 				if (sigmaGausianBlur[j] < sigmaGausianBlur[i]) {
+ 					double temp = sigmaGausianBlur[i];
+ 					sigmaGausianBlur[i] = sigmaGausianBlur[j];
+ 					sigmaGausianBlur[j] = temp;
+ 					
+ 					long tempp = millisecondsGausianBlur[i];
+ 					millisecondsGausianBlur[i] = millisecondsGausianBlur[j];
+ 					millisecondsGausianBlur[j] = tempp;
+ 				}
+ 			}
+ 		
 		
 	}
 
@@ -1168,7 +1298,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				changeBitmap = Filter.gausianBlur(originalBitmap, ssigma);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
-				csv.writeAll("GausianBlurFilter", elapsed);
+				csv.writeAllGausianBlur("GausianBlurFilter", elapsed, ssigma);
 				
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
 				    originalBitmap.recycle();

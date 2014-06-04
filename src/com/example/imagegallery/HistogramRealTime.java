@@ -176,7 +176,7 @@ class DrawOnTop extends View {
         	double imageBlueStdDev = Math.sqrt( imageBlue2ndMoment - imageBlueMean*imageBlueMean );
         	//canvas.rotate(270);  // dodato
         	// Draw mean
-        	String imageMeanStr = "Mean (R,G,B): " + String.format("%.4g", imageRedMean) + ", " + String.format("%.4g", imageGreenMean) + ", " + String.format("%.4g", imageBlueMean);
+        	String imageMeanStr = "Srednje vrednosti (R,G,B): " + String.format("%.4g", imageRedMean) + ", " + String.format("%.4g", imageGreenMean) + ", " + String.format("%.4g", imageBlueMean);
         	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5-1, mPaintBlack);  // bilo marginWidth+10-1, 30-1
         	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5-1, mPaintBlack);  // bilo marginWidth+10+1, 30-1
         	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5+1, mPaintBlack);  // bilo marginWidth+10+1, 30+1
@@ -184,7 +184,7 @@ class DrawOnTop extends View {
         	canvas.drawText(imageMeanStr, marginWidth+10, -canvasWidth/(float)2.5, mPaintYellow);     // bilo marginWidth+10, 30
         	
         	// Draw standard deviation
-        	String imageStdDevStr = "Std Dev (R,G,B): " + String.format("%.4g", imageRedStdDev) + ", " + String.format("%.4g", imageGreenStdDev) + ", " + String.format("%.4g", imageBlueStdDev);
+        	String imageStdDevStr = "Standardna devijacija (R,G,B): " + String.format("%.4g", imageRedStdDev) + ", " + String.format("%.4g", imageGreenStdDev) + ", " + String.format("%.4g", imageBlueStdDev);
         	canvas.drawText(imageStdDevStr, marginWidth+10-1, -canvasWidth/(float)2.5+31, mPaintBlack); // bilo 60-1
         	canvas.drawText(imageStdDevStr, marginWidth+10+1, -canvasWidth/(float)2.5+31, mPaintBlack); // bilo 60-1
         	canvas.drawText(imageStdDevStr, marginWidth+10+1, -canvasWidth/(float)2.5+33, mPaintBlack); // bilo 60+1

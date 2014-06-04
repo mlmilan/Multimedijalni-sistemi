@@ -194,7 +194,7 @@ public class HistogramImage extends RelativeLayout implements OnTouchListener {
 					- imageBlueMean * imageBlueMean);
 
 			// Draw mean
-			String imageMeanStr = "Mean (R,G,B): "
+			String imageMeanStr = "Srednje vrednosti (R,G,B): "
 					+ String.format("%.4g", imageRedMean) + ", "
 					+ String.format("%.4g", imageGreenMean) + ", "
 					+ String.format("%.4g", imageBlueMean);
@@ -209,7 +209,7 @@ public class HistogramImage extends RelativeLayout implements OnTouchListener {
 			canvas.drawText(imageMeanStr, marginWidth + 10, 30, mPaintYellow);
 
 			// Draw standard deviation
-			String imageStdDevStr = "Std Dev (R,G,B): "
+			String imageStdDevStr = "Standardna devijacija (R,G,B): "
 					+ String.format("%.4g", imageRedStdDev) + ", "
 					+ String.format("%.4g", imageGreenStdDev) + ", "
 					+ String.format("%.4g", imageBlueStdDev);

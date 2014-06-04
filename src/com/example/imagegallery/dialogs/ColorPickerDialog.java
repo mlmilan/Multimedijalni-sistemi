@@ -40,14 +40,14 @@ public class ColorPickerDialog {
 		this.listener = listener;
 		Color.colorToHSV(color, currentColorHsv);
 
-		final View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
-		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
-		viewSatVal = (ColorPickerView) view.findViewById(R.id.ambilwarna_viewSatBri);
-		viewCursor = (ImageView) view.findViewById(R.id.ambilwarna_cursor);
-		viewOldColor = view.findViewById(R.id.ambilwarna_warnaLama);
-		viewNewColor = view.findViewById(R.id.ambilwarna_warnaBaru);
-		viewTarget = (ImageView) view.findViewById(R.id.ambilwarna_target);
-		viewContainer = (ViewGroup) view.findViewById(R.id.ambilwarna_viewContainer);
+		final View view = LayoutInflater.from(context).inflate(R.layout.shading, null);
+		viewHue = view.findViewById(R.id.shading_viewHue);
+		viewSatVal = (ColorPickerView) view.findViewById(R.id.shading_viewSatBri);
+		viewCursor = (ImageView) view.findViewById(R.id.shading_cursor);
+		viewOldColor = view.findViewById(R.id.shading_warnaLama);
+		viewNewColor = view.findViewById(R.id.shading_warnaBaru);
+		viewTarget = (ImageView) view.findViewById(R.id.shading_target);
+		viewContainer = (ViewGroup) view.findViewById(R.id.shading_viewContainer);
 
 		viewSatVal.setHue(getHue());
 		viewOldColor.setBackgroundColor(color);

@@ -61,6 +61,26 @@ public class CsvFile {
 
 	}
 	
+	public void writeAllGausianBlur(String filter, long time, double sigma) {
+
+		try {
+			FileWriter fw = new FileWriter(csv, true);
+			CSVWriter writer = new CSVWriter(fw);
+			
+			ArrayList<String[]> data = new ArrayList<String[]>();
+			String sum_time_str = Long.toString(time);
+			String sigma_str = Double.toString(sigma);
+			data.add(new String[] { filter, sum_time_str, sigma_str });
+			writer.writeAll(data);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			System.out.println(e.toString());
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
+
+	}
+	
 	public double findAverage(String filter) {   // vraca zbir vremena izvrsavanja odgovarajuceg filtera
 
 		long ukupno_vreme = 0;
@@ -80,24 +100,10 @@ public class CsvFile {
 			    System.out.println(row[0] + "#" + row[1]);
 			     
 			    if (row[0].equals(filter)){
-			    	//csvReader.close();
-			    	//return row[1];
 			    	ukupno_vreme += Long.parseLong(row[1]);
 			    	broj_izvrsavanja++;
 			    }
 			}
-			/*
-			while((row = csvReader.readNext()) != null) {
-				System.out.println("usao u while");
-			    
-			    System.out.println(row[0] + "#" + row[1] + "#" + row[2]);
-			     
-			    if (row[0].equals(filter)){
-			    	csvReader.close();
-			    	return row[1];
-			    }
-			}
-			*/
 			csvReader.close();
 			
 		} catch (FileNotFoundException e) {
@@ -110,28 +116,92 @@ public class CsvFile {
 		else return 0;
 	}
 	
-	private String findNum(String filter) {  // vraca broj izvrsavanja odgovarajuceg filtera
+	public int findTimeGausianBlur() {   // vraca koliko puta je izvrsen gausianBlur
+
+		int broj = 0;
 		try {
 			String[] row = null;
-			CSVReader csvReader = new CSVReader(new FileReader(csv));
 			
+			CSVReader csvReader = new CSVReader(new FileReader(csv));
 			List<String[]> content = csvReader.readAll();
 			 
 			for (Object object : content) {
 			    row = (String[]) object;
+			    
 			     
-			    if (row[0].equals(filter)){
-			    	csvReader.close();
-			    	return row[2];
+			    if (row[0].equals("GausianBlurFilter")){
+			    	broj++;
 			    }
 			}
 			csvReader.close();
+			
 		} catch (FileNotFoundException e) {
 			System.out.println(e.toString());
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
-		return null;
+		return broj;
 	}
+	
+	public String[] findMillisecondsGausianBlur() {   // vraca niz vremena potrebnih za sva izvrsavanja gausian blur filtera
+
+		int broj = this.findTimeGausianBlur();
+		String[] vremena = new String[broj];
+		int i=0;
+		try {
+			String[] row = null;
+			
+			CSVReader csvReader = new CSVReader(new FileReader(csv));
+			List<String[]> content = csvReader.readAll();
+			 
+			for (Object object : content) {
+			    row = (String[]) object;
+			    
+			     
+			    if (row[0].equals("GausianBlurFilter")){
+			    	vremena[i] = row[1];
+			    	i++;
+			    }
+			}
+			csvReader.close();
+			
+		} catch (FileNotFoundException e) {
+			System.out.println(e.toString());
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
+		return vremena;
+	}
+	
+	public String[] findSigmaGausianBlur() {   // vraca niz vrednosti sigma za sva izvrsavanja gausian blur filtera
+
+		int broj = this.findTimeGausianBlur();
+		String[] sigma = new String[broj];
+		int i=0;
+		try {
+			String[] row = null;
+			
+			CSVReader csvReader = new CSVReader(new FileReader(csv));
+			List<String[]> content = csvReader.readAll();
+			 
+			for (Object object : content) {
+			    row = (String[]) object;
+			    
+			     
+			    if (row[0].equals("GausianBlurFilter")){
+			    	sigma[i] = row[2];
+			    	i++;
+			    }
+			}
+			csvReader.close();
+			
+		} catch (FileNotFoundException e) {
+			System.out.println(e.toString());
+		} catch (IOException e) {
+			System.out.println(e.toString());
+		}
+		return sigma;
+	}
+	
 
 }
