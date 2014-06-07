@@ -199,6 +199,8 @@ public class CsvFile {
 			System.out.println(e.toString());
 		} catch (IOException e) {
 			System.out.println(e.toString());
+		} catch (Exception e) {
+			System.out.println(e.toString());
 		}
 		return sigma;
 	}

@@ -1,56 +1,14 @@
 package com.example.imagegallery;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-import com.example.imagegallery.dialogs.BlendDialog;
-import com.example.imagegallery.dialogs.BlendDialog.OnBlendListener;
-import com.example.imagegallery.dialogs.ColorPickerDialog;
-import com.example.imagegallery.dialogs.BlackWhiteDialog;
-import com.example.imagegallery.dialogs.BrightnessDialog;
-import com.example.imagegallery.dialogs.ColorDialog;
-import com.example.imagegallery.dialogs.ContrastDialog;
-import com.example.imagegallery.dialogs.GammaDialog;
-import com.example.imagegallery.dialogs.GausianBlurDialog;
-import com.example.imagegallery.dialogs.HueDialog;
-import com.example.imagegallery.dialogs.SaturationDialog;
-import com.example.imagegallery.dialogs.ColorPickerDialog.OnColorPickerListener;
-import com.example.imagegallery.dialogs.BlackWhiteDialog.OnBlackWhiteListener;
-import com.example.imagegallery.dialogs.BrightnessDialog.OnBrightnessListener;
-import com.example.imagegallery.dialogs.ColorDialog.OnColorListener;
-import com.example.imagegallery.dialogs.ContrastDialog.OnContrastListener;
-import com.example.imagegallery.dialogs.GammaDialog.OnGammaListener;
-import com.example.imagegallery.dialogs.GausianBlurDialog.OnGausianBlurListener;
-import com.example.imagegallery.dialogs.HueDialog.OnHueListener;
-import com.example.imagegallery.dialogs.SaturationDialog.OnSaturationListener;
-import com.example.imagegallery.utils.CsvFile;
-import com.example.imagegallery.utils.Save;
-import com.example.imagegallery.utils.ValueComparator;
-import com.example.imagegallery.utils.WrappingSlidingDrawer;
-import com.jjoe64.graphview.CustomLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
-import com.jjoe64.graphview.GraphViewSeries.*;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-import com.jjoe64.graphview.BarGraphView;
-import com.jjoe64.graphview.GraphViewStyle;
-import com.jjoe64.graphview.GraphView.GraphViewData;
 
 import net.viralpatel.android.imagegalleray.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -64,27 +22,53 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.ImageView.ScaleType;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
+
+import com.example.imagegallery.dialogs.BlackWhiteDialog;
+import com.example.imagegallery.dialogs.BlackWhiteDialog.OnBlackWhiteListener;
+import com.example.imagegallery.dialogs.BlendDialog;
+import com.example.imagegallery.dialogs.BlendDialog.OnBlendListener;
+import com.example.imagegallery.dialogs.BrightnessDialog;
+import com.example.imagegallery.dialogs.BrightnessDialog.OnBrightnessListener;
+import com.example.imagegallery.dialogs.ColorDialog;
+import com.example.imagegallery.dialogs.ColorDialog.OnColorListener;
+import com.example.imagegallery.dialogs.ColorPickerDialog;
+import com.example.imagegallery.dialogs.ColorPickerDialog.OnColorPickerListener;
+import com.example.imagegallery.dialogs.ContrastDialog;
+import com.example.imagegallery.dialogs.ContrastDialog.OnContrastListener;
+import com.example.imagegallery.dialogs.GammaDialog;
+import com.example.imagegallery.dialogs.GammaDialog.OnGammaListener;
+import com.example.imagegallery.dialogs.GausianBlurDialog;
+import com.example.imagegallery.dialogs.GausianBlurDialog.OnGausianBlurListener;
+import com.example.imagegallery.dialogs.HueDialog;
+import com.example.imagegallery.dialogs.HueDialog.OnHueListener;
+import com.example.imagegallery.dialogs.SaturationDialog;
+import com.example.imagegallery.dialogs.SaturationDialog.OnSaturationListener;
+import com.example.imagegallery.utils.CsvFile;
+import com.example.imagegallery.utils.Save;
+import com.example.imagegallery.utils.ValueComparator;
+import com.example.imagegallery.utils.WrappingSlidingDrawer;
+import com.jjoe64.graphview.BarGraphView;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
 
 public class ImageGalleryDemoActivity extends Activity {
 
@@ -108,7 +92,8 @@ public class ImageGalleryDemoActivity extends Activity {
 			imageViewResizedEngraving, imageViewResizedSmooth,
 			imageViewResizedOriginal, imageViewOperations, imageViewResizedOriginalOperations,
 			imageViewResizedBlend, imageViewResizedMultiply, imageViewResizedDifference,
-			imageViewResizedLighter, imageViewResizedDarker, imageViewFiltersGraphics, imageViewGausianBlurGraphics;
+			imageViewResizedLighter, imageViewResizedDarker, imageViewFiltersGraphics, imageViewGausianBlurGraphics,
+			imageViewOperationsGraphics;
 	private Button slideButton;
 	private Button slideButtonOperations;
 	private Button slideButtonGraphics;
@@ -136,7 +121,8 @@ public class ImageGalleryDemoActivity extends Activity {
 	private TabHost th;
 	private CsvFile csv;
 	private double invert, blackWhite, brightness, ccontrast, flipVertical, flipHorizontal, grayscale, gammaCorection, 
-	rgb, ssaturation, hhue, color, blur, gausianBlur, sharpen, edge, emboss, engraving, smooth;
+	rgb, ssaturation, hhue, color, blur, gausianBlur, sharpen, edge, emboss, engraving, smooth, blend, multiply,
+	difference, lighter, darker;
 	private int timesGausianBlur;
 	private long[] millisecondsGausianBlur;
 	private double[] sigmaGausianBlur;
@@ -237,27 +223,85 @@ public class ImageGalleryDemoActivity extends Activity {
 		
 		imageViewFiltersGraphics = (ImageView) findViewById(R.id.imgViewFiltersGraphics);
 		imageViewGausianBlurGraphics = (ImageView) findViewById(R.id.imgViewGausianBlurGraphics);
+		imageViewOperationsGraphics = (ImageView) findViewById(R.id.imgViewOperationsGraphic);
 		
-		initGraphics();
-		
-		 
+		initGraphics();		 
 	}
 
 	private void initGraphics() {
-		// TODO Auto-generated method stub
-		
-		
-		
-		
-		
-		imageViewFiltersGraphics.setOnClickListener(new View.OnClickListener() {
-			  
-			
-			  @Override public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
-			 
-		   initValuesForGraphics();
+		imageViewOperationsGraphics.setOnClickListener(new View.OnClickListener() {			
+			  @Override 
+			  public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
+				  initValuesForGraphics();
 				  
-			GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
+				  GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
+						      new GraphViewData(0, 0.0d)
+						   	, new GraphViewData(6, blend)
+						  	, new GraphViewData(12, 0.0d)
+						    , new GraphViewData(16, multiply)
+						  	, new GraphViewData(22, 0.0d)
+						    , new GraphViewData(26, difference)
+						  	, new GraphViewData(32, 0.0d)
+						    , new GraphViewData(42, 0.0d)
+						    , new GraphViewData(56, lighter)
+						  	, new GraphViewData(62, 0.0d)
+						   	, new GraphViewData(76, darker)
+						   	, new GraphViewData(82, 0.0d)
+						});
+			
+				  GraphView graphView = new BarGraphView(
+				  ImageGalleryDemoActivity.this, "Graficki prikaz operacija");
+
+			 
+				  graphView.setBackgroundColor(Color.BLACK);
+				  graphView.setHorizontalLabels(new String[] {"blend", "multiply", "difference", "lighter  darker", ""});
+				  graphView.addSeries(exampleSeries); // data 
+			  
+				  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
+							RelativeLayout.LayoutParams.WRAP_CONTENT,
+							RelativeLayout.LayoutParams.WRAP_CONTENT);
+				  imageParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+				  imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			  
+				  closeGraphics = new ImageView(ImageGalleryDemoActivity.this);
+				  closeGraphics.setBackgroundResource(R.drawable.close);
+				  closeGraphics.setId(1);
+				  closeGraphics.setLayoutParams(imageParams);
+				  graphView.addView(closeGraphics);
+			  
+				  RelativeLayout.LayoutParams imageParamsData = new RelativeLayout.LayoutParams(
+							RelativeLayout.LayoutParams.WRAP_CONTENT,
+							RelativeLayout.LayoutParams.WRAP_CONTENT);
+					imageParamsData.addRule(RelativeLayout.LEFT_OF, 1);
+			  
+		  
+				  popupGraphics.setContentView(graphView);				
+				  closeGraphics.setOnClickListener(new OnClickListener() {	
+						@Override
+						public void onClick(View v) {							
+							popupGraphics.dismiss();
+						}
+				  });
+			  
+				  if (clickGraphics) {
+					  popupGraphics.showAtLocation(graphView, Gravity.CENTER, 10, 10);
+					  int w = (int) (width * 0.9);
+					  int h = (int) (height * 0.9);
+					  popupGraphics.update(0, 0, w, h);
+					  clickGraphics = false;
+				  } else {
+					  popupGraphics.dismiss();
+					  clickGraphics = true;
+				  }			 
+			}
+		});
+		
+		imageViewFiltersGraphics.setOnClickListener(new View.OnClickListener() {			
+			  @Override 
+			  public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
+				  initValuesForGraphics();
+				  
+				  GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
 						   	  new GraphViewData(0, invert)
 						    , new GraphViewData(2, blackWhite)
 						    , new GraphViewData(4, brightness)
@@ -280,67 +324,64 @@ public class ImageGalleryDemoActivity extends Activity {
 						   	, new GraphViewData(38, 0.0d)
 						});
 			
-			  GraphView graphView = new BarGraphView(
-			  ImageGalleryDemoActivity.this, "Graficki prikaz filtera");
+				  GraphView graphView = new BarGraphView(
+				  ImageGalleryDemoActivity.this, "Graficki prikaz filtera");
 
 			 
-			  graphView.setBackgroundColor(Color.BLACK);
-			  graphView.setHorizontalLabels(new String[] {"osn.", "hue/sat/col", "konv.", ""});
-			  graphView.addSeries(exampleSeries); // data 
+				  graphView.setBackgroundColor(Color.BLACK);
+				  graphView.setHorizontalLabels(new String[] {"osn.", "hue/sat/col", "konv.", ""});
+				  graphView.addSeries(exampleSeries); // data 
 			  
-			  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				imageParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-				imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+				  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
+							RelativeLayout.LayoutParams.WRAP_CONTENT,
+							RelativeLayout.LayoutParams.WRAP_CONTENT);
+				  imageParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+				  imageParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			  
-			  closeGraphics = new ImageView(ImageGalleryDemoActivity.this);
-			  closeGraphics.setBackgroundResource(R.drawable.close);
-			  closeGraphics.setId(1);
-			  closeGraphics.setLayoutParams(imageParams);
-			  graphView.addView(closeGraphics);
+				  closeGraphics = new ImageView(ImageGalleryDemoActivity.this);
+				  closeGraphics.setBackgroundResource(R.drawable.close);
+				  closeGraphics.setId(1);
+				  closeGraphics.setLayoutParams(imageParams);
+				  graphView.addView(closeGraphics);
 			  
-			  RelativeLayout.LayoutParams imageParamsData = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				imageParamsData.addRule(RelativeLayout.LEFT_OF, 1);
+				  RelativeLayout.LayoutParams imageParamsData = new RelativeLayout.LayoutParams(
+							RelativeLayout.LayoutParams.WRAP_CONTENT,
+							RelativeLayout.LayoutParams.WRAP_CONTENT);
+					imageParamsData.addRule(RelativeLayout.LEFT_OF, 1);
 			  
-			  dataGraphics = new ImageView(ImageGalleryDemoActivity.this);
-			  dataGraphics.setBackgroundResource(R.drawable.statistika);
-			  dataGraphics.setId(2);
-			  dataGraphics.setLayoutParams(imageParamsData);
-			  graphView.addView(dataGraphics);
-			  
-			  popupGraphics.setContentView(graphView);
+				  dataGraphics = new ImageView(ImageGalleryDemoActivity.this);
+				  dataGraphics.setBackgroundResource(R.drawable.statistika);
+				  dataGraphics.setId(2);
+				  dataGraphics.setLayoutParams(imageParamsData);
+				  graphView.addView(dataGraphics);
+				  
+				  popupGraphics.setContentView(graphView);
 			  
 				
-			  closeGraphics.setOnClickListener(new OnClickListener() {
-
+				  closeGraphics.setOnClickListener(new OnClickListener() {	
+						@Override
+						public void onClick(View v) {							
+							popupGraphics.dismiss();
+						}
+				  });
+			  
+				  if (clickGraphics) {
+					  popupGraphics.showAtLocation(graphView, Gravity.CENTER, 10, 10);
+					  int w = (int) (width * 0.9);
+					  int h = (int) (height * 0.9);
+					  popupGraphics.update(0, 0, w, h);
+					  clickGraphics = false;
+				  } else {
+					  popupGraphics.dismiss();
+					  clickGraphics = true;
+				  }
+			  
+			  
+			  
+				  dataGraphics.setOnClickListener(new View.OnClickListener() {
+					
 					@Override
 					public void onClick(View v) {
-						
-						popupGraphics.dismiss();
-					}
-				});
-			  
-			  if (clickGraphics) {
-					popupGraphics.showAtLocation(graphView, Gravity.CENTER, 10, 10);
-					int w = (int) (width * 0.9);
-					int h = (int) (height * 0.9);
-					popupGraphics.update(0, 0, w, h);
-					clickGraphics = false;
-				} else {
-					popupGraphics.dismiss();
-					clickGraphics = true;
-				}
-			  
-			  
-			  
-			  dataGraphics.setOnClickListener(new View.OnClickListener() {
-					
-				  @Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						String ispis = "Vremena potrebna za izvrsavanje odgovarajucih filtera su sledeca:\n";
 						ispis += "Invert: " + Double.toString(invert) + "ms  ";
 						ispis += "BlackWhite: " + Double.toString(blackWhite) + "ms\n";
@@ -391,7 +432,6 @@ public class ImageGalleryDemoActivity extends Activity {
 			
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
 				initValuesForGausianBlurGraphics();
 				
 				GraphViewData[] datas = new GraphViewData[timesGausianBlur + 1];
@@ -462,7 +502,6 @@ public class ImageGalleryDemoActivity extends Activity {
 								
 							  @Override
 								public void onClick(View v) {
-									// TODO Auto-generated method stub
 									String ispis = "Vremena potrebna za izvrsavanje gausian blur filtera u zavisnosti od vrednosti sigma su sledeca:\n";
 									
 									for (int i=0; i<timesGausianBlur; i++) {
@@ -484,8 +523,6 @@ public class ImageGalleryDemoActivity extends Activity {
 	}
 	
 	private void initValuesForGraphics() {
-		// TODO Auto-generated method stub
-		
 		times.clear(); millisecondsGausianBlur = null; sigmaGausianBlur = null;
 		
 		invert = csv.findAverage("InvertFilter"); blackWhite = csv.findAverage("BlackWhiteFilter"); 
@@ -498,6 +535,12 @@ public class ImageGalleryDemoActivity extends Activity {
  		sharpen = csv.findAverage("SharpenFilter"); edge = csv.findAverage("EdgeFilter");
  		emboss = csv.findAverage("EmbossFilter"); engraving = csv.findAverage("EngravingFilter");
  		smooth = csv.findAverage("SmoothFilter");
+ 		
+ 		blend = csv.findAverage("BlendOperation");
+ 		multiply = csv.findAverage("MultiplyOperation");
+ 		difference = csv.findAverage("DifferenceOperation");
+ 		lighter = csv.findAverage("LighterOperation");
+ 		darker = csv.findAverage("DarkerOperation");
  		
  		times.put("Invert", invert); times.put("BlackWhite", blackWhite); times.put("Brightness", brightness); times.put("Contrast", ccontrast);
  		times.put("FlipVertical", flipVertical); times.put("FlipHorizontal", flipHorizontal); times.put("Grayscale", grayscale);
@@ -626,9 +669,6 @@ public class ImageGalleryDemoActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Take appropriate action for each action item click
-		// Toast.makeText(this, "Kliknuto!", Toast.LENGTH_LONG).show();
-
 		switch (item.getItemId()) {
 		case R.id.loadimage:
 			Intent i = new Intent(
@@ -791,11 +831,14 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(BlendDialog dialog, float scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
 				alfa = scale;
+				
+				long start = System.currentTimeMillis();
 				changeBitmapOperations = Operation.blend(originalBitmap, originalOperationsBitmap, alfa);
+				long end = System.currentTimeMillis();
+				long elapsed = end - start;
+				csv.writeAll("BlendOperation", elapsed);
+							
 				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
 				    originalOperationsBitmap.recycle();
 				    originalOperationsBitmap = null; 
@@ -810,6 +853,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
 				createSmallerImageOperations();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija blend trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -921,10 +965,8 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedBlend.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
-				BlendDialog dialog = new BlendDialog(
-						ImageGalleryDemoActivity.this, listenerBlend);
+			public void onClick(View arg0) {				
+				BlendDialog dialog = new BlendDialog(ImageGalleryDemoActivity.this, listenerBlend);
 				dialog.show();
 			}
 		});
@@ -934,8 +976,12 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				
+				long start = System.currentTimeMillis();
 				changeBitmapOperations = Operation.multiply(originalBitmap, originalOperationsBitmap);
+				long end = System.currentTimeMillis();
+				long elapsed = end - start;
+				csv.writeAll("MultiplyOperation", elapsed);
+				
 				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
 				    originalOperationsBitmap.recycle();
 				    originalOperationsBitmap = null; 
@@ -950,15 +996,21 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
 				createSmallerImageOperations();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija multiply trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		
 		imageViewResizedDifference.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
+			public void onClick(View arg0) {				
+				long start = System.currentTimeMillis();
 				changeBitmapOperations = Operation.difference(originalBitmap, originalOperationsBitmap);
+				long end = System.currentTimeMillis();
+				long elapsed = end - start;
+				csv.writeAll("DifferenceOperation", elapsed);
+								
+				
 				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
 				    originalOperationsBitmap.recycle();
 				    originalOperationsBitmap = null; 
@@ -972,6 +1024,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
 				createSmallerImageOperations();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija difference trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		
@@ -979,8 +1032,12 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				
+				long start = System.currentTimeMillis();
 				changeBitmapOperations = Operation.lighter(originalBitmap, originalOperationsBitmap);
+				long end = System.currentTimeMillis();
+				long elapsed = end - start;
+				csv.writeAll("LighterOperation", elapsed);
+								
 				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
 				    originalOperationsBitmap.recycle();
 				    originalOperationsBitmap = null; 
@@ -995,6 +1052,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
 				createSmallerImageOperations();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija lighter trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		
@@ -1002,8 +1060,12 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				
+				long start = System.currentTimeMillis();
 				changeBitmapOperations = Operation.darker(originalBitmap, originalOperationsBitmap);
+				long end = System.currentTimeMillis();
+				long elapsed = end - start;
+				csv.writeAll("DarkerOperation", elapsed);
+								
 				if (originalOperationsBitmap != null && !originalOperationsBitmap.isRecycled()) {
 				    originalOperationsBitmap.recycle();
 				    originalOperationsBitmap = null; 
@@ -1018,6 +1080,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
 				createSmallerImageOperations();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija darker trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 
@@ -1029,18 +1092,13 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(ColorPickerDialog dialog, int color) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
-				ccolor = color;
-				
-				
+				ccolor = color;				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.shadingFilter(originalBitmap, ccolor);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("ColorFilter", elapsed);
-				
+								
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
 				    originalBitmap.recycle();
 				    originalBitmap = null; 
@@ -1049,6 +1107,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter color trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1062,17 +1121,13 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(BlackWhiteDialog dialog, int scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
-				sscale = scale;
-				
+				sscale = scale;				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.blackWhite(originalBitmap, sscale);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("BlackWhiteFilter", elapsed);
-				
+								
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
 				    originalBitmap.recycle();
 				    originalBitmap = null; 
@@ -1081,6 +1136,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter blackwhite trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1094,16 +1150,13 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(BrightnessDialog dialog, int scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
 				bright = scale;
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.brightness(originalBitmap, bright);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("BrightnessFilter", elapsed);
-				
+								
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
 				    originalBitmap.recycle();
 				    originalBitmap = null; 
@@ -1112,6 +1165,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter brightness trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1125,16 +1179,13 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(ContrastDialog dialog, int scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
 				contrast = scale;
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.contrast(originalBitmap, contrast);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("ContrastFilter", elapsed);
-				
+								
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
 				    originalBitmap.recycle();
 				    originalBitmap = null; 
@@ -1143,6 +1194,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter contrast trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1156,17 +1208,13 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(GammaDialog dialog, double scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
 				gamma = scale;
 				long start = System.currentTimeMillis();
-				changeBitmap = Filter.gammaCorection(originalBitmap, gamma,
-						gamma, gamma);
+				changeBitmap = Filter.gammaCorection(originalBitmap, gamma,	gamma, gamma);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("GammaCorectionFilter", elapsed);
-				
+								
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
 				    originalBitmap.recycle();
 				    originalBitmap = null; 
@@ -1175,6 +1223,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter gama trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1187,18 +1236,12 @@ public class ImageGalleryDemoActivity extends Activity {
 		listenerRGB = new OnColorListener() {
 
 			@Override
-			public void onOk(ColorDialog dialog, double red, double green,
-					double blue) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
+			public void onOk(ColorDialog dialog, double red, double green, double blue) {
 				rred = red;
 				ggreen = green;
-				bblue = blue;
-				
+				bblue = blue;				
 				long start = System.currentTimeMillis();
-				changeBitmap = Filter.colorFilter(originalBitmap, rred, ggreen,
-						bblue);
+				changeBitmap = Filter.colorFilter(originalBitmap, rred, ggreen,	bblue);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("RGBFilter", elapsed);
@@ -1211,6 +1254,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter rgb trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1224,14 +1268,9 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(SaturationDialog dialog, float scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
-				saturation = scale;
-				
+				saturation = scale;				
 				long start = System.currentTimeMillis();
-				changeBitmap = Filter.saturationFilter(originalBitmap,
-						saturation);
+				changeBitmap = Filter.saturationFilter(originalBitmap, saturation);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("SaturationFilter", elapsed);
@@ -1244,6 +1283,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter saturation trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1257,11 +1297,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(HueDialog dialog, int scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
-				hue = scale;
-				
+				hue = scale;				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.hueFilter(originalBitmap, hue);
 				long end = System.currentTimeMillis();
@@ -1276,6 +1312,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter hue trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1289,11 +1326,7 @@ public class ImageGalleryDemoActivity extends Activity {
 
 			@Override
 			public void onOk(GausianBlurDialog dialog, double scale) {
-				
-				// Toast.makeText(this, "Boja: " + color,
-				// Toast.LENGTH_LONG).show();
-				ssigma = scale;
-				
+				ssigma = scale;				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.gausianBlur(originalBitmap, ssigma);
 				long end = System.currentTimeMillis();
@@ -1308,6 +1341,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter gaussianblur trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -1406,7 +1440,6 @@ public class ImageGalleryDemoActivity extends Activity {
 						imageView.setImageBitmap(originalBitmap);
 						createSmallerImage();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -1418,12 +1451,11 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedInvert.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
+			public void onClick(View farg0) {				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.invert(originalBitmap);
 				long end = System.currentTimeMillis();
-				long elapsed = end - start;
+				long elapsed = end - start;				
 				csv.writeAll("InvertFilter", elapsed);
 				
 				if (originalBitmap != null && !originalBitmap.isRecycled()) {
@@ -1434,6 +1466,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter invert trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		imageViewResizedBlackWhite
@@ -1474,12 +1507,11 @@ public class ImageGalleryDemoActivity extends Activity {
 				.setOnClickListener(new View.OnClickListener() {
 
 					@Override
-					public void onClick(View arg0) {
-						
+					public void onClick(View arg0) {						
 						long start = System.currentTimeMillis();
 						changeBitmap = Filter.flipVertical(originalBitmap);
 						long end = System.currentTimeMillis();
-						long elapsed = end - start;
+						long elapsed = end - start;						
 						csv.writeAll("FlipVerticalFilter", elapsed);
 						
 						if (originalBitmap != null && !originalBitmap.isRecycled()) {
@@ -1490,20 +1522,20 @@ public class ImageGalleryDemoActivity extends Activity {
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
+						Toast.makeText(ImageGalleryDemoActivity.this, "Filter flipvertical trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
 		imageViewResizedFlipHorizontal
 				.setOnClickListener(new View.OnClickListener() {
 
 					@Override
-					public void onClick(View arg0) {
-						
+					public void onClick(View arg0) {						
 						long start = System.currentTimeMillis();
 						changeBitmap = Filter.flipHorizontal(originalBitmap);
 						long end = System.currentTimeMillis();
 						long elapsed = end - start;
 						csv.writeAll("FlipHorizontalFilter", elapsed);
-						
+												
 						if (originalBitmap != null && !originalBitmap.isRecycled()) {
 						    originalBitmap.recycle();
 						    originalBitmap = null; 
@@ -1512,14 +1544,14 @@ public class ImageGalleryDemoActivity extends Activity {
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
+						Toast.makeText(ImageGalleryDemoActivity.this, "Filter fliphorizontal trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
 		imageViewResizedGrayscale
 				.setOnClickListener(new View.OnClickListener() {
 
 					@Override
-					public void onClick(View arg0) {
-						
+					public void onClick(View arg0) {						
 						long start = System.currentTimeMillis();
 						changeBitmap = Filter.grayscale(originalBitmap);
 						long end = System.currentTimeMillis();
@@ -1534,6 +1566,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
+						Toast.makeText(ImageGalleryDemoActivity.this, "Filter grayscale trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
 		imageViewResizedGamma.setOnClickListener(new View.OnClickListener() {
@@ -1595,8 +1628,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedBlur.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
+			public void onClick(View arg0) {				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.blur(originalBitmap);
 				long end = System.currentTimeMillis();
@@ -1611,6 +1643,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter blur trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		imageViewResizedGausianBlur
@@ -1628,8 +1661,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		imageViewResizedSharpen.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
+			public void onClick(View arg0) {				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.sharpen(originalBitmap);
 				long end = System.currentTimeMillis();
@@ -1644,13 +1676,13 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter sharpen trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		imageViewResizedEdge.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
+			public void onClick(View arg0) {				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.edge(originalBitmap);
 				long end = System.currentTimeMillis();
@@ -1665,13 +1697,13 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter edge trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		imageViewResizedEmboss.setOnClickListener(new View.OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				
+			public void onClick(View arg0) {				
 				long start = System.currentTimeMillis();
 				changeBitmap = Filter.emboss(originalBitmap);
 				long end = System.currentTimeMillis();
@@ -1686,14 +1718,14 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter emboss trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 		imageViewResizedEngraving
 				.setOnClickListener(new View.OnClickListener() {
 
 					@Override
-					public void onClick(View arg0) {
-						
+					public void onClick(View arg0) {						
 						long start = System.currentTimeMillis();
 						changeBitmap = Filter.engraving(originalBitmap);
 						long end = System.currentTimeMillis();
@@ -1708,6 +1740,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
 						createSmallerImage();
+						Toast.makeText(ImageGalleryDemoActivity.this, "Filter engraving trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
 		imageViewResizedSmooth.setOnClickListener(new View.OnClickListener() {
@@ -1729,6 +1762,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
 				createSmallerImage();
+				Toast.makeText(ImageGalleryDemoActivity.this, "Filter smooth trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
 
