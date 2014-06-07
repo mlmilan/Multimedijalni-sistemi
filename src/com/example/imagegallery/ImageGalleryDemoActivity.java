@@ -433,7 +433,9 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				initValuesForGausianBlurGraphics();
-				
+				if (sigmaGausianBlur == null && millisecondsGausianBlur == null) {
+					return;
+				}
 				GraphViewData[] datas = new GraphViewData[timesGausianBlur + 1];
 				datas[0] = new GraphViewData(0, 0);
 				for (int i=0; i<timesGausianBlur; i++) {
@@ -559,9 +561,15 @@ public class ImageGalleryDemoActivity extends Activity {
  		String[] sigma = new String[timesGausianBlur];
  		milliseconds = csv.findMillisecondsGausianBlur();
  		sigma = csv.findSigmaGausianBlur();
- 		for (int i=0; i<timesGausianBlur; i++) {
- 			millisecondsGausianBlur[i] = Long.parseLong(milliseconds[i]);
- 			sigmaGausianBlur[i] = Double.parseDouble(sigma[i]);
+ 		try {
+ 			for (int i=0; i<timesGausianBlur; i++) {
+ 				millisecondsGausianBlur[i] = Long.parseLong(milliseconds[i]);
+ 				sigmaGausianBlur[i] = Double.parseDouble(sigma[i]);
+ 			}
+ 		} catch (Exception e) {
+ 			sigmaGausianBlur = null;
+ 			millisecondsGausianBlur = null;
+ 			return;
  		}
  		
  		for (int i=0; i<timesGausianBlur-1; i++) 
