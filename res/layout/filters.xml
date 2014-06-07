@@ -751,6 +751,29 @@
 				    			android:layout_below="@+id/tvOperationsGraphic" 
 				    			android:layout_toRightOf="@+id/imgViewGausianBlurGraphics">				         
 				     		</ImageView>
+				     		<TextView
+			            		android:id="@+id/tvBlaGraphic"
+			            		android:layout_width="wrap_content"
+			            		android:layout_height="wrap_content"
+			            		android:padding="0dip"
+			            		android:text=""
+			            		android:textSize="14sp"
+			            		android:layout_marginLeft="5dip"
+			            		android:textStyle="bold" 
+			            		android:layout_alignLeft="@+id/imgViewBlaGraphic"/>
+				    
+				    		<ImageView
+				    			android:id="@+id/imgViewBlaGraphic"
+				    			android:layout_width="wrap_content"
+				    			android:layout_height="wrap_content"
+				    			android:src="@drawable/barchart"
+				    			android:contentDescription="@string/img_invert"
+				    			android:layout_marginBottom="5dip"
+				    			android:padding="10dip"
+				    			android:visibility="invisible"
+				    			android:layout_below="@+id/tvBlaGraphic" 
+				    			android:layout_toRightOf="@+id/imgViewOperationsGraphic">				         
+				     		</ImageView>
 				     		
 						</RelativeLayout>
 				</com.example.imagegallery.utils.WrappingSlidingDrawer>
