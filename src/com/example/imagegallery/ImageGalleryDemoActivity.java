@@ -628,8 +628,7 @@ public class ImageGalleryDemoActivity extends Activity {
 		Bitmap resizedFilterFlipVertical = Filter.flipVertical(resized);
 		Bitmap resizedFilterFlipHorizontal = Filter.flipHorizontal(resized);
 		Bitmap resizedFilterGrayscale = Filter.grayscale(resized);
-		Bitmap resizedFilterGamma = Filter.gammaCorection(resized, 1.8, 1.8,
-				1.8);
+		Bitmap resizedFilterGamma = Filter.gammaCorection(resized, 1.8);
 		Bitmap resizedFilterColorRGB = Filter.colorFilter(resized, 1, 0, 0);
 		Bitmap resizedFilterSaturation = Filter.saturationFilter(resized,
 				(float) 0.5);
@@ -1218,7 +1217,7 @@ public class ImageGalleryDemoActivity extends Activity {
 			public void onOk(GammaDialog dialog, double scale) {
 				gamma = scale;
 				long start = System.currentTimeMillis();
-				changeBitmap = Filter.gammaCorection(originalBitmap, gamma,	gamma, gamma);
+				changeBitmap = Filter.gammaCorection(originalBitmap, gamma);
 				long end = System.currentTimeMillis();
 				long elapsed = end - start;
 				csv.writeAll("GammaCorectionFilter", elapsed);

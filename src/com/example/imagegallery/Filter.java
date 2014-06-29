@@ -720,7 +720,7 @@ public class Filter {
 	
 
 	
-	public static Bitmap gammaCorection(Bitmap src, double red, double green, double blue) {
+	public static Bitmap gammaCorection(Bitmap src, double gammaFactor) {
 	    // create output image
 	    Bitmap bmOut = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
 	    // get image size
@@ -733,22 +733,15 @@ public class Filter {
 	    final int    MAX_SIZE = 256;
 	    final double MAX_VALUE_DBL = 255.0;
 	    final int    MAX_VALUE_INT = 255;
-	    final double REVERSE = 1.0;
 	 
 	    // gamma arrays
-	    int[] gammaR = new int[MAX_SIZE];
-	    int[] gammaG = new int[MAX_SIZE];
-	    int[] gammaB = new int[MAX_SIZE];
+	    int[] gamma = new int[MAX_SIZE];
 	 
-	    if (red > 0 && green > 0 && blue > 0) {
+	    if (gammaFactor > 0) {
 	    // setting values for every gamma channels
 	    for(int i = 0; i < MAX_SIZE; ++i) {
-	        gammaR[i] = (int)Math.min(MAX_VALUE_INT,
-	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  red/REVERSE)) + 0.5));  // OVDE BILO REVERSE/red, ali mislim da treba obrnuto!!! proveriti, ovako se slaze sa onim sa wikipedia-e
-	        gammaG[i] = (int)Math.min(MAX_VALUE_INT,
-	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  green/REVERSE)) + 0.5));
-	        gammaB[i] = (int)Math.min(MAX_VALUE_INT,
-	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  blue/REVERSE)) + 0.5));
+	        gamma[i] = (int)Math.min(MAX_VALUE_INT,
+	                (int)((MAX_VALUE_DBL * Math.pow(i / MAX_VALUE_DBL,  gammaFactor)))); 
 	    }
 	 
 	    // apply gamma table
@@ -758,9 +751,9 @@ public class Filter {
 	            pixel = src.getPixel(x, y);
 	            A = Color.alpha(pixel);
 	            // look up gamma
-	            R = gammaR[Color.red(pixel)];
-	            G = gammaG[Color.green(pixel)];
-	            B = gammaB[Color.blue(pixel)];
+	            R = gamma[Color.red(pixel)];
+	            G = gamma[Color.green(pixel)];
+	            B = gamma[Color.blue(pixel)];
 	            // set new color to output bitmap
 	            bmOut.setPixel(x, y, Color.argb(A, R, G, B));
 	        }
