@@ -127,6 +127,7 @@ public class ImageGalleryDemoActivity extends Activity {
 	private long[] millisecondsGausianBlur;
 	private double[] sigmaGausianBlur;
 	private HashMap<String, Double> times = new HashMap<String, Double>();
+	private HashMap<String, Double> timesOperations = new HashMap<String, Double>();
 	/** Called when the activity is first created. */
 	@SuppressLint("NewApi")
 	@Override
@@ -274,8 +275,15 @@ public class ImageGalleryDemoActivity extends Activity {
 							RelativeLayout.LayoutParams.WRAP_CONTENT);
 					imageParamsData.addRule(RelativeLayout.LEFT_OF, 1);
 			  
-		  
-				  popupGraphics.setContentView(graphView);				
+				  dataGraphics = new ImageView(ImageGalleryDemoActivity.this);
+				  dataGraphics.setBackgroundResource(R.drawable.statistika);
+				  dataGraphics.setId(2);
+				  dataGraphics.setLayoutParams(imageParamsData);
+				  graphView.addView(dataGraphics);
+				  
+				  popupGraphics.setContentView(graphView);
+			  
+				
 				  closeGraphics.setOnClickListener(new OnClickListener() {	
 						@Override
 						public void onClick(View v) {							
@@ -292,7 +300,34 @@ public class ImageGalleryDemoActivity extends Activity {
 				  } else {
 					  popupGraphics.dismiss();
 					  clickGraphics = true;
-				  }			 
+				  }
+			  
+				  dataGraphics.setOnClickListener(new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						String ispis = "Vremena potrebna za izvrsavanje odgovarajucih operacija su sledeca:\n";
+						ispis += "Blend: " + Double.toString(blend) + "ms  ";
+						ispis += "Multiply: " + Double.toString(multiply) + "ms\n";
+						ispis += "Difference: " + Double.toString(difference) + "ms  ";
+						ispis += "Lighter: " + Double.toString(lighter) + "ms\n";
+						ispis += "Darker: " + Double.toString(darker) + "ms  ";
+						ispis += "Operacije poredjane od najsporije do najbrze:" + "\n";
+						
+						ValueComparator bvc =  new ValueComparator(timesOperations);
+				        TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
+				        sorted_map.putAll(timesOperations);
+				        ispis += sorted_map.toString() + " \n ";
+				        
+						ispis += "Operacija kojoj najmanje vremena treba za izvrsavanje je " + sorted_map.lastKey() + " \n ";
+						ispis += "Operacija kojoj najvise vremena treba za izvrsavanje je " + sorted_map.firstKey() + " \n ";
+						
+						final Toast toast = Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG);
+						toast.setDuration(10000);  // NE RADI!!!
+						toast.show();
+						
+					}
+				});		 
 			}
 		});
 		
@@ -310,10 +345,10 @@ public class ImageGalleryDemoActivity extends Activity {
 						   	, new GraphViewData(10, flipHorizontal)
 						   	, new GraphViewData(12, grayscale)
 						   	, new GraphViewData(14, gammaCorection)
-						   	, new GraphViewData(16, rgb)
+						   	, new GraphViewData(16, rgb)              // ovo je color filter
 						   	, new GraphViewData(18, ssaturation)
 						   	, new GraphViewData(20, hhue)
-						   	, new GraphViewData(22, color)
+						   	, new GraphViewData(22, color)           // ovo je shading filter
 						   	, new GraphViewData(24, blur)
 						   	, new GraphViewData(26, gausianBlur)
 						   	, new GraphViewData(28, sharpen)
@@ -543,6 +578,10 @@ public class ImageGalleryDemoActivity extends Activity {
  		difference = csv.findAverage("DifferenceOperation");
  		lighter = csv.findAverage("LighterOperation");
  		darker = csv.findAverage("DarkerOperation");
+ 		
+ 		timesOperations.put("Blend", blend); timesOperations.put("Multiply", multiply);
+ 		timesOperations.put("Difference", difference); timesOperations.put("Lighter", lighter);
+ 		timesOperations.put("Darker", darker);
  		
  		times.put("Invert", invert); times.put("BlackWhite", blackWhite); times.put("Brightness", brightness); times.put("Contrast", ccontrast);
  		times.put("FlipVertical", flipVertical); times.put("FlipHorizontal", flipHorizontal); times.put("Grayscale", grayscale);

@@ -81,7 +81,7 @@ public class CsvFile {
 
 	}
 	
-	public double findAverage(String filter) {   // vraca zbir vremena izvrsavanja odgovarajuceg filtera
+	public double findAverage(String filter) {   // returns sum of times need for all execution of specific filter
 
 		long ukupno_vreme = 0;
 		int broj_izvrsavanja = 0;
@@ -116,7 +116,7 @@ public class CsvFile {
 		else return 0;
 	}
 	
-	public int findTimeGausianBlur() {   // vraca koliko puta je izvrsen gausianBlur
+	public int findTimeGausianBlur() {   // how many times gausianBlur executed
 
 		int broj = 0;
 		try {
@@ -143,7 +143,7 @@ public class CsvFile {
 		return broj;
 	}
 	
-	public String[] findMillisecondsGausianBlur() {   // vraca niz vremena potrebnih za sva izvrsavanja gausian blur filtera
+	public String[] findMillisecondsGausianBlur() {   // returns array of time values need for all execution gausianBlur filter
 
 		int broj = this.findTimeGausianBlur();
 		String[] vremena = new String[broj];
@@ -173,7 +173,7 @@ public class CsvFile {
 		return vremena;
 	}
 	
-	public String[] findSigmaGausianBlur() {   // vraca niz vrednosti sigma za sva izvrsavanja gausian blur filtera
+	public String[] findSigmaGausianBlur() {   // returns array of sigma values for all execution gausianBlur filter
 
 		int broj = this.findTimeGausianBlur();
 		String[] sigma = new String[broj];
