@@ -810,12 +810,10 @@ public class Filter {
 	            index = y * width + x;
 	            // convert to HSV
 	            Color.colorToHSV(pixels[index], HSV);
-	            // increase Saturation level
-	          //  HSV[1] *= level; bilo ovo, ja stavila
+	            // change Saturation level
 	            HSV[1] = level;
 	            HSV[1] = (float) Math.max(0.0, Math.min(HSV[1], 1.0));
 	            // take color back
-	            //pixels[index] |= Color.HSVToColor(HSV);  bilo ovo, ja stavila PROVERITI
 	            pixels[index] = Color.HSVToColor(HSV);
 	        }
 	    }
@@ -842,11 +840,10 @@ public class Filter {
 	            index = y * width + x;              
 	            // convert to HSV
 	            Color.colorToHSV(pixels[index], HSV);
-	            // increase Saturation level
+	            // change Hue level
 	            HSV[0] = level;
 	            HSV[0] = (float) Math.max(0.0, Math.min(HSV[0], 360.0));
 	            // take color back
-	            //pixels[index] |= Color.HSVToColor(HSV);
 	            pixels[index] = Color.HSVToColor(HSV);
 	        }
 	    }

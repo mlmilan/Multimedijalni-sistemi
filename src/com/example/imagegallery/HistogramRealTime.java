@@ -1,16 +1,19 @@
 package com.example.imagegallery;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
@@ -60,7 +63,6 @@ class DrawOnTop extends View {
 	int[] mRedHistogram;
 	int[] mGreenHistogram;
 	int[] mBlueHistogram;
-	double[] mBinSquared;
 
     public DrawOnTop(Context context) {
         super(context);
@@ -96,11 +98,6 @@ class DrawOnTop extends View {
         mRedHistogram = new int[256];
         mGreenHistogram = new int[256];
         mBlueHistogram = new int[256];
-        mBinSquared = new double[256];
-        for (int bin = 0; bin < 256; bin++)
-        {
-        	mBinSquared[bin] = ((double)bin) * bin;
-        } // bin
     }
 
     @Override
@@ -115,9 +112,9 @@ class DrawOnTop extends View {
         
         	        	
         	// Convert from YUV to RGB
-        	decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
+        	//decodeYUV420SP(mRGBData, mYUVData, mImageWidth, mImageHeight);
+        	convertYUV420_NV21toRGB8888(mRGBData, mYUVData, mImageWidth, mImageHeight);
         	
-        	//mBitmap.getPixels(mRGBData, 0, mBitmap.getWidth(), 0, 0, mBitmap.getWidth(), mBitmap.getHeight());
         	
         	// Draw bitmap
         	mBitmap.setPixels(mRGBData, 0, mImageWidth, 0, 0, 
@@ -160,50 +157,29 @@ class DrawOnTop extends View {
         	imageGreenMean /= greenHistogramSum;
         	imageBlueMean /= blueHistogramSum;
         	
-        	// Calculate second moment
-        	double imageRed2ndMoment = 0, imageGreen2ndMoment = 0, imageBlue2ndMoment = 0;
-        	for (int bin = 0; bin < 256; bin++)
-        	{
-        		imageRed2ndMoment += mRedHistogram[bin] * mBinSquared[bin];
-        		imageGreen2ndMoment += mGreenHistogram[bin] * mBinSquared[bin];
-        		imageBlue2ndMoment += mBlueHistogram[bin] * mBinSquared[bin];
-        	} // bin
-        	imageRed2ndMoment /= redHistogramSum;
-        	imageGreen2ndMoment /= greenHistogramSum;
-        	imageBlue2ndMoment /= blueHistogramSum;
-        	double imageRedStdDev = Math.sqrt( imageRed2ndMoment - imageRedMean*imageRedMean );
-        	double imageGreenStdDev = Math.sqrt( imageGreen2ndMoment - imageGreenMean*imageGreenMean );
-        	double imageBlueStdDev = Math.sqrt( imageBlue2ndMoment - imageBlueMean*imageBlueMean );
-        	//canvas.rotate(270);  // dodato
+
         	// Draw mean
         	String imageMeanStr = "Srednje vrednosti (R,G,B): " + String.format("%.4g", imageRedMean) + ", " + String.format("%.4g", imageGreenMean) + ", " + String.format("%.4g", imageBlueMean);
-        	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5-1, mPaintBlack);  // bilo marginWidth+10-1, 30-1
-        	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5-1, mPaintBlack);  // bilo marginWidth+10+1, 30-1
-        	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5+1, mPaintBlack);  // bilo marginWidth+10+1, 30+1
-        	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5+1, mPaintBlack);  // bilo marginWidth+10-1, 30+1
-        	canvas.drawText(imageMeanStr, marginWidth+10, -canvasWidth/(float)2.5, mPaintYellow);     // bilo marginWidth+10, 30
+        	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5-1, mPaintBlack);  
+        	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5-1, mPaintBlack);  
+        	canvas.drawText(imageMeanStr, marginWidth+10+1, -canvasWidth/(float)2.5+1, mPaintBlack);  
+        	canvas.drawText(imageMeanStr, marginWidth+10-1, -canvasWidth/(float)2.5+1, mPaintBlack);  
+        	canvas.drawText(imageMeanStr, marginWidth+10, -canvasWidth/(float)2.5, mPaintYellow);     
         	
-        	// Draw standard deviation
-        	String imageStdDevStr = "Standardna devijacija (R,G,B): " + String.format("%.4g", imageRedStdDev) + ", " + String.format("%.4g", imageGreenStdDev) + ", " + String.format("%.4g", imageBlueStdDev);
-        	canvas.drawText(imageStdDevStr, marginWidth+10-1, -canvasWidth/(float)2.5+31, mPaintBlack); // bilo 60-1
-        	canvas.drawText(imageStdDevStr, marginWidth+10+1, -canvasWidth/(float)2.5+31, mPaintBlack); // bilo 60-1
-        	canvas.drawText(imageStdDevStr, marginWidth+10+1, -canvasWidth/(float)2.5+33, mPaintBlack); // bilo 60+1
-        	canvas.drawText(imageStdDevStr, marginWidth+10-1, -canvasWidth/(float)2.5+33, mPaintBlack); // bilo 60+1
-        	canvas.drawText(imageStdDevStr, marginWidth+10, -canvasWidth/(float)2.5+32, mPaintYellow);    // bilo 60
         	
         	// Draw red intensity histogram
-        	float barMaxHeight = 12000;  // bilo 3000
+        	float barMaxHeight = 12000;  
         	float barWidth = ((float)newImageWidth) / 256;
         	float barMarginHeight = 2;
         	RectF barRect = new RectF();
-        	barRect.bottom = canvasHeight - 600;  // bilo -200
+        	barRect.bottom = canvasHeight - 600;  
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
         	{
         		float prob = (float)mRedHistogram[bin] / (float)redHistogramSum;
         		barRect.top = barRect.bottom - 
-        			Math.min(200,prob*barMaxHeight) - barMarginHeight;  // bilo min 80
+        			Math.min(200,prob*barMaxHeight) - barMarginHeight;  
         		canvas.drawRect(barRect, mPaintBlack);
         		barRect.top += barMarginHeight;
         		canvas.drawRect(barRect, mPaintRed);
@@ -212,7 +188,7 @@ class DrawOnTop extends View {
         	} // bin
         	
         	// Draw green intensity histogram
-        	barRect.bottom = canvasHeight - 300;  // bilo -100
+        	barRect.bottom = canvasHeight - 300;  
         	barRect.left = marginWidth;
         	barRect.right = barRect.left + barWidth;
         	for (int bin = 0; bin < 256; bin++)
@@ -273,18 +249,54 @@ class DrawOnTop extends View {
     	}
     }
     
-    static public void decodeYUV420SPGrayscale(int[] rgb, byte[] yuv420sp, int width, int height)
-    {
-    	final int frameSize = width * height;
-    	
-    	for (int pix = 0; pix < frameSize; pix++)
-    	{
-    		int pixVal = (0xff & ((int) yuv420sp[pix])) - 16;
-    		if (pixVal < 0) pixVal = 0;
-    		if (pixVal > 255) pixVal = 255;
-    		rgb[pix] = 0xff000000 | (pixVal << 16) | (pixVal << 8) | pixVal;
-    	} // pix
+    /**
+     * Converts YUV420 NV21 to RGB8888
+     * 
+     * @param data byte array on YUV420 NV21 format.
+     * @param width pixels width
+     * @param height pixels height
+     * @return a RGB8888 pixels int array. Where each int is a pixels ARGB. 
+     */
+    public static void convertYUV420_NV21toRGB8888(int [] rgb, byte [] data, int width, int height) {
+        int size = width*height;
+        int offset = size;
+        int u, v, y1, y2, y3, y4;
+
+        // i percorre os Y and the final pixels
+        // k percorre os pixles U e V
+        for(int i=0, k=0; i < size; i+=2, k+=2) {
+            y1 = data[i  ]&0xff;
+            y2 = data[i+1]&0xff;
+            y3 = data[width+i  ]&0xff;
+            y4 = data[width+i+1]&0xff;
+
+            u = data[offset+k  ]&0xff;
+            v = data[offset+k+1]&0xff;
+            u = u-128;
+            v = v-128;
+
+            rgb[i  ] = convertYUVtoRGB(y1, u, v);
+            rgb[i+1] = convertYUVtoRGB(y2, u, v);
+            rgb[width+i  ] = convertYUVtoRGB(y3, u, v);
+            rgb[width+i+1] = convertYUVtoRGB(y4, u, v);
+
+            if (i!=0 && (i+2)%width==0)
+                i+=width;
+        }
     }
+
+    private static int convertYUVtoRGB(int y, int u, int v) {
+        int r,g,b;
+
+        r = y + (int)1.402f*v;
+        g = y - (int)(0.344f*u +0.714f*v);
+        b = y + (int)1.772f*u;
+        r = r>255? 255 : r<0 ? 0 : r;
+        g = g>255? 255 : g<0 ? 0 : g;
+        b = b>255? 255 : b<0 ? 0 : b;
+        return 0xff000000 | (b<<16) | (g<<8) | r;
+    }
+    
     
     static public void calculateIntensityHistogram(int[] rgb, int[] histogram, int width, int height, int component)
     {
@@ -294,7 +306,7 @@ class DrawOnTop extends View {
     	} // bin
     	if (component == 0) // red
     	{
-    		for (int pix = 0; pix < width*height; pix += 3)
+    		for (int pix = 0; pix < width*height; pix ++)
     		{
 	    		int pixVal = (rgb[pix] >> 16) & 0xff;
 	    		histogram[ pixVal ]++;
@@ -302,7 +314,7 @@ class DrawOnTop extends View {
     	}
     	else if (component == 1) // green
     	{
-    		for (int pix = 0; pix < width*height; pix += 3)
+    		for (int pix = 0; pix < width*height; pix ++)
     		{
 	    		int pixVal = (rgb[pix] >> 8) & 0xff;
 	    		histogram[ pixVal ]++;
@@ -310,7 +322,7 @@ class DrawOnTop extends View {
     	}
     	else // blue
     	{
-    		for (int pix = 0; pix < width*height; pix += 3)
+    		for (int pix = 0; pix < width*height; pix ++)
     		{
 	    		int pixVal = rgb[pix] & 0xff;
 	    		histogram[ pixVal ]++;
@@ -341,11 +353,11 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-        mCamera = Camera.open();
+        mCamera = Camera.open(); 
         try {
            mCamera.setPreviewDisplay(holder);
-           
            // Preview callback used whenever new viewfinder frame is available
+           
            mCamera.setPreviewCallback(new PreviewCallback() {
         	  public void onPreviewFrame(byte[] data, Camera camera)
         	  {
@@ -359,8 +371,10 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         			  mDrawOnTop.mImageWidth = params.getPreviewSize().width;
         			  mDrawOnTop.mImageHeight = params.getPreviewSize().height;
         			  mDrawOnTop.mBitmap = Bitmap.createBitmap(mDrawOnTop.mImageWidth, 
-        					  mDrawOnTop.mImageHeight, Bitmap.Config.RGB_565);
+        					  mDrawOnTop.mImageHeight, Bitmap.Config.ARGB_8888);  // bilo rgb565
         			  mDrawOnTop.mRGBData = new int[mDrawOnTop.mImageWidth * mDrawOnTop.mImageHeight]; 
+        			  
+        			// pWidth and pHeight define the size of the preview
         			  mDrawOnTop.mYUVData = new byte[data.length];        			  
         		  }
         		  
@@ -373,13 +387,10 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         catch (IOException exception) {
             mCamera.release();
             mCamera = null;
-        }
+        } 
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // Surface will be destroyed when we return, so stop the preview.
-        // Because the CameraDevice object is not a shared resource, it's very
-        // important to release it when the activity is paused.
     	mFinished = true;
     	mCamera.setPreviewCallback(null);
         mCamera.stopPreview();
@@ -388,8 +399,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        // Now that the size is known, set up the camera parameters and begin
-        // the preview.
         Camera.Parameters parameters = mCamera.getParameters();
         parameters.setPreviewSize(320, 240);
         parameters.setPreviewFrameRate(15);
