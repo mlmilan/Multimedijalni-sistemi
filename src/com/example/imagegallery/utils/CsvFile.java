@@ -29,8 +29,8 @@ public class CsvFile {
 			for (Object object : content) {
 			    row = (String[]) object;
 			     
-			    System.out.println(row[0]
-			               + " # " + row[1]);
+			   // System.out.println(row[0]
+			    //           + " # " + row[1]);
 			}
 			csvReader.close();
 			return content;
@@ -89,15 +89,15 @@ public class CsvFile {
 			String[] row = null;
 			
 			CSVReader csvReader = new CSVReader(new FileReader(csv));
-			System.out.println("usao");
+			//System.out.println("usao");
 			
 			List<String[]> content = csvReader.readAll();
 			 
 			for (Object object : content) {
-				System.out.println("usao u for");
+				//System.out.println("usao u for");
 			    row = (String[]) object;
 			    
-			    System.out.println(row[0] + "#" + row[1]);
+			    //System.out.println(row[0] + "#" + row[1]);
 			     
 			    if (row[0].equals(filter)){
 			    	ukupno_vreme += Long.parseLong(row[1]);

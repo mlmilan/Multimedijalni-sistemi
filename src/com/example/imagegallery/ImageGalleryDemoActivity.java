@@ -21,6 +21,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -32,12 +33,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.imagegallery.dialogs.BlackWhiteDialog;
@@ -65,6 +68,7 @@ import com.example.imagegallery.utils.Save;
 import com.example.imagegallery.utils.ValueComparator;
 import com.example.imagegallery.utils.WrappingSlidingDrawer;
 import com.jjoe64.graphview.BarGraphView;
+import com.jjoe64.graphview.CustomLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
@@ -115,9 +119,10 @@ public class ImageGalleryDemoActivity extends Activity {
 	private OnGausianBlurListener listenerGausianBlur;
 	private OnBlendListener listenerBlend;
 	public PopupWindow popup, popupGraphics, popupGausianBlur;
-	private int width, height;
+	private int width, height, flag = -1;
 	private boolean click = true, clickGraphics = true, clickGausianBlur = true;
 	private ImageView close, closeGraphics, dataGraphics;
+	private TextView textGraphics;
 	private TabHost th;
 	private CsvFile csv;
 	private double invert, blackWhite, brightness, ccontrast, flipVertical, flipHorizontal, grayscale, gammaCorection, 
@@ -234,28 +239,28 @@ public class ImageGalleryDemoActivity extends Activity {
 			  @Override 
 			  public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
 				  initValuesForGraphics();
-				  
+				  flag = 2;
 				  GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
 						      new GraphViewData(0, 0.0d)
-						   	, new GraphViewData(6, blend)
-						  	, new GraphViewData(12, 0.0d)
-						    , new GraphViewData(16, multiply)
-						  	, new GraphViewData(22, 0.0d)
-						    , new GraphViewData(26, difference)
-						  	, new GraphViewData(32, 0.0d)
-						    , new GraphViewData(42, 0.0d)
-						    , new GraphViewData(56, lighter)
-						  	, new GraphViewData(62, 0.0d)
-						   	, new GraphViewData(76, darker)
-						   	, new GraphViewData(82, 0.0d)
+						   	, new GraphViewData(4, blend)
+						  	, new GraphViewData(8, 0.0d)
+						    , new GraphViewData(12, multiply)
+						  	, new GraphViewData(16, 0.0d)
+						    , new GraphViewData(20, difference)
+						  	, new GraphViewData(24, 0.0d)
+						    , new GraphViewData(28, 0.0d)
+						    , new GraphViewData(32, lighter)
+						  	, new GraphViewData(36, 0.0d)
+						   	, new GraphViewData(40, darker)
+						   	, new GraphViewData(44, 0.0d)
 						});
 			
-				  GraphView graphView = new BarGraphView(
+				  final GraphView graphView = new BarGraphView(
 				  ImageGalleryDemoActivity.this, "Graficki prikaz operacija");
 
 			 
 				  graphView.setBackgroundColor(Color.BLACK);
-				  graphView.setHorizontalLabels(new String[] {"blend", "multiply", "difference", "lighter  darker", ""});
+				  graphView.setHorizontalLabels(new String[] {"blnd", "mul", "diff", "ligh", "dark", ""});
 				  graphView.addSeries(exampleSeries); // data 
 			  
 				  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
@@ -281,26 +286,33 @@ public class ImageGalleryDemoActivity extends Activity {
 				  dataGraphics.setLayoutParams(imageParamsData);
 				  graphView.addView(dataGraphics);
 				  
-				  popupGraphics.setContentView(graphView);
-			  
+				  graphView.setViewPort(2, 40);
+				  graphView.setScrollable(true);
+				  graphView.setScalable(true);
+				  
+				  final FrameLayout fl = (FrameLayout)findViewById(R.id.tab3);
+				  fl.addView(graphView);
+				  
 				
+				  fl.setOnClickListener(new View.OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							if (flag == 2)
+							Toast.makeText(ImageGalleryDemoActivity.this, "1 - blend \n2 - multiply \n3 - "
+									+ "difference \n4 - lighter \n5 - darker \n", Toast.LENGTH_LONG).show();
+							flag = -1;
+						}
+					});
+				  
 				  closeGraphics.setOnClickListener(new OnClickListener() {	
 						@Override
 						public void onClick(View v) {							
-							popupGraphics.dismiss();
+							fl.removeView(graphView);
 						}
 				  });
 			  
-				  if (clickGraphics) {
-					  popupGraphics.showAtLocation(graphView, Gravity.CENTER, 10, 10);
-					  int w = (int) (width * 0.9);
-					  int h = (int) (height * 0.9);
-					  popupGraphics.update(0, 0, w, h);
-					  clickGraphics = false;
-				  } else {
-					  popupGraphics.dismiss();
-					  clickGraphics = true;
-				  }
 			  
 				  dataGraphics.setOnClickListener(new View.OnClickListener() {
 					
@@ -323,7 +335,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						ispis += "Operacija kojoj najvise vremena treba za izvrsavanje je " + sorted_map.firstKey() + " \n ";
 						
 						final Toast toast = Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG);
-						toast.setDuration(10000);  // NE RADI!!!
+						toast.setDuration(10000);  
 						toast.show();
 						
 					}
@@ -335,9 +347,9 @@ public class ImageGalleryDemoActivity extends Activity {
 			  @Override 
 			  public void onClick(View arg0) { // graph with dynamically genereated horizontal and vertical labels 
 				  initValuesForGraphics();
-				  
+				  flag = 0;
 				  GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
-						   	  new GraphViewData(0, invert)
+						  	  new GraphViewData(0, invert)
 						    , new GraphViewData(2, blackWhite)
 						    , new GraphViewData(4, brightness)
 						    , new GraphViewData(6, ccontrast)
@@ -348,7 +360,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						   	, new GraphViewData(16, rgb)              // ovo je color filter
 						   	, new GraphViewData(18, ssaturation)
 						   	, new GraphViewData(20, hhue)
-						   	, new GraphViewData(22, color)           // ovo je shading filter
+						  	, new GraphViewData(22, color)           // ovo je shading filter
 						   	, new GraphViewData(24, blur)
 						   	, new GraphViewData(26, gausianBlur)
 						   	, new GraphViewData(28, sharpen)
@@ -358,15 +370,19 @@ public class ImageGalleryDemoActivity extends Activity {
 						   	, new GraphViewData(36, smooth)
 						   	, new GraphViewData(38, 0.0d)
 						});
-			
-				  GraphView graphView = new BarGraphView(
+				  
+				  
+				  final GraphView graphView = new BarGraphView(
 				  ImageGalleryDemoActivity.this, "Graficki prikaz filtera");
 
+				 
+				  
 			 
 				  graphView.setBackgroundColor(Color.BLACK);
-				  graphView.setHorizontalLabels(new String[] {"osn.", "hue/sat/col", "konv.", ""});
+				  graphView.setHorizontalLabels(new String[] {"brzi", "srednji", "spori", ""});
 				  graphView.addSeries(exampleSeries); // data 
-			  
+
+				 
 				  RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
 							RelativeLayout.LayoutParams.WRAP_CONTENT,
 							RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -390,29 +406,37 @@ public class ImageGalleryDemoActivity extends Activity {
 				  dataGraphics.setLayoutParams(imageParamsData);
 				  graphView.addView(dataGraphics);
 				  
-				  popupGraphics.setContentView(graphView);
-			  
-				
+				  
+				  graphView.setViewPort(2, 40);
+				  graphView.setScrollable(true);
+				  graphView.setScalable(true);
+				  final FrameLayout fl = (FrameLayout) findViewById(R.id.tab3);
+				  
+				  fl.addView(graphView);
+				  
+				  fl.setOnClickListener(new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						if (flag == 0)
+						Toast.makeText(ImageGalleryDemoActivity.this, "1 - invert \n2 - black&white \n3 - "
+								+ "brightness \n4 - contrast \n5 - flip vertical \n6 - flip horizontal \n"
+								+ "7 - grayscale \n8 - gamma correction \n9 - rgb \n10 - saturation \n"
+								+ "11 - hue \n12 - color \n13 - blur \n14 - gausian blur \n"
+								+ "15 - sharpen \n16 - edge \n17 - emboss \n18 - engraving"
+								+ "\n19 - smooth\n", Toast.LENGTH_LONG).show();
+						flag = -1;
+					}
+				});
+				  
 				  closeGraphics.setOnClickListener(new OnClickListener() {	
 						@Override
-						public void onClick(View v) {							
-							popupGraphics.dismiss();
+						public void onClick(View v) {	
+							fl.removeView(graphView);
 						}
 				  });
-			  
-				  if (clickGraphics) {
-					  popupGraphics.showAtLocation(graphView, Gravity.CENTER, 10, 10);
-					  int w = (int) (width * 0.9);
-					  int h = (int) (height * 0.9);
-					  popupGraphics.update(0, 0, w, h);
-					  clickGraphics = false;
-				  } else {
-					  popupGraphics.dismiss();
-					  clickGraphics = true;
-				  }
-			  
-			  
-			  
+
 				  dataGraphics.setOnClickListener(new View.OnClickListener() {
 					
 					@Override
@@ -447,14 +471,12 @@ public class ImageGalleryDemoActivity extends Activity {
 				        TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
 				        sorted_map.putAll(times);
 				        ispis += sorted_map.toString() + " \n ";
-				        
-						
-						
+				        						
 						ispis += "Filter kome najmanje vremena treba za izvrsavanje je " + sorted_map.lastKey() + " \n ";
 						ispis += "Filter kome najvise vremena treba za izvrsavanje je " + sorted_map.firstKey() + " \n ";
 						
 						final Toast toast = Toast.makeText(ImageGalleryDemoActivity.this, ispis, Toast.LENGTH_LONG);
-						toast.setDuration(10000);  // NE RADI!!!
+						toast.setDuration(10000); 
 						toast.show();
 						
 					}
@@ -468,23 +490,29 @@ public class ImageGalleryDemoActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				initValuesForGausianBlurGraphics();
+				flag = 1;
 				if (sigmaGausianBlur == null && millisecondsGausianBlur == null) {
 					return;
 				}
+				String[] niz_sigma = new String[timesGausianBlur+1];
+				niz_sigma[0] = "0";
 				GraphViewData[] datas = new GraphViewData[timesGausianBlur + 1];
 				datas[0] = new GraphViewData(0, 0);
 				for (int i=0; i<timesGausianBlur; i++) {
 					datas[i+1] = new GraphViewData(sigmaGausianBlur[i], millisecondsGausianBlur[i]);
-					System.out.println(sigmaGausianBlur[i] + " " + millisecondsGausianBlur[i]);
+					niz_sigma[i+1] = Double.toString(sigmaGausianBlur[i]);
+					//System.out.println(sigmaGausianBlur[i] + " " + millisecondsGausianBlur[i]);
 				}
+				
 				
 				
 				GraphViewSeries lineChart = new GraphViewSeries(datas);
 				
-				GraphView graphView = new LineGraphView(
+				final GraphView graphView = new LineGraphView(
 						  ImageGalleryDemoActivity.this, "Graficki prikaz gausian blura");
 
-						 
+						  graphView.setHorizontalLabels(niz_sigma);
+				
 						  ((LineGraphView) graphView).setDrawBackground(true);
 						  ((LineGraphView) graphView).setBackgroundColor(Color.GRAY);
 						  graphView.addSeries(lineChart); // data 
@@ -512,28 +540,42 @@ public class ImageGalleryDemoActivity extends Activity {
 						  dataGraphics.setLayoutParams(imageParamsData);
 						  graphView.addView(dataGraphics);
 						  
-						  popupGausianBlur.setContentView(graphView);
+						  final FrameLayout fl = (FrameLayout)findViewById(R.id.tab3);
+						  fl.addView(graphView);
+						  fl.setBackgroundColor(Color.BLACK);
+						  final ImageView img1 = (ImageView) findViewById(R.id.imgViewFiltersGraphics), 
+								  img2 = (ImageView) findViewById(R.id.imgViewOperationsGraphic),
+								  img3 = (ImageView) findViewById(R.id.imgViewGausianBlurGraphics);
+						  final TextView tv1 = (TextView) findViewById(R.id.tvFiltersGraphics), 
+								  tv2 = (TextView) findViewById(R.id.tvOperationsGraphic),
+								  tv3 = (TextView) findViewById(R.id.tvGausianBlurGraphics);
 						  
+						  img1.setVisibility(View.INVISIBLE);
+						  img2.setVisibility(View.INVISIBLE);
+						  img3.setVisibility(View.INVISIBLE);
+						  
+						  tv1.setVisibility(View.INVISIBLE);
+						  tv2.setVisibility(View.INVISIBLE);
+						  tv3.setVisibility(View.INVISIBLE);
 							
 						  closeGraphics.setOnClickListener(new OnClickListener() {
 
 								@Override
 								public void onClick(View v) {
 									
-									popupGausianBlur.dismiss();
+									fl.removeView(graphView);
+									fl.setBackgroundColor(Color.WHITE);
+									
+									img1.setVisibility(View.VISIBLE);
+									img2.setVisibility(View.VISIBLE);
+									img3.setVisibility(View.VISIBLE);
+									  
+									tv1.setVisibility(View.VISIBLE);
+									tv2.setVisibility(View.VISIBLE);
+									tv3.setVisibility(View.VISIBLE);
 								}
 							});
 						  
-						  if (clickGausianBlur) {
-							  popupGausianBlur.showAtLocation(graphView, Gravity.CENTER, 10, 10);
-								int w = (int) (width * 0.9);
-								int h = (int) (height * 0.9);
-								popupGausianBlur.update(0, 0, w, h);
-								clickGausianBlur = false;
-							} else {
-								popupGausianBlur.dismiss();
-								clickGausianBlur = true;
-							}
 						  
 						  dataGraphics.setOnClickListener(new View.OnClickListener() {
 								
