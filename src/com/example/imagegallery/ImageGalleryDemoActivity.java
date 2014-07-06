@@ -940,7 +940,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
-				createSmallerImageOperations();
+//				createSmallerImageOperations();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija blend trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1042,7 +1042,7 @@ public class ImageGalleryDemoActivity extends Activity {
 					else
 						imageViewOperations.setScaleType(ScaleType.FIT_CENTER);
 					imageViewOperations.setImageBitmap(originalOperationsBitmap);
-					createSmallerImageOperations();
+//					createSmallerImageOperations();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -1083,7 +1083,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
-				createSmallerImageOperations();
+//				createSmallerImageOperations();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija multiply trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1111,7 +1111,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
-				createSmallerImageOperations();
+//				createSmallerImageOperations();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija difference trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1139,7 +1139,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
-				createSmallerImageOperations();
+//				createSmallerImageOperations();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija lighter trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1167,7 +1167,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				
 				imageViewOperations.setImageBitmap(changeBitmapOperations);
 				originalOperationsBitmap = Bitmap.createBitmap(changeBitmapOperations);
-				createSmallerImageOperations();
+//				createSmallerImageOperations();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Operacija darker trajala je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1194,7 +1194,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter color trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1223,7 +1223,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter blackwhite trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1252,7 +1252,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter brightness trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1281,7 +1281,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter contrast trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1310,7 +1310,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter gama trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1341,7 +1341,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter rgb trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1370,7 +1370,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter saturation trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1399,7 +1399,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter hue trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1428,7 +1428,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter gaussianblur trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 
@@ -1526,7 +1526,7 @@ public class ImageGalleryDemoActivity extends Activity {
 								mmatrix, true); // rotating bitmap
 						
 						imageView.setImageBitmap(originalBitmap);
-						createSmallerImage();
+//						createSmallerImage();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -1553,7 +1553,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter invert trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1609,7 +1609,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
-						createSmallerImage();
+//						createSmallerImage();
 						Toast.makeText(ImageGalleryDemoActivity.this, "Filter flipvertical trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
@@ -1631,7 +1631,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
-						createSmallerImage();
+//						createSmallerImage();
 						Toast.makeText(ImageGalleryDemoActivity.this, "Filter fliphorizontal trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
@@ -1653,7 +1653,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
-						createSmallerImage();
+//						createSmallerImage();
 						Toast.makeText(ImageGalleryDemoActivity.this, "Filter grayscale trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
@@ -1730,7 +1730,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter blur trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1763,7 +1763,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter sharpen trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1784,7 +1784,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter edge trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1805,7 +1805,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter emboss trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
@@ -1827,7 +1827,7 @@ public class ImageGalleryDemoActivity extends Activity {
 						}
 						imageView.setImageBitmap(changeBitmap);
 						originalBitmap = Bitmap.createBitmap(changeBitmap);
-						createSmallerImage();
+//						createSmallerImage();
 						Toast.makeText(ImageGalleryDemoActivity.this, "Filter engraving trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 					}
 				});
@@ -1849,7 +1849,7 @@ public class ImageGalleryDemoActivity extends Activity {
 				}
 				imageView.setImageBitmap(changeBitmap);
 				originalBitmap = Bitmap.createBitmap(changeBitmap);
-				createSmallerImage();
+//				createSmallerImage();
 				Toast.makeText(ImageGalleryDemoActivity.this, "Filter smooth trajao je " + elapsed/1000.0d + " sekundi", Toast.LENGTH_LONG).show();
 			}
 		});
