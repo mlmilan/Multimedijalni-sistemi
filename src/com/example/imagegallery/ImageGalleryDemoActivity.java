@@ -549,6 +549,8 @@ public class ImageGalleryDemoActivity extends Activity {
 						  final TextView tv1 = (TextView) findViewById(R.id.tvFiltersGraphics), 
 								  tv2 = (TextView) findViewById(R.id.tvOperationsGraphic),
 								  tv3 = (TextView) findViewById(R.id.tvGausianBlurGraphics);
+						  final Button b = (Button) findViewById(R.id.handleGraphics);
+						  final WrappingSlidingDrawer wsd = (WrappingSlidingDrawer) findViewById(R.id.drawerGraphics);
 						  
 						  img1.setVisibility(View.INVISIBLE);
 						  img2.setVisibility(View.INVISIBLE);
@@ -557,7 +559,11 @@ public class ImageGalleryDemoActivity extends Activity {
 						  tv1.setVisibility(View.INVISIBLE);
 						  tv2.setVisibility(View.INVISIBLE);
 						  tv3.setVisibility(View.INVISIBLE);
+						  
+						  b.setVisibility(View.INVISIBLE);
 							
+						  wsd.setVisibility(View.INVISIBLE);
+						  
 						  closeGraphics.setOnClickListener(new OnClickListener() {
 
 								@Override
@@ -573,6 +579,10 @@ public class ImageGalleryDemoActivity extends Activity {
 									tv1.setVisibility(View.VISIBLE);
 									tv2.setVisibility(View.VISIBLE);
 									tv3.setVisibility(View.VISIBLE);
+									
+									b.setVisibility(View.VISIBLE);
+									
+									wsd.setVisibility(View.VISIBLE);
 								}
 							});
 						  
